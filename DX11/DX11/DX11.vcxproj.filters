@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Source\App.hpp" />
+    <ClInclude Include="Source\PCH.hpp" />
+    <ClInclude Include="Source\KeyCode.hpp" />
+    <ClInclude Include="Source\AppWin.hpp" />
+    <ClInclude Include="Source\DX11\DX11.hpp" />
+    <ClInclude Include="Source\DX11\ImGui\ImGui_DX11.h" />
+    <ClInclude Include="Source\DX11\ImGui\imconfig.h" />
+    <ClInclude Include="Source\DX11\ImGui\imgui.h" />
+    <ClInclude Include="Source\DX11\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="Source\DX11\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Source\DX11\ImGui\imgui_internal.h" />
+    <ClInclude Include="Source\DX11\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Source\DX11\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Source\DX11\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Source\DX11\Utils\ResultUtil.hpp" />
+    <ClInclude Include="Source\DX11\Utils\DX11Util.hpp" />
+    <ClInclude Include="Source\DX11\lodepng\lodepng.h" />
+    <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\PCH.cpp" />
+    <ClCompile Include="Source\WinMain.cpp" />
+    <ClCompile Include="Source\AppWin.cpp" />
+    <ClCompile Include="Source\AppMain.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\DX11\DX11.cpp" />
+    <ClCompile Include="Source\DX11\Utils\ResultUtil.cpp" />
+    <ClCompile Include="Source\DX11\lodepng\lodepng.cpp" />
+  </ItemGroup>
+</Project>
