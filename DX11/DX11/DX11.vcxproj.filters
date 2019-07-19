@@ -19,6 +19,9 @@
     <ClInclude Include="Source\DX11\Utils\DX11Util.hpp" />
     <ClInclude Include="Source\DX11\lodepng\lodepng.h" />
     <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
+    <ClInclude Include="Source\DX11\ImGui\imgui_stdlib.h" />
+    <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
+    <ClInclude Include="Source\DX11\Utils\StringUtil.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -34,5 +37,9 @@
     <ClCompile Include="Source\DX11\DX11.cpp" />
     <ClCompile Include="Source\DX11\Utils\ResultUtil.cpp" />
     <ClCompile Include="Source\DX11\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\DX11\Demo\Demo.cpp" />
+    <ClCompile Include="Source\DX11\ImGui\imgui_stdlib.cpp" />
+    <ClCompile Include="Source\DX11\Utils\DX11Util.cpp" />
+    <ClCompile Include="Source\DX11\Utils\StringUtil.cpp" />
   </ItemGroup>
 </Project>

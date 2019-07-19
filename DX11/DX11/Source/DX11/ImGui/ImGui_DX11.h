@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+#include "imgui_stdlib.h"
 
 
 class ImGui_DX11
@@ -62,14 +63,14 @@ public:
         io.DisplaySize.y = static_cast<float>(height);
     }
 
-    static void Begin()
+    static void NewFrame()
     {
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
     }
 
-    static void End()
+    static void Render()
     {
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());

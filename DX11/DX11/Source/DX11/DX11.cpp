@@ -8,6 +8,7 @@
 #include "DX11.hpp"
 #include "ImGui/ImGui_DX11.h"
 #include "Utils/DX11Util.hpp"
+#include "Demo/Demo.hpp"
 
 
 DX11::DX11()
@@ -130,7 +131,7 @@ void DX11::OnInitEnd()
             m_Device.Get(),
             m_Context.Get(),
             "c:\\Windows\\Fonts\\meiryo.ttc", // 日本語要らないならnullptrをセット
-            20.0f,
+            16.0f,
             nullptr,
             nullptr,
             false
@@ -143,6 +144,12 @@ void DX11::OnInitEnd()
             return;
         }
     }
+
+    std::vector<std::string> demoNames = {
+        "ClearColor"
+    };
+
+    m_DemoSelector = std::make_unique<DemoSelector>(demoNames);
 }
 
 
@@ -155,45 +162,15 @@ void DX11::OnTermRequested()
 
 void DX11::OnIdle()
 {
-    // 更新
-    {
-        ImGui_DX11::Begin();
+    ImGui_DX11::NewFrame();
 
-        if (m_ImGuiActive)
-        {
-            ImGui::SetNextWindowSize(ImVec2(320, 120), ImGuiCond_Once);
-            ImGui::Begin("DX11");
-            ImGui::End();
-        }
-    }
+    Update();
 
-    // 描画
-    {
-        // 指定色でクリア
-        {
-            // red, green, blue, alpha
-            FLOAT clearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-            m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), clearColor);
-        }
+    Render();
 
-        // 深度ステンシルビューをクリア
-        m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    ImGui_DX11::Render();
 
-        // 深度ステンシルステートを設定
-        m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 0);
-
-        // ラスタライザーステートを設定
-        m_Context->RSSetState(m_RasterizerState.Get());
-
-        ImGui_DX11::End();
-
-        // 結果をウインドウに反映
-        ResultUtil result = m_SwapChain->Present(0, 0);
-        if (!result)
-        {
-            ShowErrorMessage(result, "m_SwapChain->Present");
-        }
-    }
+    Present();
 }
 
 
@@ -212,7 +189,7 @@ void DX11::OnKeyDown(KEY_CODE key)
         PostQuit();
     }
 
-    if (key == KEY_CODE_I)
+    if (key == KEY_CODE_F1)
     {
         m_ImGuiActive = !m_ImGuiActive;
     }
@@ -392,12 +369,14 @@ bool DX11::CreateBackBuffer(const Size2D& newSize)
     viewport.TopLeftY = 0.0f;
     m_Context->RSSetViewports(1, &viewport);
 
-    return DX11Util::CreateRasterizerState(
-        m_Device,
-        D3D11_CULL_BACK,
-        FALSE,
-        m_RasterizerState
-    );
+    //return DX11Util::CreateRasterizerState(
+    //    m_Device,
+    //    D3D11_CULL_BACK,
+    //    FALSE,
+    //    m_RasterizerState
+    //);
+
+    return true;
 }
 
 
@@ -428,5 +407,54 @@ void DX11::ShowErrorMessage(const ResultUtil& result, const std::string& text)
         result.GetText() + "\n\n" + text,
         "エラー"
     );
+}
+
+
+void DX11::Update()
+{
+    if (m_ImGuiActive)
+    {
+        ImGui::SetNextWindowSize(ImVec2(320, 120), ImGuiCond_FirstUseEver);
+        ImGui::Begin("DX11");
+
+        m_DemoSelector->UpdateSelector(
+            [](const std::string&)
+            {
+                //if (name == "ClearColor")
+                //{
+                //    
+                //}
+                return std::make_shared<Demo>();
+            }
+        );
+
+        ImGui::End();
+    }
+
+    m_DemoSelector->UpdateDemo();
+}
+
+
+void DX11::Render()
+{
+    // 指定色でクリア
+    {
+        // red, green, blue, alpha
+        FLOAT clearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
+        m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), clearColor);
+    }
+
+    m_DemoSelector->RenderDemo();
+}
+
+
+void DX11::Present()
+{
+    // 結果をウインドウに反映
+    ResultUtil result = m_SwapChain->Present(0, 0);
+    if (!result)
+    {
+        ShowErrorMessage(result, "m_SwapChain->Present");
+    }
 }
 

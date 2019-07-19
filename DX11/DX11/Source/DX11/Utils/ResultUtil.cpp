@@ -63,3 +63,9 @@ const std::string& ResultUtil::GetText() const
     return m_Text;
 }
 
+
+void ResultUtil::ShowMessageBox(const std::string& text)
+{
+    std::string message = m_Text + "\n\n" + text;
+    MessageBoxA(nullptr, message.c_str(), "エラー", MB_OK);
+}

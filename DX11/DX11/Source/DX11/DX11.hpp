@@ -6,7 +6,7 @@
 #include "DX11Prerequisites.hpp"
 
 
-
+class DemoSelector;
 
 class DX11 : public AppWin
 {
@@ -14,6 +14,8 @@ public:
     DX11();
 
     virtual ~DX11();
+
+
 
 private:
     virtual void OnInitEnd() override;
@@ -38,6 +40,14 @@ private:
     // エラーメッセージ表示
     void ShowErrorMessage(const ResultUtil& result, const std::string& text);
 
+
+private:
+    void Update();
+
+    void Render();
+
+    void Present();
+
 private:
     // DXGI
     UINT                    m_BufferCount;
@@ -57,6 +67,7 @@ private:
     ComPtr<ID3D11RasterizerState>   m_RasterizerState;
 
 
+    std::unique_ptr<DemoSelector>   m_DemoSelector;
     bool    m_ImGuiActive;
 };
 

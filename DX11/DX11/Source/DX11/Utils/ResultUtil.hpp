@@ -18,6 +18,8 @@ public:
 
     const std::string& GetText() const;
 
+    void ShowMessageBox(const std::string& text);
+
 private:
     bool        m_IsSucceeded;
     std::string m_Text;
