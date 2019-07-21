@@ -1,5 +1,5 @@
-﻿#include "Demo.h"
-#include "../ImGui/ImGui_DX11.h"
+﻿#include "Demo.hpp"
+#include "../External/ImGui/ImGui_DX11.h"
 
 
 

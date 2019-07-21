@@ -2,13 +2,14 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxguid.lib")
-//#pragma comment(lib, "D3DCompiler.lib")
+#pragma comment(lib, "D3DCompiler.lib")
 
 
 #include "DX11.hpp"
-#include "ImGui/ImGui_DX11.h"
+#include "External/ImGui/ImGui_DX11.h"
 #include "Utils/DX11Util.hpp"
 #include "Demo/Demo.hpp"
+#include "Demo/AllDemo.hpp"
 
 
 DX11::DX11()
@@ -23,7 +24,7 @@ DX11::DX11()
 
 DX11::~DX11()
 {
-
+    OnTermRequested();
 }
 
 
@@ -146,7 +147,8 @@ void DX11::OnInitEnd()
     }
 
     std::vector<std::string> demoNames = {
-        "ClearColor"
+        "Triangle",
+        "Texture",
     };
 
     m_DemoSelector = std::make_unique<DemoSelector>(demoNames);
@@ -357,7 +359,7 @@ bool DX11::CreateBackBuffer(const Size2D& newSize)
     ID3D11RenderTargetView* pRenderTargetViews[] = {
         m_RenderTargetView.Get()
     };
-    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, m_DepthStencilView.Get());
+    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, nullptr);
 
     // ビューポートを設定
     D3D11_VIEWPORT viewport;
@@ -418,20 +420,31 @@ void DX11::Update()
         ImGui::Begin("DX11");
 
         m_DemoSelector->UpdateSelector(
-            [](const std::string&)
+            [&](const std::string& name) -> std::unique_ptr<Demo>
             {
-                //if (name == "ClearColor")
-                //{
-                //    
-                //}
-                return std::make_shared<Demo>();
+                if (name == "Triangle")
+                {
+                    return std::make_unique<TriangleDemo>(
+                        m_Device,
+                        m_Context
+                        );
+                }
+                else if (name == "Texture")
+                {
+                    return std::make_unique<TextureDemo>(
+                        m_Device,
+                        m_Context
+                        );
+                }
+
+                return std::make_unique<Demo>();
             }
         );
 
+        m_DemoSelector->UpdateDemo();
+
         ImGui::End();
     }
-
-    m_DemoSelector->UpdateDemo();
 }
 
 

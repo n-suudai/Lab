@@ -19,7 +19,7 @@ public:
 class DemoSelector
 {
 public:
-    typedef std::function<std::shared_ptr<Demo>(const std::string& name)> DemoCreateFunc;
+    typedef std::function<std::unique_ptr<Demo>(const std::string& name)> DemoCreateFunc;
 
 public:
     DemoSelector(const std::vector<std::string>& demos);
@@ -35,5 +35,5 @@ public:
 private:
     const char*              m_DemoName;
     std::vector<std::string> m_DemoNames;
-    std::shared_ptr<Demo>    m_Demo;
+    std::unique_ptr<Demo>    m_Demo;
 };

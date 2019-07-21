@@ -1,5 +1,6 @@
 ﻿#include "DX11Util.hpp"
-#include "../lodepng/lodepng.h"
+#include "../External/lodepng/lodepng.h"
+#include <d3dcompiler.h>
 
 
 namespace DX11Util
@@ -650,6 +651,48 @@ namespace DX11Util
     }
 
 
+    // 頂点シェーダーと入力レイアウトを作成
+    bool CreateVertexShaderAndInputLayout(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs,
+        UINT inputElementCount,
+        ComPtr<ID3D11VertexShader>& outVertexShader,
+        ComPtr<ID3D11InputLayout>& outInputLayout
+    )
+    {
+        ResultUtil result = device->CreateVertexShader(
+            byteCode->GetBufferPointer(),
+            byteCode->GetBufferSize(),
+            nullptr,
+            &outVertexShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreateVertexShader");
+            return false;
+        }
+
+        // InputLayout
+        {
+            result = device->CreateInputLayout(
+                pInputElementDescs,
+                inputElementCount,
+                byteCode->GetBufferPointer(),
+                byteCode->GetBufferSize(),
+                &outInputLayout
+            );
+            if (!result)
+            {
+                result.ShowMessageBox("device->CreateInputLayout");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     // ピクセルシェーダーを作成
     bool CreatePixelShader(
         const ComPtr<ID3D11Device>& device,
@@ -667,6 +710,29 @@ namespace DX11Util
         ResultUtil result = device->CreatePixelShader(
             pixelShaderData.data(),
             pixelShaderData.size(),
+            nullptr,
+            &outPixelShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreatePixelShader");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // ピクセルシェーダーを作成
+    bool CreatePixelShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11PixelShader>& outPixelShader
+    )
+    {
+        ResultUtil result = device->CreatePixelShader(
+            byteCode->GetBufferPointer(),
+            byteCode->GetBufferSize(),
             nullptr,
             &outPixelShader
         );
@@ -736,6 +802,60 @@ namespace DX11Util
             result.ShowMessageBox("device->CreateBlendState");
             return false;
         }
+        return true;
+    }
+
+
+    // シェーダーをコンパイル
+    bool CompileShader(
+        const char* src,
+        size_t srcSize,
+        const char* shaderModel,
+        ComPtr<ID3DBlob>& outCode
+    )
+    {
+        ComPtr<ID3DBlob> errorMessage;
+        UINT shaderFlag = D3DCOMPILE_ENABLE_STRICTNESS;
+
+#if defined(DEBUG) || defined(_DEBUG)
+        shaderFlag |= D3DCOMPILE_DEBUG;
+#endif
+
+        ResultUtil result =  D3DCompile2(
+            reinterpret_cast<LPCVOID>(src),
+            srcSize,
+            "",
+            nullptr,
+            nullptr,
+            "main",
+            shaderModel,
+            shaderFlag,
+            0,
+            0,
+            nullptr,
+            0,
+            outCode.GetAddressOf(),
+            errorMessage.GetAddressOf()
+        );
+
+        if (!result)
+        {
+            if (errorMessage)
+            {
+                result.ShowMessageBox(
+                    (char*)errorMessage->GetBufferPointer()
+                );
+            }
+            else
+            {
+                result.ShowMessageBox(
+                    "ShaderCompile Failed."
+                );
+            }
+
+            return false;
+        }
+
         return true;
     }
 }

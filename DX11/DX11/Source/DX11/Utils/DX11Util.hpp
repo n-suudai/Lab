@@ -91,10 +91,27 @@ namespace DX11Util
         ComPtr<ID3D11InputLayout>& outInputLayout
     );
 
+    // 頂点シェーダーと入力レイアウトを作成
+    bool CreateVertexShaderAndInputLayout(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs,
+        UINT inputElementCount,
+        ComPtr<ID3D11VertexShader>& outVertexShader,
+        ComPtr<ID3D11InputLayout>& outInputLayout
+    );
+
     // ピクセルシェーダーを作成
     bool CreatePixelShader(
         const ComPtr<ID3D11Device>& device,
         const std::string& fileName,
+        ComPtr<ID3D11PixelShader>& outPixelShader
+    );
+
+    // ピクセルシェーダーを作成
+    bool CreatePixelShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
         ComPtr<ID3D11PixelShader>& outPixelShader
     );
 
@@ -111,6 +128,29 @@ namespace DX11Util
         const ComPtr<ID3D11Device>& device,
         ComPtr<ID3D11BlendState>& outBlendState
     );
+
+
+    // シェーダーをコンパイル
+    bool CompileShader(
+        const char* src,
+        size_t srcSize,
+        const char* shaderModel,
+        ComPtr<ID3DBlob>& outCode
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //inline u32 ColorPack(const glm::vec4& color)

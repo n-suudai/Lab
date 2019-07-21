@@ -48,6 +48,7 @@ public:
     {
         ImGui_ImplDX11_Shutdown();
         ImGui_ImplWin32_Shutdown();
+        ImGui::DestroyContext();
     }
 
     static void WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

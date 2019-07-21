@@ -34,8 +34,5 @@ public:
     virtual void ShowMessageBox(const std::string& message, const std::string& caption) = 0;
 };
 
-
-bool CreateApp(const Size2D& clientSize, const std::string& title, IApp ** ppOut);
-
 void AppMain(int argc, char* argv[]);
 

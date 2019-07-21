@@ -15,8 +15,6 @@ public:
 
     virtual ~DX11();
 
-
-
 private:
     virtual void OnInitEnd() override;
 
