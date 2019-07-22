@@ -811,6 +811,7 @@ namespace DX11Util
         const char* src,
         size_t srcSize,
         const char* shaderModel,
+        const char* entryPoint,
         ComPtr<ID3DBlob>& outCode
     )
     {
@@ -827,7 +828,7 @@ namespace DX11Util
             "",
             nullptr,
             nullptr,
-            "main",
+            entryPoint,
             shaderModel,
             shaderFlag,
             0,

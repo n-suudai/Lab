@@ -19,16 +19,29 @@ Texture::~Texture()
 
 bool Texture::Initialize(const std::string& fileName)
 {
-    return DX11Util::CreateTextureFromFile(
+    ComPtr<ID3D11Texture2D> texture2D;
+    ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+
+    bool result = DX11Util::CreateTextureFromFile(
         m_Device,
         fileName,
-        m_Texture2D,
-        m_ShaderResourceView
+        texture2D,
+        shaderResourceView
     );
+
+    if (result)
+    {
+        m_Texture2D = texture2D;
+        m_ShaderResourceView = shaderResourceView;
+    }
+
+    return result;
 }
 
 void Texture::Bind(u32 iSlot)
 {
+    if (!m_ShaderResourceView) { return; }
+
     ID3D11ShaderResourceView* pShaderResourceViews[] = {
         m_ShaderResourceView.Get()
     };

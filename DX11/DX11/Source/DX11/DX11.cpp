@@ -416,8 +416,13 @@ void DX11::Update()
 {
     if (m_ImGuiActive)
     {
-        ImGui::SetNextWindowSize(ImVec2(320, 120), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(480, 480), ImGuiCond_FirstUseEver);
         ImGui::Begin("DX11");
+
+        ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Framebuffer size: (%d, %d)", (int)m_ClientSize.width, (int)m_ClientSize.height);
+
+        ImGui::Separator();
 
         m_DemoSelector->UpdateSelector(
             [&](const std::string& name) -> std::unique_ptr<Demo>
@@ -440,6 +445,8 @@ void DX11::Update()
                 return std::make_unique<Demo>();
             }
         );
+
+        ImGui::Separator();
 
         m_DemoSelector->UpdateDemo();
 

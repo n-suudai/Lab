@@ -57,32 +57,41 @@ TextureDemo::TextureDemo(
         m_IndexBuffer
     );
 
-    {
-        m_VertexShaderCode = R"(
-            struct VS_INPUT {
-                float2 position : POSITION;
-                float4 color    : COLOR;
-                float2 texcoord : TEXCOORD;
-            };
-            struct VS_OUTPUT {
-                float4 position : SV_POSITION;
-                float4 color    : COLOR;
-                float2 texcoord : TEXCOORD;
-            };
-            VS_OUTPUT main(VS_INPUT In) {
-                VS_OUTPUT Out = (VS_OUTPUT)0;
-                Out.position = float4(In.position.x, In.position.y, 0, 1);
-                Out.color = In.color;
-                Out.texcoord = In.texcoord;
-                return Out;
-            }
+    m_ShaderCode = R"(
+Texture2D diffuseTexture : register(t0);
+SamplerState normalSampler : register(s0);
+
+struct VS_INPUT {
+    float2 position : POSITION;
+    float4 color    : COLOR;
+    float2 texcoord : TEXCOORD;
+};
+struct VS_OUTPUT {
+    float4 position : SV_POSITION;
+    float4 color    : COLOR;
+    float2 texcoord : TEXCOORD;
+};
+
+VS_OUTPUT vs_main(VS_INPUT In) {
+    VS_OUTPUT Out = (VS_OUTPUT)0;
+    Out.position = float4(In.position.x, In.position.y, 0, 1);
+    Out.color = In.color;
+    Out.texcoord = In.texcoord;
+    return Out;
+}
+
+float4 ps_main(VS_OUTPUT In) : SV_TARGET {
+    return diffuseTexture.Sample(normalSampler, In.texcoord) * In.color;
+}
         )";
 
+    {
         ComPtr<ID3DBlob> code;
         bool result = DX11Util::CompileShader(
-            m_VertexShaderCode.data(),
-            m_VertexShaderCode.size(),
+            m_ShaderCode.data(),
+            m_ShaderCode.size(),
             "vs_5_0",
+            "vs_main",
             code
         );
 
@@ -100,24 +109,12 @@ TextureDemo::TextureDemo(
     }
 
     {
-        m_PixelShaderCode = R"(
-            Texture2D diffuseTexture : register(t0);
-            SamplerState normalSampler : register(s0);
-            struct PS_INPUT {
-                float4 position : SV_POSITION;
-                float4 color    : COLOR;
-                float2 texcoord : TEXCOORD;
-            };
-            float4 main(PS_INPUT In) : SV_TARGET {
-                return diffuseTexture.Sample(normalSampler, In.texcoord) * In.color;
-            }
-        )";
-
         ComPtr<ID3DBlob> code;
         bool result = DX11Util::CompileShader(
-            m_PixelShaderCode.data(),
-            m_PixelShaderCode.size(),
+            m_ShaderCode.data(),
+            m_ShaderCode.size(),
             "ps_5_0",
+            "ps_main",
             code
         );
 
@@ -164,53 +161,52 @@ void TextureDemo::Update()
     ImGui::Separator();
 
     ImGui::InputTextMultiline(
-        "VertexShader",
-        &m_VertexShaderCode
+        "ShaderCode",
+        &m_ShaderCode
     );
-    if (ImGui::Button("CompileVertexShader"))
+    if (ImGui::Button("CompileShader"))
     {
-        ComPtr<ID3DBlob> code;
-        bool result = DX11Util::CompileShader(
-            m_VertexShaderCode.data(),
-            m_VertexShaderCode.size(),
-            "vs_5_0",
-            code
-        );
-
-        if (result)
         {
-            DX11Util::CreateVertexShaderAndInputLayout(
-                m_Device,
-                code,
-                inputElements,
-                _countof(inputElements),
-                m_VertexShader,
-                m_InputLayout
+            ComPtr<ID3DBlob> code;
+            bool result = DX11Util::CompileShader(
+                m_ShaderCode.data(),
+                m_ShaderCode.size(),
+                "vs_5_0",
+                "vs_main",
+                code
             );
+
+            if (result)
+            {
+                DX11Util::CreateVertexShaderAndInputLayout(
+                    m_Device,
+                    code,
+                    inputElements,
+                    _countof(inputElements),
+                    m_VertexShader,
+                    m_InputLayout
+                );
+            }
         }
-    }
 
-    ImGui::InputTextMultiline(
-        "PixelShader",
-        &m_PixelShaderCode
-    );
-    if (ImGui::Button("CompilePixelShader"))
-    {
-        ComPtr<ID3DBlob> code;
-        bool result = DX11Util::CompileShader(
-            m_PixelShaderCode.data(),
-            m_PixelShaderCode.size(),
-            "ps_5_0",
-            code
-        );
-
-        if (result)
         {
-            DX11Util::CreatePixelShader(
-                m_Device,
-                code,
-                m_PixelShader
+            ComPtr<ID3DBlob> code;
+            bool result = DX11Util::CompileShader(
+                m_ShaderCode.data(),
+                m_ShaderCode.size(),
+                "ps_5_0",
+                "ps_main",
+                code
             );
+
+            if (result)
+            {
+                DX11Util::CreatePixelShader(
+                    m_Device,
+                    code,
+                    m_PixelShader
+                );
+            }
         }
     }
 }

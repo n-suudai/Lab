@@ -26,7 +26,7 @@ void AppMain(int argc, char* argv[])
     //UNUSED(argv);
 
     AppWin* pApp = nullptr;
-    Size2D clientSize = { 640, 480 };
+    Size2D clientSize = { 1280, 720 };
 
     if (!CreateApp(clientSize, argv[0], &pApp))
     {

@@ -33,8 +33,7 @@ private:
     ComPtr<ID3D11RasterizerState> m_RasterizerState;
     //ComPtr<ID3D11BlendState>      m_BlendState;
 
-    std::string                 m_VertexShaderCode;
-    std::string                 m_PixelShaderCode;
+    std::string                 m_ShaderCode;
 
     std::unique_ptr<Sampler> m_Sampler;
     std::unique_ptr<Texture> m_Texture;

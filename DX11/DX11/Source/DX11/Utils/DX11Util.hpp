@@ -135,6 +135,7 @@ namespace DX11Util
         const char* src,
         size_t srcSize,
         const char* shaderModel,
+        const char* entryPoint,
         ComPtr<ID3DBlob>& outCode
     );
 

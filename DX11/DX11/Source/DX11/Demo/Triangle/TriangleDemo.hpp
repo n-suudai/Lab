@@ -30,6 +30,5 @@ private:
     ComPtr<ID3D11PixelShader>   m_PixelShader;
     ComPtr<ID3D11RasterizerState> m_RasterizerState;
 
-    std::string                 m_VertexShaderCode;
-    std::string                 m_PixelShaderCode;
+    std::string                 m_ShaderCode;
 };

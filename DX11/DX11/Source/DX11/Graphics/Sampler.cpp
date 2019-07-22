@@ -130,8 +130,8 @@ void Sampler::UpdateImGui()
     };
 
     selectAddressMode("AddressModeU", m_AddressU);
-    selectAddressMode("AddressModeV", m_AddressU);
-    selectAddressMode("AddressModeW", m_AddressU);
+    selectAddressMode("AddressModeV", m_AddressV);
+    selectAddressMode("AddressModeW", m_AddressW);
 
     if (changed)
     {
