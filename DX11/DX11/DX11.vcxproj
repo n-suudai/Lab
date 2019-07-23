@@ -205,6 +205,7 @@
     <ClInclude Include="Source\DX11\External\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\DX11\External\lodepng\lodepng.h" />
     <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
+    <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
     <ClInclude Include="Source\DX11\Graphics\Sampler.hpp">
       <SubType>
       </SubType>
@@ -249,6 +250,7 @@
     <ClCompile Include="Source\DX11\External\ImGui\imgui_stdlib.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Source\DX11\External\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Sampler.cpp">
       <SubType>
       </SubType>

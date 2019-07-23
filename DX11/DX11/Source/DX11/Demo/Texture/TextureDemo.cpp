@@ -135,16 +135,27 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         m_RasterizerState
     );
 
+    DX11Util::CreateBlendState(
+        m_Device,
+        m_BlendState
+    );
+
     m_Sampler = std::make_unique<Sampler>(
         m_Device,
         m_Context
         );
 
-    m_Texture = std::make_unique<Texture>(
+    m_Texture1 = std::make_unique<Texture>(
         m_Device,
         m_Context
         );
-    m_Texture->Initialize("Assets\\Image\\icon.png");
+    m_Texture1->Initialize("Assets\\Image\\icon.png");
+
+    m_Texture2 = std::make_unique<Texture>(
+        m_Device,
+        m_Context
+        );
+    m_Texture2->Initialize("Assets\\Image\\sample.png");
 }
 
 
@@ -248,9 +259,19 @@ void TextureDemo::Render()
 
     m_Context->RSSetState(m_RasterizerState.Get());
 
+    m_Context->OMSetBlendState(m_BlendState.Get(), nullptr, 0xFFFFFFFF);
+
     m_Sampler->Set();
 
-    m_Texture->Bind(0);
+    RenderTexture(m_Texture1.get());
+    RenderTexture(m_Texture2.get());
+}
+
+
+void TextureDemo::RenderTexture(Texture* pTexture)
+{
+    pTexture->Bind(0);
 
     m_Context->DrawIndexed(m_IndexCount, 0, 0);
 }
+

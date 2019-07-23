@@ -10,17 +10,23 @@ Sampler::Sampler(
 )
     : m_Device(device)
     , m_Context(context)
-    , m_Filter(D3D11_FILTER_ANISOTROPIC)
-    , m_AddressU(D3D11_TEXTURE_ADDRESS_WRAP)
-    , m_AddressV(D3D11_TEXTURE_ADDRESS_WRAP)
-    , m_AddressW(D3D11_TEXTURE_ADDRESS_WRAP)
+    , m_SamplerDesc(D3D11_DEFAULT)
 {
-    Init(
-        m_Filter,
-        m_AddressU,
-        m_AddressV,
-        m_AddressW
+    FLOAT borderColor[4] = { 0.0f };
+    m_SamplerDesc = CD3D11_SAMPLER_DESC(
+        D3D11_FILTER_ANISOTROPIC,       // サンプリング時に使用するフィルタ。ここでは異方性フィルターを使用する(D3D11_FILTER_ANISOTROPIC)
+        D3D11_TEXTURE_ADDRESS_WRAP,     // 0 ～ 1 の範囲外にある u テクスチャー座標の描画方法
+        D3D11_TEXTURE_ADDRESS_WRAP,     // 0 ～ 1 の範囲外にある v テクスチャー座標
+        D3D11_TEXTURE_ADDRESS_WRAP,     // 0 ～ 1 の範囲外にある w テクスチャー座標
+        0,                              // 計算されたミップマップ レベルからのバイアス
+        16,                             // サンプリングに異方性補間を使用している場合の限界値。有効な値は 1 ～ 16 
+        D3D11_COMPARISON_ALWAYS,        // 比較オプション
+        borderColor,                    // 境界色
+        0,                              // アクセス可能なミップマップの下限値
+        D3D11_FLOAT32_MAX               // アクセス可能なミップマップの上限値
     );
+
+    Init(m_SamplerDesc);
 }
 
 
@@ -77,22 +83,36 @@ void Sampler::UpdateImGui()
         { D3D11_TEXTURE_ADDRESS_BORDER,      "BORDER"       },
         { D3D11_TEXTURE_ADDRESS_MIRROR_ONCE, "MIRROR_ONCE"  },
     };
+    static std::map<D3D11_COMPARISON_FUNC, std::string> comparisonFuncMap = {
+        { D3D11_COMPARISON_NEVER,           "NEVER"            },
+        { D3D11_COMPARISON_LESS,            "LESS"             },
+        { D3D11_COMPARISON_EQUAL,           "EQUAL"            },
+        { D3D11_COMPARISON_LESS_EQUAL,      "LESS_EQUAL"       },
+        { D3D11_COMPARISON_GREATER,         "GREATER"          },
+        { D3D11_COMPARISON_NOT_EQUAL,       "NOT_EQUAL"        },
+        { D3D11_COMPARISON_GREATER_EQUAL,   "GREATER_EQUAL"    },
+        { D3D11_COMPARISON_ALWAYS,          "ALWAYS"           },
+    };
+
 
     bool changed = false;
 
+    CD3D11_SAMPLER_DESC newDesc(m_SamplerDesc);
+
+    // Filter
     {
-        const char* pSelectedFilter = filterMap[m_Filter].c_str();
+        const char* pSelectedFilter = filterMap[newDesc.Filter].c_str();
 
         if (ImGui::BeginCombo("Filter", pSelectedFilter))
         {
             for (auto& filter : filterMap)
             {
-                bool selected = filter.first == m_Filter;
+                bool selected = filter.first == newDesc.Filter;
 
                 if (ImGui::Selectable(filter.second.c_str(), &selected))
                 {
                     changed = true;
-                    m_Filter = filter.first;
+                    newDesc.Filter = filter.first;
                 }
 
                 if (selected)
@@ -104,6 +124,7 @@ void Sampler::UpdateImGui()
         }
     }
 
+    // AddressMode
     auto selectAddressMode = [&](const char* label, D3D11_TEXTURE_ADDRESS_MODE& currentAddressMode)
     {
         const char* pSelectedAddressMode = addressModeMap[currentAddressMode].c_str();
@@ -129,50 +150,85 @@ void Sampler::UpdateImGui()
         }
     };
 
-    selectAddressMode("AddressModeU", m_AddressU);
-    selectAddressMode("AddressModeV", m_AddressV);
-    selectAddressMode("AddressModeW", m_AddressW);
+    selectAddressMode("AddressModeU", newDesc.AddressU);
+    selectAddressMode("AddressModeV", newDesc.AddressV);
+    selectAddressMode("AddressModeW", newDesc.AddressW);
+
+    // MipLODBias
+    changed |= ImGui::DragFloat("MipLODBias", &newDesc.MipLODBias);
+
+    // MaxAnisotropy
+    {
+        int value = static_cast<int>(newDesc.MaxAnisotropy);
+        if (ImGui::DragInt("MaxAnisotropy", &value))
+        {
+            changed = true;
+            newDesc.MaxAnisotropy = static_cast<UINT>(value);
+        }
+    }
+
+    // ComparisonFunc
+    {
+        const char* pSelectedComparisonFunc = comparisonFuncMap[newDesc.ComparisonFunc].c_str();
+
+        if (ImGui::BeginCombo("ComparisonFunc", pSelectedComparisonFunc))
+        {
+            for (auto& comparisonFunc : comparisonFuncMap)
+            {
+                bool selected = comparisonFunc.first == newDesc.ComparisonFunc;
+
+                if (ImGui::Selectable(comparisonFunc.second.c_str(), &selected))
+                {
+                    changed = true;
+                    newDesc.ComparisonFunc = comparisonFunc.first;
+                }
+
+                if (selected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+    }
+
+    // BorderColor
+    changed |= ImGui::ColorEdit4("BorderColor", newDesc.BorderColor);
+
+    // MinLOD
+    changed |= ImGui::DragFloat("MinLOD", &newDesc.MinLOD);
+
+    // MaxLOD
+    changed |= ImGui::DragFloat("MaxLOD", &newDesc.MaxLOD);
 
     if (changed)
     {
-        Init(
-            m_Filter,
-            m_AddressU,
-            m_AddressV,
-            m_AddressW
-        );
+        Init(newDesc);
     }
 }
 
 
-bool Sampler::Init(
-    D3D11_FILTER filter,
-    D3D11_TEXTURE_ADDRESS_MODE addressU,
-    D3D11_TEXTURE_ADDRESS_MODE addressV,
-    D3D11_TEXTURE_ADDRESS_MODE addressW
-)
+bool Sampler::Init(const CD3D11_SAMPLER_DESC& newDesc)
 {
     ComPtr<ID3D11SamplerState> sampler;
 
-    bool result = DX11Util::CreateSamplerState(
-        m_Device,
-        filter,
-        addressU,
-        addressV,
-        addressW,
-        sampler
+    ResultUtil result = m_Device->CreateSamplerState(
+        &newDesc,
+        &sampler
     );
 
-    if (result)
+    if (!result)
+    {
+        result.ShowMessageBox("device->CreateSamplerState");
+        return false;
+    }
+    else
     {
         m_SamplerState = sampler;
-        m_Filter = filter;
-        m_AddressU = addressU;
-        m_AddressV = addressV;
-        m_AddressW = addressW;
+        m_SamplerDesc = newDesc;
     }
 
-    return result;
+    return true;
 }
 
 

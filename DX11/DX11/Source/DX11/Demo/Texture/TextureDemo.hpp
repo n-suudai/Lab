@@ -21,6 +21,9 @@ public:
     virtual void Render() override;
 
 private:
+    void RenderTexture(Texture* pTexture);
+
+private:
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
 
@@ -31,10 +34,11 @@ private:
     ComPtr<ID3D11VertexShader>  m_VertexShader;
     ComPtr<ID3D11PixelShader>   m_PixelShader;
     ComPtr<ID3D11RasterizerState> m_RasterizerState;
-    //ComPtr<ID3D11BlendState>      m_BlendState;
+    ComPtr<ID3D11BlendState>      m_BlendState;
 
     std::string                 m_ShaderCode;
 
     std::unique_ptr<Sampler> m_Sampler;
-    std::unique_ptr<Texture> m_Texture;
+    std::unique_ptr<Texture> m_Texture1;
+    std::unique_ptr<Texture> m_Texture2;
 };
