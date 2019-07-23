@@ -208,6 +208,11 @@ void BlendState::UpdateImGui()
 
     // SampleMask
     ImGui::InputUInt("SampleMask", &m_SampleMask, 1, 100, ImGuiInputTextFlags_CharsHexadecimal);
+
+    if (changed)
+    {
+        Init(newDesc);
+    }
 }
 
 
