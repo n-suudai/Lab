@@ -135,6 +135,7 @@ TriangleDemo::~TriangleDemo()
 
 void TriangleDemo::Update()
 {
+    ImGui::Text("Shader");
     ImGui::InputTextMultiline(
         "ShaderCode",
         &m_ShaderCode

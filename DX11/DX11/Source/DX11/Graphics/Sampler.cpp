@@ -1,5 +1,5 @@
 ﻿#include "Sampler.hpp"
-#include "../Utils/DX11Util.hpp"
+#include "../Utils/ResultUtil.hpp"
 #include "../External/ImGui/ImGui_DX11.h"
 #include <map>
 

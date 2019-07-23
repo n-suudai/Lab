@@ -3,6 +3,7 @@
 #include "../../External/ImGui/ImGui_DX11.h"
 #include "../../Graphics/Sampler.hpp"
 #include "../../Graphics/Texture.hpp"
+#include "../../Graphics/BlendState.hpp"
 
 
 struct Vertex
@@ -135,12 +136,12 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         m_RasterizerState
     );
 
-    DX11Util::CreateBlendState(
-        m_Device,
-        m_BlendState
-    );
-
     m_Sampler = std::make_unique<Sampler>(
+        m_Device,
+        m_Context
+        );
+
+    m_BlendState = std::make_unique<BlendState>(
         m_Device,
         m_Context
         );
@@ -167,10 +168,17 @@ TextureDemo::~TextureDemo()
 
 void TextureDemo::Update()
 {
+    ImGui::Text("Sampler");
     m_Sampler->UpdateImGui();
 
     ImGui::Separator();
 
+    ImGui::Text("BlendState");
+    m_BlendState->UpdateImGui();
+
+    ImGui::Separator();
+
+    ImGui::Text("Shader");
     ImGui::InputTextMultiline(
         "ShaderCode",
         &m_ShaderCode
@@ -259,9 +267,9 @@ void TextureDemo::Render()
 
     m_Context->RSSetState(m_RasterizerState.Get());
 
-    m_Context->OMSetBlendState(m_BlendState.Get(), nullptr, 0xFFFFFFFF);
-
     m_Sampler->Set();
+
+    m_BlendState->Set();
 
     RenderTexture(m_Texture1.get());
     RenderTexture(m_Texture2.get());

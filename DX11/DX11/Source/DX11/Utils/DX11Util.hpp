@@ -71,16 +71,6 @@ namespace DX11Util
         ComPtr<ID3D11RasterizerState>& outRasterizerState
     );
 
-    // サンプラーステートを作成
-    bool CreateSamplerState(
-        const ComPtr<ID3D11Device>& device,
-        D3D11_FILTER filter,
-        D3D11_TEXTURE_ADDRESS_MODE addressU,
-        D3D11_TEXTURE_ADDRESS_MODE addressV,
-        D3D11_TEXTURE_ADDRESS_MODE addressW,
-        ComPtr<ID3D11SamplerState>& outSamplerState
-    );
-
     // 頂点シェーダーと入力レイアウトを作成
     bool CreateVertexShaderAndInputLayout(
         const ComPtr<ID3D11Device>& device,
@@ -120,13 +110,6 @@ namespace DX11Util
         const ComPtr<ID3D11Device>& device,
         const std::string& fileName,
         ComPtr<ID3D11GeometryShader>& outGeometryShader
-    );
-
-
-    // ブレンドステートを作成
-    bool CreateBlendState(
-        const ComPtr<ID3D11Device>& device,
-        ComPtr<ID3D11BlendState>& outBlendState
     );
 
 
