@@ -28,6 +28,7 @@
     <ClInclude Include="Source\DX11\Graphics\Sampler.hpp" />
     <ClInclude Include="Source\DX11\Graphics\Texture.hpp" />
     <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
+    <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />

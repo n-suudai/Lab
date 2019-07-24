@@ -74,21 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -193,6 +197,10 @@
     </ClInclude>
     <ClInclude Include="Source\DX11\DX11.hpp" />
     <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
+    <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\DX11\External\ImGui\imconfig.h" />
     <ClInclude Include="Source\DX11\External\ImGui\imgui.h" />
     <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />

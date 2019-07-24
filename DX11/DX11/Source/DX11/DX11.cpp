@@ -10,6 +10,7 @@
 #include "Utils/DX11Util.hpp"
 #include "Demo/Demo.hpp"
 #include "Demo/AllDemo.hpp"
+#include <thread>
 
 
 DX11::DX11()
@@ -164,6 +165,11 @@ void DX11::OnTermRequested()
 
 void DX11::OnIdle()
 {
+    static constexpr std::chrono::nanoseconds frame_duration =
+        std::chrono::nanoseconds(15666666);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
     ImGui_DX11::NewFrame();
 
     Update();
@@ -173,6 +179,17 @@ void DX11::OnIdle()
     ImGui_DX11::Render();
 
     Present();
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = frame_duration - (end - start);
+
+    if (duration.count() > 0)
+    {
+        std::this_thread::sleep_for(
+            duration
+        );
+    }
 }
 
 
