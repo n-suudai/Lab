@@ -80,34 +80,6 @@ void BlendState::UpdateImGui()
 
     D3D11_RENDER_TARGET_BLEND_DESC& editRTBDesc = newDesc.RenderTarget[m_EditRenderTarget];
 
-    static std::map<D3D11_BLEND, std::string> blendMap = {
-        { D3D11_BLEND_ZERO,             "ZERO"              },
-        { D3D11_BLEND_ONE,              "ONE"               },
-        { D3D11_BLEND_SRC_COLOR,        "SRC_COLOR"         },
-        { D3D11_BLEND_INV_SRC_COLOR,    "INV_SRC_COLOR"     },
-        { D3D11_BLEND_SRC_ALPHA,        "SRC_ALPHA"         },
-        { D3D11_BLEND_INV_SRC_ALPHA,    "INV_SRC_ALPHA"     },
-        { D3D11_BLEND_DEST_ALPHA,       "DEST_ALPHA"        },
-        { D3D11_BLEND_INV_DEST_ALPHA,   "INV_DEST_ALPHA"    },
-        { D3D11_BLEND_DEST_COLOR,       "DEST_COLOR"        },
-        { D3D11_BLEND_INV_DEST_COLOR,   "INV_DEST_COLOR"    },
-        { D3D11_BLEND_SRC_ALPHA_SAT,    "SRC_ALPHA_SAT"     },
-        { D3D11_BLEND_BLEND_FACTOR,     "BLEND_FACTOR"      },
-        { D3D11_BLEND_INV_BLEND_FACTOR, "INV_BLEND_FACTOR"  },
-        { D3D11_BLEND_SRC1_COLOR,       "SRC1_COLOR"        },
-        { D3D11_BLEND_INV_SRC1_COLOR,   "INV_SRC1_COLOR"    },
-        { D3D11_BLEND_SRC1_ALPHA,       "SRC1_ALPHA"        },
-        { D3D11_BLEND_INV_SRC1_ALPHA,   "INV_SRC1_ALPHA"    },
-    };
-
-    static std::map<D3D11_BLEND_OP, std::string> blendOPMap = {
-        { D3D11_BLEND_OP_ADD,           "ADD"            },
-        { D3D11_BLEND_OP_SUBTRACT,      "SUBTRACT"       },
-        { D3D11_BLEND_OP_REV_SUBTRACT,  "REV_SUBTRACT"   },
-        { D3D11_BLEND_OP_MIN,           "MIN"            },
-        { D3D11_BLEND_OP_MAX,           "MAX"            },
-    };
-
     static std::map<D3D11_COLOR_WRITE_ENABLE, std::string> colorWriteEnableMap = {
         { D3D11_COLOR_WRITE_ENABLE_RED,     "RED"      },
         { D3D11_COLOR_WRITE_ENABLE_GREEN,   "GREEN"    },
@@ -124,62 +96,14 @@ void BlendState::UpdateImGui()
             editRTBDesc.BlendEnable = enable ? TRUE : FALSE;
         }
     }
-    
-    auto selectBlend = [&](const char* label, D3D11_BLEND& currentBlend) {
-        const char* pSelectedBlend = blendMap[currentBlend].c_str();
 
-        if (ImGui::BeginCombo(label, pSelectedBlend))
-        {
-            for (auto& blend : blendMap)
-            {
-                bool selected = blend.first == currentBlend;
+    changed |= ImGui_DX11::ComboEnum("SrcBlend", &editRTBDesc.SrcBlend);
+    changed |= ImGui_DX11::ComboEnum("DestBlend", &editRTBDesc.DestBlend);
+    changed |= ImGui_DX11::ComboEnum("BlendOp", &editRTBDesc.BlendOp);
 
-                if (ImGui::Selectable(blend.second.c_str(), &selected))
-                {
-                    changed = true;
-                    currentBlend = blend.first;
-                }
-
-                if (selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-    };
-
-    auto selectBlendOP = [&](const char* label, D3D11_BLEND_OP& currentBlendOP) {
-        const char* pSelectedBlendOP = blendOPMap[currentBlendOP].c_str();
-
-        if (ImGui::BeginCombo(label, pSelectedBlendOP))
-        {
-            for (auto& blendOP : blendOPMap)
-            {
-                bool selected = blendOP.first == currentBlendOP;
-
-                if (ImGui::Selectable(blendOP.second.c_str(), &selected))
-                {
-                    changed = true;
-                    currentBlendOP = blendOP.first;
-                }
-
-                if (selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-    };
-
-    selectBlend("SrcBlend", editRTBDesc.SrcBlend);
-    selectBlend("DestBlend", editRTBDesc.DestBlend);
-    selectBlendOP("BlendOp", editRTBDesc.BlendOp);
-
-    selectBlend("SrcBlendAlpha", editRTBDesc.SrcBlendAlpha);
-    selectBlend("DestBlendAlpha", editRTBDesc.DestBlendAlpha);
-    selectBlendOP("BlendOpAlpha", editRTBDesc.BlendOpAlpha);
+    changed |= ImGui_DX11::ComboEnum("SrcBlendAlpha", &editRTBDesc.SrcBlendAlpha);
+    changed |= ImGui_DX11::ComboEnum("DestBlendAlpha", &editRTBDesc.DestBlendAlpha);
+    changed |= ImGui_DX11::ComboEnum("BlendOpAlpha", &editRTBDesc.BlendOpAlpha);
 
     // RenderTargetWriteMask
     ImGui::Text("RenderTargetWriteMask");
@@ -207,7 +131,7 @@ void BlendState::UpdateImGui()
     ImGui::ColorEdit4("BlendFactor", m_BlendFactor);
 
     // SampleMask
-    ImGui::InputUInt("SampleMask", &m_SampleMask, 1, 100, ImGuiInputTextFlags_CharsHexadecimal);
+    ImGuiEx::InputUInt("SampleMask", &m_SampleMask, 1, 100, ImGuiInputTextFlags_CharsHexadecimal);
 
     if (changed)
     {

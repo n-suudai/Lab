@@ -29,6 +29,7 @@
     <ClInclude Include="Source\DX11\Graphics\Texture.hpp" />
     <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
     <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
+    <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -53,5 +54,6 @@
     <ClCompile Include="Source\DX11\Graphics\Sampler.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Texture.cpp" />
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
+    <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp" />
   </ItemGroup>
 </Project>

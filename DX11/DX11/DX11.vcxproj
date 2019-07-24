@@ -203,6 +203,10 @@
     </ClInclude>
     <ClInclude Include="Source\DX11\External\ImGui\imconfig.h" />
     <ClInclude Include="Source\DX11\External\ImGui\imgui.h" />
+    <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />
     <ClInclude Include="Source\DX11\External\ImGui\imgui_impl_dx11.h" />
     <ClInclude Include="Source\DX11\External\ImGui\imgui_impl_win32.h" />
@@ -253,6 +257,10 @@
     <ClCompile Include="Source\DX11\External\ImGui\imgui.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\DX11\External\ImGui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_stdlib.cpp" />
