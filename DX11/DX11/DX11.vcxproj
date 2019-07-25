@@ -255,6 +255,7 @@
     </ClCompile>
     <ClCompile Include="Source\DX11\DX11.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui.cpp" />
+    <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp">

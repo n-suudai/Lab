@@ -5,27 +5,42 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_stdlib.h"
+#include "imgui_internal.h"
 
 
 namespace ImGuiEx
 {
-    inline bool InputUInt64(const char* label, ImU64* v, ImU64 step = 1, ImU64 step_fast = 100, ImGuiInputTextFlags flags = 0)
-    {
-        // Hexadecimal input provided as a convenience but the flag name is awkward. Typically you'd use InputText() to parse your own data, if you want to handle prefixes.
-        const char* format = (flags & ImGuiInputTextFlags_CharsHexadecimal) ? "%016I64X" : "%d";
-        return ImGui::InputScalar(label, ImGuiDataType_U64, (void*)v, (void*)(step > 0 ? &step : NULL), (void*)(step_fast > 0 ? &step_fast : NULL), format, flags);
-    }
+    bool InputS8(const char* label, ImS8* v, ImS8 step = 1, ImS8 step_fast = 100, ImGuiInputTextFlags flags = 0);
 
-    inline bool InputUInt(const char* label, unsigned int* v, unsigned int step = 1, unsigned int step_fast = 100, ImGuiInputTextFlags flags = 0)
-    {
-        // Hexadecimal input provided as a convenience but the flag name is awkward. Typically you'd use InputText() to parse your own data, if you want to handle prefixes.
-        const char* format = (flags & ImGuiInputTextFlags_CharsHexadecimal) ? "%08X" : "%d";
-        return ImGui::InputScalar(label, ImGuiDataType_U32, (void*)v, (void*)(step > 0 ? &step : NULL), (void*)(step_fast > 0 ? &step_fast : NULL), format, flags);
-    }
+    bool InputU8(const char* label, ImU8* v, ImU8 step = 1, ImU8 step_fast = 100, ImGuiInputTextFlags flags = 0);
 
-    inline bool DragUInt(const char* label, unsigned int* v, float v_speed = 1.0f, unsigned int v_min = 0, unsigned int v_max = 0, const char* format = "%d")
-    {
-        return ImGui::DragScalar(label, ImGuiDataType_U32, v, v_speed, &v_min, &v_max, format);
-    }
+    bool InputS16(const char* label, ImS16* v, ImS16 step = 1, ImS16 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+    bool InputU16(const char* label, ImU16* v, ImU16 step = 1, ImU16 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+    bool InputS32(const char* label, ImS32* v, ImS32 step = 1, ImS32 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+    bool InputU32(const char* label, ImU32* v, ImU32 step = 1, ImU32 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+    bool InputS64(const char* label, ImS64* v, ImS64 step = 1, ImS64 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+    bool InputU64(const char* label, ImU64* v, ImU64 step = 1, ImU64 step_fast = 100, ImGuiInputTextFlags flags = 0);
+
+
+    bool DragS8(const char* label, ImS8* v, float v_speed = 1.0f, ImS8 v_min = 0, ImS8 v_max = 0, const char* format = "%d");
+
+    bool DragU8(const char* label, ImU8* v, float v_speed = 1.0f, ImU8 v_min = 0, ImU8 v_max = 0, const char* format = "%u");
+
+    bool DragS16(const char* label, ImS16* v, float v_speed = 1.0f, ImS16 v_min = 0, ImS16 v_max = 0, const char* format = "%d");
+
+    bool DragU16(const char* label, ImU16* v, float v_speed = 1.0f, ImU16 v_min = 0, ImU16 v_max = 0, const char* format = "%u");
+
+    bool DragS32(const char* label, ImS32* v, float v_speed = 1.0f, ImS32 v_min = 0, ImS32 v_max = 0, const char* format = "%d");
+
+    bool DragU32(const char* label, ImU32* v, float v_speed = 1.0f, ImU32 v_min = 0, ImU32 v_max = 0, const char* format = "%u");
+
+    bool DragS64(const char* label, ImS64* v, float v_speed = 1.0f, ImS64 v_min = 0, ImS64 v_max = 0, const char* format = "%I64d");
+
+    bool DragU64(const char* label, ImU64* v, float v_speed = 1.0f, ImU64 v_min = 0, ImU64 v_max = 0, const char* format = "%I64u");
 }
 

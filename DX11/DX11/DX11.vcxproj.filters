@@ -55,5 +55,6 @@
     <ClCompile Include="Source\DX11\Graphics\Texture.cpp" />
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp" />
+    <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
   </ItemGroup>
 </Project>

@@ -54,7 +54,7 @@ void Sampler::UpdateImGui()
     changed |= ImGui::DragFloat("MipLODBias", &newDesc.MipLODBias);
 
     // MaxAnisotropy
-    changed |= ImGuiEx::DragUInt("MaxAnisotropy", &newDesc.MaxAnisotropy);
+    changed |= ImGuiEx::DragU32("MaxAnisotropy", &newDesc.MaxAnisotropy);
 
     // ComparisonFunc
     changed |= ImGui_DX11::ComboEnum("ComparisonFunc", &newDesc.ComparisonFunc);

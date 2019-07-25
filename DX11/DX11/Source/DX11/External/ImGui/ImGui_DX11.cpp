@@ -21,6 +21,9 @@ bool ImGui_DX11::Init(const InitParams& params)
         io.Fonts->AddFontFromFileTTF(params.font, params.fontSize, &config, ranges);
     }
 
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.Colors[ImGuiCol_WindowBg].w = 0.5f;
+
     return true;
 }
 
@@ -303,3 +306,42 @@ bool ImGui_DX11::ComboEnum(const char* label, D3D11_COMPARISON_FUNC* p_compariso
 
     return changed;
 }
+
+// D3D11_COLOR_WRITE_ENABLE
+bool ImGui_DX11::CheckBox_ColorWriteEnable(const char* label, UINT8* p_flags)
+{
+    static std::map<D3D11_COLOR_WRITE_ENABLE, std::string> colorWriteEnableMap = {
+        { D3D11_COLOR_WRITE_ENABLE_RED,     "RED"      },
+        { D3D11_COLOR_WRITE_ENABLE_GREEN,   "GREEN"    },
+        { D3D11_COLOR_WRITE_ENABLE_BLUE,    "BLUE"     },
+        { D3D11_COLOR_WRITE_ENABLE_ALPHA,   "ALPHA"    },
+    };
+
+    assert(p_flags != nullptr);
+
+    ImGui::Text(label);
+
+    bool changed = false;
+
+    for (auto& colorWriteEnable : colorWriteEnableMap)
+    {
+        bool enable = (*p_flags) & colorWriteEnable.first;
+
+        if (ImGui::Checkbox(colorWriteEnable.second.c_str(), &enable))
+        {
+            changed = true;
+
+            if (enable)
+            {
+                (*p_flags) |= colorWriteEnable.first;
+            }
+            else
+            {
+                (*p_flags) &= ~colorWriteEnable.first;
+            }
+        }
+    }
+
+    return changed;
+}
+

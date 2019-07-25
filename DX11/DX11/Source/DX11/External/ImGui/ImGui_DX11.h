@@ -48,4 +48,13 @@ namespace ImGui_DX11
 
     // D3D11_COMPARISON_FUNC
     bool ComboEnum(const char* label, D3D11_COMPARISON_FUNC* p_comparison_func);
+
+
+    //----------------------
+    // Flags
+    //----------------------
+
+    // D3D11_COLOR_WRITE_ENABLE
+    bool CheckBox_ColorWriteEnable(const char* label, UINT8* p_flags);
+
 };

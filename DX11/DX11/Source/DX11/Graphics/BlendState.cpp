@@ -106,32 +106,14 @@ void BlendState::UpdateImGui()
     changed |= ImGui_DX11::ComboEnum("BlendOpAlpha", &editRTBDesc.BlendOpAlpha);
 
     // RenderTargetWriteMask
-    ImGui::Text("RenderTargetWriteMask");
-
-    for (auto& colorWriteEnable : colorWriteEnableMap)
-    {
-        bool enable = editRTBDesc.RenderTargetWriteMask & colorWriteEnable.first;
-
-        if (ImGui::Checkbox(colorWriteEnable.second.c_str(), &enable))
-        {
-            changed = true;
-
-            if (enable)
-            {
-                editRTBDesc.RenderTargetWriteMask |= colorWriteEnable.first;
-            }
-            else
-            {
-                editRTBDesc.RenderTargetWriteMask &= ~colorWriteEnable.first;
-            }
-        }
-    }
+    changed |= ImGui_DX11::CheckBox_ColorWriteEnable(
+        "RenderTargetWriteMask", &editRTBDesc.RenderTargetWriteMask);
 
     // BlendFactor
     ImGui::ColorEdit4("BlendFactor", m_BlendFactor);
 
     // SampleMask
-    ImGuiEx::InputUInt("SampleMask", &m_SampleMask, 1, 100, ImGuiInputTextFlags_CharsHexadecimal);
+    ImGuiEx::InputU32("SampleMask", &m_SampleMask, 1, 100, ImGuiInputTextFlags_CharsHexadecimal);
 
     if (changed)
     {

@@ -64,7 +64,7 @@ private:
     ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
     ComPtr<ID3D11RasterizerState>   m_RasterizerState;
 
-
+    FLOAT                           m_ClearColor[4];
     std::unique_ptr<DemoSelector>   m_DemoSelector;
     bool    m_ImGuiActive;
 };

@@ -19,7 +19,10 @@ DX11::DX11()
     , m_FeatureLevel(D3D_FEATURE_LEVEL_11_1)
     , m_ImGuiActive(true)
 {
-
+    m_ClearColor[0] = 0.0f;
+    m_ClearColor[1] = 0.125f;
+    m_ClearColor[2] = 0.3f;
+    m_ClearColor[3] = 1.0f;
 }
 
 
@@ -438,6 +441,7 @@ void DX11::Update()
 
         ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Text("Framebuffer size: (%d, %d)", (int)m_ClientSize.width, (int)m_ClientSize.height);
+        ImGui::ColorEdit4("ClearColor", m_ClearColor);
 
         ImGui::Separator();
 
@@ -476,9 +480,7 @@ void DX11::Render()
 {
     // 指定色でクリア
     {
-        // red, green, blue, alpha
-        FLOAT clearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
-        m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), clearColor);
+        m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), m_ClearColor);
     }
 
     m_DemoSelector->RenderDemo();
