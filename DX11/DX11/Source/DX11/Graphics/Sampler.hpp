@@ -17,7 +17,7 @@ public:
 
     bool Init(const CD3D11_SAMPLER_DESC& newDesc);
 
-    void Set();
+    void Set(u32 slot = 0);
 
 protected:
     ComPtr<ID3D11Device>        m_Device;

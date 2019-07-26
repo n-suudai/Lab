@@ -30,6 +30,7 @@
     <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
     <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
     <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h" />
+    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -56,5 +57,6 @@
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\ConstantBuffer.cpp" />
   </ItemGroup>
 </Project>

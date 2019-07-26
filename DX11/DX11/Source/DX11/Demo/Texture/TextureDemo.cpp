@@ -179,54 +179,59 @@ void TextureDemo::Update()
     ImGui::Separator();
 
     ImGui::Text("Shader");
-    ImGui::InputTextMultiline(
-        "ShaderCode",
-        &m_ShaderCode
-    );
-    if (ImGui::Button("CompileShader"))
+    if (ImGui::TreeNode("Shader"))
     {
+        ImGui::InputTextMultiline(
+            "ShaderCode",
+            &m_ShaderCode
+        );
+        if (ImGui::Button("CompileShader"))
         {
-            ComPtr<ID3DBlob> code;
-            bool result = DX11Util::CompileShader(
-                m_ShaderCode.data(),
-                m_ShaderCode.size(),
-                "vs_5_0",
-                "vs_main",
-                code
-            );
-
-            if (result)
             {
-                DX11Util::CreateVertexShaderAndInputLayout(
-                    m_Device,
-                    code,
-                    inputElements,
-                    _countof(inputElements),
-                    m_VertexShader,
-                    m_InputLayout
+                ComPtr<ID3DBlob> code;
+                bool result = DX11Util::CompileShader(
+                    m_ShaderCode.data(),
+                    m_ShaderCode.size(),
+                    "vs_5_0",
+                    "vs_main",
+                    code
                 );
+
+                if (result)
+                {
+                    DX11Util::CreateVertexShaderAndInputLayout(
+                        m_Device,
+                        code,
+                        inputElements,
+                        _countof(inputElements),
+                        m_VertexShader,
+                        m_InputLayout
+                    );
+                }
+            }
+
+            {
+                ComPtr<ID3DBlob> code;
+                bool result = DX11Util::CompileShader(
+                    m_ShaderCode.data(),
+                    m_ShaderCode.size(),
+                    "ps_5_0",
+                    "ps_main",
+                    code
+                );
+
+                if (result)
+                {
+                    DX11Util::CreatePixelShader(
+                        m_Device,
+                        code,
+                        m_PixelShader
+                    );
+                }
             }
         }
 
-        {
-            ComPtr<ID3DBlob> code;
-            bool result = DX11Util::CompileShader(
-                m_ShaderCode.data(),
-                m_ShaderCode.size(),
-                "ps_5_0",
-                "ps_main",
-                code
-            );
-
-            if (result)
-            {
-                DX11Util::CreatePixelShader(
-                    m_Device,
-                    code,
-                    m_PixelShader
-                );
-            }
-        }
+        ImGui::TreePop();
     }
 }
 

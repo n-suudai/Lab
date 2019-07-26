@@ -38,39 +38,44 @@ Sampler::~Sampler()
 
 void Sampler::UpdateImGui()
 {
-    bool changed = false;
-
-    CD3D11_SAMPLER_DESC newDesc(m_SamplerDesc);
-
-    // Filter
-    changed |= ImGui_DX11::ComboEnum("Filter", &newDesc.Filter);
-
-    // TextureAddressMode
-    changed |= ImGui_DX11::ComboEnum("AddressModeU", &newDesc.AddressU);
-    changed |= ImGui_DX11::ComboEnum("AddressModeV", &newDesc.AddressV);
-    changed |= ImGui_DX11::ComboEnum("AddressModeW", &newDesc.AddressW);
-
-    // MipLODBias
-    changed |= ImGui::DragFloat("MipLODBias", &newDesc.MipLODBias);
-
-    // MaxAnisotropy
-    changed |= ImGuiEx::DragU32("MaxAnisotropy", &newDesc.MaxAnisotropy);
-
-    // ComparisonFunc
-    changed |= ImGui_DX11::ComboEnum("ComparisonFunc", &newDesc.ComparisonFunc);
-
-    // BorderColor
-    changed |= ImGui::ColorEdit4("BorderColor", newDesc.BorderColor);
-
-    // MinLOD
-    changed |= ImGui::DragFloat("MinLOD", &newDesc.MinLOD);
-
-    // MaxLOD
-    changed |= ImGui::DragFloat("MaxLOD", &newDesc.MaxLOD);
-
-    if (changed)
+    if (ImGui::TreeNode("Sampler"))
     {
-        Init(newDesc);
+        bool changed = false;
+
+        CD3D11_SAMPLER_DESC newDesc(m_SamplerDesc);
+
+        // Filter
+        changed |= ImGui_DX11::ComboEnum("Filter", &newDesc.Filter);
+
+        // TextureAddressMode
+        changed |= ImGui_DX11::ComboEnum("AddressModeU", &newDesc.AddressU);
+        changed |= ImGui_DX11::ComboEnum("AddressModeV", &newDesc.AddressV);
+        changed |= ImGui_DX11::ComboEnum("AddressModeW", &newDesc.AddressW);
+
+        // MipLODBias
+        changed |= ImGui::DragFloat("MipLODBias", &newDesc.MipLODBias);
+
+        // MaxAnisotropy
+        changed |= ImGuiEx::DragU32("MaxAnisotropy", &newDesc.MaxAnisotropy);
+
+        // ComparisonFunc
+        changed |= ImGui_DX11::ComboEnum("ComparisonFunc", &newDesc.ComparisonFunc);
+
+        // BorderColor
+        changed |= ImGui::ColorEdit4("BorderColor", newDesc.BorderColor);
+
+        // MinLOD
+        changed |= ImGui::DragFloat("MinLOD", &newDesc.MinLOD);
+
+        // MaxLOD
+        changed |= ImGui::DragFloat("MaxLOD", &newDesc.MaxLOD);
+
+        if (changed)
+        {
+            Init(newDesc);
+        }
+
+        ImGui::TreePop();
     }
 }
 
@@ -99,10 +104,10 @@ bool Sampler::Init(const CD3D11_SAMPLER_DESC& newDesc)
 }
 
 
-void Sampler::Set()
+void Sampler::Set(u32 slot)
 {
     ID3D11SamplerState* pSamplerStates[] = {
         m_SamplerState.Get()
     };
-    m_Context->PSSetSamplers(0, _countof(pSamplerStates), pSamplerStates);
+    m_Context->PSSetSamplers(static_cast<UINT>(slot), _countof(pSamplerStates), pSamplerStates);
 }

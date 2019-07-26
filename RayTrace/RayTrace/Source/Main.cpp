@@ -1,8 +1,23 @@
 ﻿
 #include <fstream>
+#include <sstream>
+#include <algorithm>
 
 
 #define UNUSED(x) (x)
+
+
+int tonemap(double v) {
+    return std::min(
+        std::max(int(std::pow(v, 1 / 2.2) * 255), 0), 255);
+};
+
+std::string tonemap(double r, double g, double b)
+{
+    std::stringstream ss;
+    ss << tonemap(r) << " " << tonemap(g) << " " << tonemap(b);
+    return ss.str();
+}
 
 
 int main(int argc, char* argv[])
@@ -19,7 +34,7 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < width * height; i++)
     {
-        ofs << "255 0 255\n";
+        ofs << tonemap(0.608, 0.337, 0.384) << "\n";
     }
 
     return 0;

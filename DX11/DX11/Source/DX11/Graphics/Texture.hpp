@@ -15,7 +15,7 @@ public:
 
     bool Initialize(const std::string& fileName);
 
-    void Bind(u32 iSlot = 0);
+    void Bind(u32 slot = 0);
 
 protected:
     ComPtr<ID3D11Device>                m_Device;               // デバイス

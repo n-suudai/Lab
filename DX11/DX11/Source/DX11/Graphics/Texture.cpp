@@ -38,7 +38,7 @@ bool Texture::Initialize(const std::string& fileName)
     return result;
 }
 
-void Texture::Bind(u32 iSlot)
+void Texture::Bind(u32 slot)
 {
     if (!m_ShaderResourceView) { return; }
 
@@ -47,7 +47,7 @@ void Texture::Bind(u32 iSlot)
     };
 
     m_Context->PSSetShaderResources(
-        static_cast<UINT>(iSlot),
+        static_cast<UINT>(slot),
         _countof(pShaderResourceViews),
         pShaderResourceViews
     );
