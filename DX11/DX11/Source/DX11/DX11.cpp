@@ -18,6 +18,7 @@ DX11::DX11()
     , m_BufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM)
     , m_FeatureLevel(D3D_FEATURE_LEVEL_11_1)
     , m_ImGuiActive(true)
+    , m_Viewport()
 {
     m_ClearColor[0] = 0.0f;
     m_ClearColor[1] = 0.125f;
@@ -382,15 +383,14 @@ bool DX11::CreateBackBuffer(const Size2D& newSize)
     m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, nullptr);
 
     // ビューポートを設定
-    D3D11_VIEWPORT viewport;
-    viewport.Width = static_cast<FLOAT>(newSize.width);
-    viewport.Height = static_cast<FLOAT>(newSize.height);
-    viewport.MinDepth = 0.0f;
-    viewport.MaxDepth = 1.0f;
-    viewport.TopLeftX = 0.0f;
-    viewport.TopLeftY = 0.0f;
-    m_Context->RSSetViewports(1, &viewport);
-
+    m_Viewport.Width = static_cast<FLOAT>(newSize.width);
+    m_Viewport.Height = static_cast<FLOAT>(newSize.height);
+    m_Viewport.MinDepth = 0.0f;
+    m_Viewport.MaxDepth = 1.0f;
+    m_Viewport.TopLeftX = 0.0f;
+    m_Viewport.TopLeftY = 0.0f;
+    m_Context->RSSetViewports(1, &m_Viewport);
+    
     //return DX11Util::CreateRasterizerState(
     //    m_Device,
     //    D3D11_CULL_BACK,
@@ -442,6 +442,25 @@ void DX11::Update()
         ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Text("Framebuffer size: (%d, %d)", (int)m_ClientSize.width, (int)m_ClientSize.height);
         ImGui::ColorEdit4("ClearColor", m_ClearColor);
+
+        if (ImGui::TreeNode("Viewport"))
+        {
+            bool changed = false;
+
+            changed |= ImGui::DragFloat("Width", &m_Viewport.Width, 1.0f, 0.0f, (float)m_ClientSize.width);
+            changed |= ImGui::DragFloat("Height", &m_Viewport.Height, 1.0f, 0.0f, (float)m_ClientSize.height);
+            changed |= ImGui::DragFloat("TopLeftX", &m_Viewport.TopLeftX, 1.0f, 0.0f, (float)m_ClientSize.width);
+            changed |= ImGui::DragFloat("TopLeftY", &m_Viewport.TopLeftY, 1.0f, 0.0f, (float)m_ClientSize.height);
+            changed |= ImGui::DragFloat("MinDepth", &m_Viewport.MinDepth, 1.0f, D3D11_MIN_DEPTH, m_Viewport.MaxDepth);
+            changed |= ImGui::DragFloat("MaxDepth", &m_Viewport.MaxDepth, 1.0f, m_Viewport.MinDepth, FLT_MAX);
+
+            if (changed)
+            {
+                m_Context->RSSetViewports(1, &m_Viewport);
+            }
+
+            ImGui::TreePop();
+        }
 
         ImGui::Separator();
 

@@ -13,6 +13,7 @@ public:
     virtual ~Demo() {}
     virtual void Update() {}
     virtual void Render() {}
+    virtual void OnResizedBuffer(const Size2D&) {}
 };
 
 

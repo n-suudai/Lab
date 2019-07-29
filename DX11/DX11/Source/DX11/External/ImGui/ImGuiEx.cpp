@@ -99,3 +99,19 @@ bool ImGuiEx::DragU64(const char* label, ImU64* v, float v_speed, ImU64 v_min, I
     return ImGui::DragScalar(label, ImGuiDataType_U64, v, v_speed, &v_min, &v_max, format);
 }
 
+
+bool ImGuiEx::DragVec2(const char* label, glm::vec2* v, float v_speed, float v_min, float v_max, const char* format, float power)
+{
+    return ImGui::DragScalarN(label, ImGuiDataType_Float, reinterpret_cast<float*>(v), 2, v_speed, &v_min, &v_max, format, power);
+}
+
+bool ImGuiEx::DragVec3(const char* label, glm::vec3* v, float v_speed, float v_min, float v_max, const char* format, float power)
+{
+    return ImGui::DragScalarN(label, ImGuiDataType_Float, reinterpret_cast<float*>(v), 3, v_speed, &v_min, &v_max, format, power);
+}
+
+bool ImGuiEx::DragVec4(const char* label, glm::vec4* v, float v_speed, float v_min, float v_max, const char* format, float power)
+{
+    return ImGui::DragScalarN(label, ImGuiDataType_Float, reinterpret_cast<float*>(v), 4, v_speed, &v_min, &v_max, format, power);
+}
+

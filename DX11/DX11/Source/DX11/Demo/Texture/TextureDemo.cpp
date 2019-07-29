@@ -4,21 +4,41 @@
 #include "../../Graphics/Sampler.hpp"
 #include "../../Graphics/Texture.hpp"
 #include "../../Graphics/BlendState.hpp"
+#include "../../Graphics/ConstantBuffer.hpp"
 
 
 struct Vertex
 {
     float position[2];
-    u32   color;
     float texcoord[2];
 };
 
 
 const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,   0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "COLOR",    0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
+
+
+TextureDemo::ConstantBufferData::ConstantBufferData()
+    : Position(0.0f)
+    , UVOffset(0.0f)
+    , Color(1.0f)
+{
+
+}
+
+
+bool TextureDemo::ConstantBufferData::UpdateImGui()
+{
+    bool changed = false;
+
+    changed |= ImGuiEx::DragVec2("Position", &Position, 0.01f);
+    changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
+    changed |= ImGuiEx::DragVec4("Color", &Color, 0.01f);
+
+    return changed;
+}
 
 
 TextureDemo::TextureDemo(
@@ -30,10 +50,10 @@ TextureDemo::TextureDemo(
     , m_IndexCount(0)
 {
     const Vertex vertices[] = {
-        { {  0.5f,  0.5f }, 0xFFFFFFFF, { 1.0f, 0.0f } },
-        { { -0.5f, -0.5f }, 0xFFFFFFFF, { 0.0f, 1.0f } },
-        { {  0.5f, -0.5f }, 0xFFFFFFFF, { 1.0f, 1.0f } },
-        { { -0.5f,  0.5f }, 0xFFFFFFFF, { 0.0f, 0.0f } },
+        { {  0.5f,  0.5f }, { 1.0f, 0.0f } },
+        { { -0.5f, -0.5f }, { 0.0f, 1.0f } },
+        { {  0.5f, -0.5f }, { 1.0f, 1.0f } },
+        { { -0.5f,  0.5f }, { 0.0f, 0.0f } },
     };
 
     DX11Util::CreateBuffer(
@@ -62,11 +82,18 @@ TextureDemo::TextureDemo(
 Texture2D diffuseTexture : register(t0);
 SamplerState normalSampler : register(s0);
 
+cbuffer CB0 : register(b0)
+{
+    float2 Position;
+    float2 UVOffset;
+    float4 Color;
+};
+
 struct VS_INPUT {
     float2 position : POSITION;
-    float4 color    : COLOR;
     float2 texcoord : TEXCOORD;
 };
+
 struct VS_OUTPUT {
     float4 position : SV_POSITION;
     float4 color    : COLOR;
@@ -75,9 +102,9 @@ struct VS_OUTPUT {
 
 VS_OUTPUT vs_main(VS_INPUT In) {
     VS_OUTPUT Out = (VS_OUTPUT)0;
-    Out.position = float4(In.position.x, In.position.y, 0, 1);
-    Out.color = In.color;
-    Out.texcoord = In.texcoord;
+    Out.position = float4(In.position.x + Position.x, In.position.y + Position.y, 0, 1);
+    Out.color = Color;
+    Out.texcoord = In.texcoord + UVOffset;
     return Out;
 }
 
@@ -157,6 +184,20 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         m_Context
         );
     m_Texture2->Initialize("Assets\\Image\\sample.png");
+
+    m_ConstantBuffer1 = std::make_unique<ConstantBuffer>(
+        m_Device,
+        m_Context,
+        &m_ConstantBufferData1,
+        sizeof(ConstantBufferData)
+        );
+
+    m_ConstantBuffer2 = std::make_unique<ConstantBuffer>(
+        m_Device,
+        m_Context,
+        &m_ConstantBufferData2,
+        sizeof(ConstantBufferData)
+        );
 }
 
 
@@ -168,6 +209,26 @@ TextureDemo::~TextureDemo()
 
 void TextureDemo::Update()
 {
+    ImGui::Text("ConstantBuffer");
+    if (ImGui::TreeNode("ConstantBuffer1"))
+    {
+        if (m_ConstantBufferData1.UpdateImGui())
+        {
+            m_ConstantBuffer1->Update(&m_ConstantBufferData1);
+        }
+        ImGui::TreePop();
+    }
+    if (ImGui::TreeNode("ConstantBuffer2"))
+    {
+        if (m_ConstantBufferData2.UpdateImGui())
+        {
+            m_ConstantBuffer2->Update(&m_ConstantBufferData2);
+        }
+        ImGui::TreePop();
+    }
+
+    ImGui::Separator();
+
     ImGui::Text("Sampler");
     m_Sampler->UpdateImGui();
 
@@ -276,8 +337,17 @@ void TextureDemo::Render()
 
     m_BlendState->Set();
 
+    m_ConstantBuffer1->SetVS();
     RenderTexture(m_Texture1.get());
+
+    m_ConstantBuffer2->SetVS();
     RenderTexture(m_Texture2.get());
+}
+
+
+void TextureDemo::OnResizedBuffer(const Size2D&)
+{
+
 }
 
 
