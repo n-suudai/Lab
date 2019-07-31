@@ -217,6 +217,14 @@
     <ClInclude Include="Source\DX11\External\ImGui\imstb_truetype.h" />
     <ClInclude Include="Source\DX11\External\lodepng\lodepng.h" />
     <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
+    <ClInclude Include="Source\DX11\Geometry\Camera.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Source\DX11\Geometry\Transform.hpp">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
     <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="Source\DX11\Graphics\Sampler.hpp">
@@ -268,6 +276,14 @@
     <ClCompile Include="Source\DX11\External\ImGui\imgui_stdlib.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Source\DX11\External\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Camera.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Source\DX11\Geometry\Transform.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\Graphics\ConstantBuffer.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Sampler.cpp">

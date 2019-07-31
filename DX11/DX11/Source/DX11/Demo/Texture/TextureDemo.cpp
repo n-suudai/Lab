@@ -9,21 +9,21 @@
 
 struct Vertex
 {
-    float position[2];
+    float position[4];
     float texcoord[2];
 };
 
 
 const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
-    { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT,   0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,   0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,          0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 
 TextureDemo::ConstantBufferData::ConstantBufferData()
-    : Position(0.0f)
-    , UVOffset(0.0f)
+    : MVPMatrix(1.0f)
     , Color(1.0f)
+    , UVOffset(0.0f)
 {
 
 }
@@ -33,9 +33,8 @@ bool TextureDemo::ConstantBufferData::UpdateImGui()
 {
     bool changed = false;
 
-    changed |= ImGuiEx::DragVec2("Position", &Position, 0.01f);
-    changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
     changed |= ImGuiEx::DragVec4("Color", &Color, 0.01f);
+    changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
 
     return changed;
 }
@@ -43,17 +42,26 @@ bool TextureDemo::ConstantBufferData::UpdateImGui()
 
 TextureDemo::TextureDemo(
     const ComPtr<ID3D11Device>& device,
-    const ComPtr<ID3D11DeviceContext>& context
+    const ComPtr<ID3D11DeviceContext>& context,
+    const Size2D& clientSize
 )
     : m_Device(device)
     , m_Context(context)
     , m_IndexCount(0)
+    , m_ForceUpdateConstantBuffer(false)
 {
+    m_Camera.eye = glm::vec3(0.0f, 2.8f, 6.0f);
+    m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
+    m_Camera.screenSize.x = static_cast<float>(clientSize.width);
+    m_Camera.screenSize.y = static_cast<float>(clientSize.height);
+    m_Camera.UpdateMatrix();
+    m_ForceUpdateConstantBuffer = true;
+
     const Vertex vertices[] = {
-        { {  0.5f,  0.5f }, { 1.0f, 0.0f } },
-        { { -0.5f, -0.5f }, { 0.0f, 1.0f } },
-        { {  0.5f, -0.5f }, { 1.0f, 1.0f } },
-        { { -0.5f,  0.5f }, { 0.0f, 0.0f } },
+        { {  0.5f,  0.5f, 0.0f, 1.0f }, { 1.0f, 0.0f } },
+        { { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
+        { {  0.5f, -0.5f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+        { { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
     };
 
     DX11Util::CreateBuffer(
@@ -84,13 +92,13 @@ SamplerState normalSampler : register(s0);
 
 cbuffer CB0 : register(b0)
 {
-    float2 Position;
-    float2 UVOffset;
+    float4x4 MVPMatrix;
     float4 Color;
+    float2 UVOffset;
 };
 
 struct VS_INPUT {
-    float2 position : POSITION;
+    float4 position : POSITION;
     float2 texcoord : TEXCOORD;
 };
 
@@ -102,7 +110,7 @@ struct VS_OUTPUT {
 
 VS_OUTPUT vs_main(VS_INPUT In) {
     VS_OUTPUT Out = (VS_OUTPUT)0;
-    Out.position = float4(In.position.x + Position.x, In.position.y + Position.y, 0, 1);
+    Out.position = mul(In.position, MVPMatrix);
     Out.color = Color;
     Out.texcoord = In.texcoord + UVOffset;
     return Out;
@@ -158,7 +166,7 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
 
     DX11Util::CreateRasterizerState(
         m_Device,
-        D3D11_CULL_BACK,
+        D3D11_CULL_NONE,
         FALSE,
         m_RasterizerState
     );
@@ -209,23 +217,55 @@ TextureDemo::~TextureDemo()
 
 void TextureDemo::Update()
 {
-    ImGui::Text("ConstantBuffer");
-    if (ImGui::TreeNode("ConstantBuffer1"))
+    auto updateTexture = [&](
+        const char* label,
+        ConstantBuffer* pCBuffer,
+        ConstantBufferData* pCBufferData,
+        Transform* pTransform
+        )
     {
-        if (m_ConstantBufferData1.UpdateImGui())
+        ImGui::Text(label);
+
+        ImGui::PushID(label);
+
+        bool update = m_ForceUpdateConstantBuffer;
+
+        if (ImGui::TreeNode("ConstantBuffer"))
         {
-            m_ConstantBuffer1->Update(&m_ConstantBufferData1);
+            if (pCBufferData->UpdateImGui())
+            {
+                update = true;
+            }
+            ImGui::TreePop();
         }
-        ImGui::TreePop();
-    }
-    if (ImGui::TreeNode("ConstantBuffer2"))
+
+        if (pTransform->UpdateImGui("Transform"))
+        {
+            pTransform->UpdateMatrix();
+            update = true;
+        }
+
+        if (update)
+        {
+            pCBufferData->MVPMatrix = glm::mat4x4(1.0f);
+            pCBufferData->MVPMatrix = glm::transpose(
+                m_Camera.orthoGraphicMatrix * m_Camera.viewMatrix * pTransform->matrix
+            );
+            pCBuffer->Update(pCBufferData);
+        }
+
+        ImGui::PopID();
+    };
+
+    if (m_Camera.UpdateImGui())
     {
-        if (m_ConstantBufferData2.UpdateImGui())
-        {
-            m_ConstantBuffer2->Update(&m_ConstantBufferData2);
-        }
-        ImGui::TreePop();
+        m_Camera.UpdateMatrix();
+        m_ForceUpdateConstantBuffer = true;
     }
+
+    updateTexture("Texture1", m_ConstantBuffer1.get(), &m_ConstantBufferData1, &m_Transform1);
+    updateTexture("Texture2", m_ConstantBuffer2.get(), &m_ConstantBufferData2, &m_Transform2);
+    m_ForceUpdateConstantBuffer = false;
 
     ImGui::Separator();
 
@@ -345,9 +385,12 @@ void TextureDemo::Render()
 }
 
 
-void TextureDemo::OnResizedBuffer(const Size2D&)
+void TextureDemo::OnResizedBuffer(const Size2D& size)
 {
-
+    m_Camera.screenSize.x = static_cast<float>(size.width);
+    m_Camera.screenSize.y = static_cast<float>(size.height);
+    m_Camera.UpdateMatrix();
+    m_ForceUpdateConstantBuffer = true;
 }
 
 

@@ -31,6 +31,8 @@
     <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
     <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h" />
     <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
+    <ClInclude Include="Source\DX11\Geometry\Transform.hpp" />
+    <ClInclude Include="Source\DX11\Geometry\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -58,5 +60,7 @@
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
     <ClCompile Include="Source\DX11\Graphics\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Transform.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Camera.cpp" />
   </ItemGroup>
 </Project>

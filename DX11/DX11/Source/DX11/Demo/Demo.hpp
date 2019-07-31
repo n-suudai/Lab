@@ -33,6 +33,8 @@ public:
 
     void RenderDemo();
 
+    void OnResizedBuffer(const Size2D& size);
+
 private:
     const char*              m_DemoName;
     std::vector<std::string> m_DemoNames;

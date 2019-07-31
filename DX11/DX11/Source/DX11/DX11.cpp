@@ -202,6 +202,10 @@ void DX11::OnResize(const Size2D& newSize)
     // バックバッファを再生成
     CreateBackBuffer(newSize);
     m_ClientSize = newSize;
+    if (m_DemoSelector)
+    {
+        m_DemoSelector->OnResizedBuffer(newSize);
+    }
 }
 
 
@@ -478,7 +482,8 @@ void DX11::Update()
                 {
                     return std::make_unique<TextureDemo>(
                         m_Device,
-                        m_Context
+                        m_Context,
+                        m_ClientSize
                         );
                 }
 

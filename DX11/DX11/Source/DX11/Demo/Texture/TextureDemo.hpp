@@ -3,6 +3,8 @@
 #include "../Demo.hpp"
 #include "../../DX11Prerequisites.hpp"
 #include "../../External/glm/glm_Prerequisites.h"
+#include "../../Geometry/Transform.hpp"
+#include "../../Geometry/Camera.h"
 
 
 class Sampler;
@@ -13,9 +15,10 @@ class TextureDemo : public Demo
 {
     struct ConstantBufferData
     {
-        glm::vec2 Position;
-        glm::vec2 UVOffset;
-        glm::vec4 Color;
+        glm::mat4x4 MVPMatrix;
+        glm::vec4   Color;
+        glm::vec2   UVOffset;
+        float       dummy[2];
 
         ConstantBufferData();
 
@@ -25,7 +28,8 @@ class TextureDemo : public Demo
 public:
     TextureDemo(
         const ComPtr<ID3D11Device>& device,
-        const ComPtr<ID3D11DeviceContext>& context
+        const ComPtr<ID3D11DeviceContext>& context,
+        const Size2D& clientSize
     );
 
     virtual ~TextureDemo();
@@ -61,4 +65,9 @@ private:
     std::unique_ptr<Texture>        m_Texture2;
     std::unique_ptr<ConstantBuffer> m_ConstantBuffer2;
     ConstantBufferData              m_ConstantBufferData2;
+
+    Transform   m_Transform1;
+    Transform   m_Transform2;
+    Camera      m_Camera;
+    bool m_ForceUpdateConstantBuffer;
 };

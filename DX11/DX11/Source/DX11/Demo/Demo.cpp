@@ -67,3 +67,12 @@ void DemoSelector::RenderDemo()
     }
 }
 
+
+void DemoSelector::OnResizedBuffer(const Size2D& size)
+{
+    if (m_Demo)
+    {
+        m_Demo->OnResizedBuffer(size);
+    }
+}
+
