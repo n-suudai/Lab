@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include "../DX11Prerequisites.hpp"
+#include "DX11/DX11Prerequisites.hpp"
 
 
 class ConstantBuffer

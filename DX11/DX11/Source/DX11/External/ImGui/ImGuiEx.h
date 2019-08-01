@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_stdlib.h"
-#include "imgui_internal.h"
-#include "../glm/glm_Prerequisites.h"
+#include <imgui.h>
+#include <examples/imgui_impl_win32.h>
+#include <examples/imgui_impl_dx11.h>
+#include <misc/cpp/imgui_stdlib.h>
+#include <imgui_internal.h>
+#include "DX11/External/glm/glm_Prerequisites.h"
 
 
 namespace ImGuiEx

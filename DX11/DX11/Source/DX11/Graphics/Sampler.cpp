@@ -1,6 +1,6 @@
 ﻿#include "Sampler.hpp"
-#include "../Utils/ResultUtil.hpp"
-#include "../External/ImGui/ImGui_DX11.h"
+#include "DX11/Utils/ResultUtil.hpp"
+#include "DX11/External/ImGui/ImGui_DX11.h"
 #include <map>
 
 

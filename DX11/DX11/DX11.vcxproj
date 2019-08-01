@@ -23,32 +23,32 @@
     <ProjectGuid>{2657288a-f97b-435b-998b-bd2ff95a47d1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DX11</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -74,25 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -105,6 +105,7 @@
       <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,6 +124,7 @@
       <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -143,6 +145,7 @@
       <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -165,6 +168,7 @@
       <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -201,21 +205,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\External\ImGui\imconfig.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imgui.h" />
     <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imgui_internal.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imgui_stdlib.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imstb_textedit.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\DX11\External\lodepng\lodepng.h" />
     <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
     <ClInclude Include="Source\DX11\Geometry\Camera.h">
       <SubType>
@@ -263,19 +257,13 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Source\DX11\DX11.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui.cpp" />
+    <ClCompile Include="Source\DX11\External\ImGui\ImGui_Build.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_draw.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_stdlib.cpp" />
-    <ClCompile Include="Source\DX11\External\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\DX11\External\lodepng\lodepng.cpp" />
+    <ClCompile Include="Source\DX11\External\lodepng\lodepng_Build.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Camera.cpp">
       <SubType>
       </SubType>

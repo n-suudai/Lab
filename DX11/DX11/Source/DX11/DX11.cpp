@@ -73,6 +73,21 @@ void DX11::OnInitEnd()
         );
         if (!result)
         {
+            result = D3D11CreateDevice(
+                nullptr,
+                D3D_DRIVER_TYPE_REFERENCE,
+                nullptr,
+                createDeviceFlags,
+                featureLevels,
+                _countof(featureLevels),
+                D3D11_SDK_VERSION,
+                &m_Device,
+                &m_FeatureLevel,
+                &m_Context
+            );
+        }
+        if (!result)
+        {
             ShowErrorMessage(result, "D3D11CreateDevice");
             return;
         }

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../Demo.hpp"
-#include "../../DX11Prerequisites.hpp"
+#include "DX11/Demo/Demo.hpp"
+#include "DX11/DX11Prerequisites.hpp"
 
 
 class TriangleDemo : public Demo

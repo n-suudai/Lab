@@ -1,9 +1,10 @@
 ﻿#pragma once
 
 
-#include "../AppWin.hpp"
+#include "AppWin.hpp"
 #include "Utils/ResultUtil.hpp"
 #include "DX11Prerequisites.hpp"
+#include <memory>
 
 
 class DemoSelector;

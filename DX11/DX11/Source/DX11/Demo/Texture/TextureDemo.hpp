@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "../Demo.hpp"
-#include "../../DX11Prerequisites.hpp"
-#include "../../External/glm/glm_Prerequisites.h"
-#include "../../Geometry/Transform.hpp"
-#include "../../Geometry/Camera.h"
+#include "DX11/Demo/Demo.hpp"
+#include "DX11/DX11Prerequisites.hpp"
+#include "DX11/External/glm/glm_Prerequisites.h"
+#include "DX11/Geometry/Transform.hpp"
+#include "DX11/Geometry/Camera.h"
 
 
 class Sampler;

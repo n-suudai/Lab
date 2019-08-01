@@ -1,6 +1,6 @@
 ﻿#include "TriangleDemo.hpp"
-#include "../../Utils/DX11Util.hpp"
-#include "../../External/ImGui/ImGui_DX11.h"
+#include "DX11/Utils/DX11Util.hpp"
+#include "DX11/External/ImGui/ImGui_DX11.h"
 
 
 

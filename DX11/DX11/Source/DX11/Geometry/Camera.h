@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../External/glm/glm_Prerequisites.h"
+#include "DX11/External/glm/glm_Prerequisites.h"
 
 
 struct Camera

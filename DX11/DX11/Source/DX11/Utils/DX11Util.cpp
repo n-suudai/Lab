@@ -1,5 +1,5 @@
 ﻿#include "DX11Util.hpp"
-#include "../External/lodepng/lodepng.h"
+#include <lodepng.h>
 #include <d3dcompiler.h>
 
 

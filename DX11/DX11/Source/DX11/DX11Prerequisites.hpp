@@ -11,6 +11,3 @@
 template<class T>
 using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-
-#include "External/lodepng/lodepng.h"
-

@@ -1,5 +1,5 @@
 ﻿#include "ConstantBuffer.hpp"
-#include "../Utils/DX11Util.hpp"
+#include "DX11/Utils/DX11Util.hpp"
 
 
 ConstantBuffer::ConstantBuffer(

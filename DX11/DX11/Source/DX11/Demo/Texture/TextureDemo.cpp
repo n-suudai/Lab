@@ -1,10 +1,10 @@
 ﻿#include "TextureDemo.hpp"
-#include "../../Utils/DX11Util.hpp"
-#include "../../External/ImGui/ImGui_DX11.h"
-#include "../../Graphics/Sampler.hpp"
-#include "../../Graphics/Texture.hpp"
-#include "../../Graphics/BlendState.hpp"
-#include "../../Graphics/ConstantBuffer.hpp"
+#include "DX11/Utils/DX11Util.hpp"
+#include "DX11/External/ImGui/ImGui_DX11.h"
+#include "DX11/Graphics/Sampler.hpp"
+#include "DX11/Graphics/Texture.hpp"
+#include "DX11/Graphics/BlendState.hpp"
+#include "DX11/Graphics/ConstantBuffer.hpp"
 
 
 struct Vertex
