@@ -11,8 +11,8 @@ Camera::Camera()
     , up(0.0f, 1.0f, 0.0f)
     , screenSize(1280.0f, 720.0f)
     , nearClip(0.1f)
-    , farClip(10.0f)
-    , fov(glm::radians(90.0f))
+    , farClip(100.0f)
+    , fov(glm::radians(45.0f))
 {
 
 }
@@ -21,9 +21,11 @@ Camera::Camera()
 void Camera::UpdateMatrix()
 {
     viewMatrix = glm::lookAtLH(eye, center, up);
+
     perspectiveMatrix = glm::perspectiveFovLH(
         fov, screenSize.x, screenSize.y, nearClip, farClip
     );
+
     orthoGraphicMatrix = glm::orthoLH(
         0.0f,
         screenSize.x,
@@ -47,7 +49,7 @@ bool Camera::UpdateImGui()
         changed |= ImGui::DragFloat("near", &nearClip, 0.1f, 0.1f, farClip);
         changed |= ImGui::DragFloat("far", &farClip, 1.0f, farClip, 10000.0f);
 
-        changed |= ImGui::DragFloat("fov", &fov, 0.1f, 0.0f, glm::radians(180.0f));
+        changed |= ImGui::DragFloat("fov", &fov, 0.1f, glm::radians(0.01f), glm::radians(180.0f));
 
         ImGui::TreePop();
     }

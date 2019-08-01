@@ -9,8 +9,8 @@
 
 struct Vertex
 {
-    float position[4];
-    float texcoord[2];
+    glm::vec4 position;
+    glm::vec2 texcoord;
 };
 
 
@@ -50,19 +50,35 @@ TextureDemo::TextureDemo(
     , m_IndexCount(0)
     , m_ForceUpdateConstantBuffer(false)
 {
-    m_Camera.eye = glm::vec3(0.0f, 2.8f, 6.0f);
+    m_Camera.eye = glm::vec3(0.0f, 2.8f, -6.0f);
     m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
     m_Camera.screenSize.x = static_cast<float>(clientSize.width);
     m_Camera.screenSize.y = static_cast<float>(clientSize.height);
     m_Camera.UpdateMatrix();
     m_ForceUpdateConstantBuffer = true;
 
+    m_Transform1.position.x = 640.0f;
+    m_Transform1.position.y = 360.0f;
+    m_Transform1.scale.x = 640.0f;
+    m_Transform1.scale.y = 360.0f;
+    m_Transform1.UpdateMatrix();
+
+    m_Transform2.position.x = 640.0f;
+    m_Transform2.position.y = 360.0f;
+    m_Transform2.scale.x = 640.0f;
+    m_Transform2.scale.y = 360.0f;
+    m_Transform2.UpdateMatrix();
+
+    // 頂点配列
     const Vertex vertices[] = {
-        { {  0.5f,  0.5f, 0.0f, 1.0f }, { 1.0f, 0.0f } },
-        { { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
-        { {  0.5f, -0.5f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
-        { { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
+        { {  0.5f,  0.5f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+        { { -0.5f, -0.5f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
+        { {  0.5f, -0.5f, 0.0f, 1.0f }, { 1.0f, 0.0f } },
+        { { -0.5f,  0.5f, 0.0f, 1.0f }, { 0.0f, 1.0f } },
     };
+
+    // インデックス配列
+    const u16 indices[] = { 0, 1, 2, 0, 3, 1 };
 
     DX11Util::CreateBuffer(
         m_Device,
@@ -73,8 +89,6 @@ TextureDemo::TextureDemo(
         m_VertexBuffer
     );
 
-
-    const u16 indices[] = { 0, 2, 1, 0, 1, 3 };
     m_IndexCount = _countof(indices);
 
     DX11Util::CreateBuffer(
@@ -95,6 +109,7 @@ cbuffer CB0 : register(b0)
     float4x4 MVPMatrix;
     float4 Color;
     float2 UVOffset;
+    float2 dummy;
 };
 
 struct VS_INPUT {
@@ -166,7 +181,7 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
 
     DX11Util::CreateRasterizerState(
         m_Device,
-        D3D11_CULL_NONE,
+        D3D11_CULL_BACK,
         FALSE,
         m_RasterizerState
     );
@@ -224,37 +239,33 @@ void TextureDemo::Update()
         Transform* pTransform
         )
     {
-        ImGui::Text(label);
-
-        ImGui::PushID(label);
-
         bool update = m_ForceUpdateConstantBuffer;
 
-        if (ImGui::TreeNode("ConstantBuffer"))
+        if (ImGui::TreeNode(label))
         {
             if (pCBufferData->UpdateImGui())
             {
                 update = true;
             }
-            ImGui::TreePop();
-        }
 
-        if (pTransform->UpdateImGui("Transform"))
-        {
-            pTransform->UpdateMatrix();
-            update = true;
+            if (pTransform->UpdateImGui("Transform"))
+            {
+                update = true;
+            }
+
+            ImGui::TreePop();
         }
 
         if (update)
         {
+            pTransform->UpdateMatrix();
             pCBufferData->MVPMatrix = glm::mat4x4(1.0f);
-            pCBufferData->MVPMatrix = glm::transpose(
+            pCBufferData->MVPMatrix = glm::transpose
+            (
                 m_Camera.orthoGraphicMatrix * m_Camera.viewMatrix * pTransform->matrix
             );
             pCBuffer->Update(pCBufferData);
         }
-
-        ImGui::PopID();
     };
 
     if (m_Camera.UpdateImGui())

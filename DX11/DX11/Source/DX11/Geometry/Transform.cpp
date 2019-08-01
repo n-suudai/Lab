@@ -8,17 +8,18 @@ Transform::Transform()
     , rotate(0.0f)
     , scale(1.0f)
 {
-
+    UpdateMatrix();
 }
 
 
 void Transform::UpdateMatrix()
 {
-    glm::translate(matrix, position);
-    glm::rotate(matrix, rotate.x, glm::vec3(1.0f, 0.0f, 0.0f));
-    glm::rotate(matrix, rotate.y, glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::rotate(matrix, rotate.z, glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::scale(matrix, scale);
+    matrix = glm::mat4x4(1.0f);
+    matrix = glm::translate(matrix, position);
+    matrix = glm::rotate(matrix, rotate.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    matrix = glm::rotate(matrix, rotate.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    matrix = glm::rotate(matrix, rotate.z, glm::vec3(0.0f, 0.0f, 1.0f));
+    matrix = glm::scale(matrix, scale);
 }
 
 
@@ -30,9 +31,9 @@ bool Transform::UpdateImGui(const char* label)
 
     if (ImGui::TreeNode(label))
     {
-        changed |= ImGuiEx::DragVec3("position", &position);
-        changed |= ImGuiEx::DragVec3("rotate", &rotate);
-        changed |= ImGuiEx::DragVec3("scale", &scale);
+        changed |= ImGuiEx::DragVec3("position", &position, 0.1f);
+        changed |= ImGuiEx::DragVec3("rotate", &rotate, 0.1f);
+        changed |= ImGuiEx::DragVec3("scale", &scale, 0.1f);
 
         ImGui::TreePop();
     }
