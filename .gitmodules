@@ -7,3 +7,6 @@
 [submodule "Externals/glm"]
 	path = Externals/glm
 	url = https://github.com/g-truc/glm
+[submodule "Externals/cereal"]
+	path = Externals/cereal
+	url = https://github.com/USCiLab/cereal
