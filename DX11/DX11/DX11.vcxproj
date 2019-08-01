@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -74,25 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -201,6 +201,7 @@
     </ClInclude>
     <ClInclude Include="Source\DX11\DX11.hpp" />
     <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
+    <ClInclude Include="Source\DX11\External\cereal\cereal_Prerequisites.h" />
     <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h">
       <SubType>
       </SubType>
@@ -215,6 +216,8 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.hpp" />
+    <ClInclude Include="Source\DX11\Geometry\Font\FontData.hpp" />
     <ClInclude Include="Source\DX11\Geometry\Transform.hpp">
       <SubType>
       </SubType>
@@ -226,6 +229,8 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Source\DX11\Graphics\Texture.hpp" />
+    <ClInclude Include="Source\DX11\Utils\MathUtil.hpp" />
+    <ClInclude Include="Source\DX11\Utils\PathUtil.hpp" />
     <ClInclude Include="Source\DX11\Utils\ResultUtil.hpp" />
     <ClInclude Include="Source\DX11\Utils\DX11Util.hpp" />
     <ClInclude Include="Source\DX11\Utils\StringUtil.hpp" />
@@ -268,6 +273,8 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Source\DX11\Geometry\Font\BitmapFont.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Font\FontData.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Transform.cpp">
       <SubType>
       </SubType>
@@ -280,6 +287,7 @@
     </ClCompile>
     <ClCompile Include="Source\DX11\Graphics\Texture.cpp" />
     <ClCompile Include="Source\DX11\Utils\DX11Util.cpp" />
+    <ClCompile Include="Source\DX11\Utils\PathUtil.cpp" />
     <ClCompile Include="Source\DX11\Utils\ResultUtil.cpp" />
     <ClCompile Include="Source\DX11\Utils\StringUtil.cpp" />
     <ClCompile Include="Source\PCH.cpp">

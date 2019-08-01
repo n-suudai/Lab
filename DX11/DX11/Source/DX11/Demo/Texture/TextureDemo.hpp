@@ -11,6 +11,7 @@ class Sampler;
 class Texture;
 class BlendState;
 class ConstantBuffer;
+class BitmapFont;
 class TextureDemo : public Demo
 {
     struct ConstantBufferData
@@ -70,4 +71,6 @@ private:
     Transform   m_Transform2;
     Camera      m_Camera;
     bool m_ForceUpdateConstantBuffer;
+
+    std::unique_ptr<BitmapFont> m_BitmapFont;
 };

@@ -5,6 +5,7 @@
 #include "DX11/Graphics/Texture.hpp"
 #include "DX11/Graphics/BlendState.hpp"
 #include "DX11/Graphics/ConstantBuffer.hpp"
+#include "DX11/Geometry/Font/BitmapFont.hpp"
 
 
 struct Vertex
@@ -221,6 +222,14 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         &m_ConstantBufferData2,
         sizeof(ConstantBufferData)
         );
+
+
+    m_BitmapFont = std::make_unique<BitmapFont>(
+        m_Device,
+        m_Context,
+        m_Camera.orthoGraphicMatrix
+        );
+    m_BitmapFont->Initialize("test");
 }
 
 
@@ -232,6 +241,8 @@ TextureDemo::~TextureDemo()
 
 void TextureDemo::Update()
 {
+    m_BitmapFont->Put(glm::vec2(0), "魑魅魍魎複雑なサンプルと、思う");
+
     auto updateTexture = [&](
         const char* label,
         ConstantBuffer* pCBuffer,
@@ -393,6 +404,8 @@ void TextureDemo::Render()
 
     m_ConstantBuffer2->SetVS();
     RenderTexture(m_Texture2.get());
+
+    m_BitmapFont->Flush();
 }
 
 

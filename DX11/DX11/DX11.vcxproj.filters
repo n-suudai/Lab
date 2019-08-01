@@ -23,6 +23,11 @@
     <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="Source\DX11\Geometry\Transform.hpp" />
     <ClInclude Include="Source\DX11\Geometry\Camera.h" />
+    <ClInclude Include="Source\DX11\External\cereal\cereal_Prerequisites.h" />
+    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.hpp" />
+    <ClInclude Include="Source\DX11\Geometry\Font\FontData.hpp" />
+    <ClInclude Include="Source\DX11\Utils\MathUtil.hpp" />
+    <ClInclude Include="Source\DX11\Utils\PathUtil.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -46,5 +51,8 @@
     <ClCompile Include="Source\DX11\Geometry\Camera.cpp" />
     <ClCompile Include="Source\DX11\External\lodepng\lodepng_Build.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_Build.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Font\BitmapFont.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Font\FontData.cpp" />
+    <ClCompile Include="Source\DX11\Utils\PathUtil.cpp" />
   </ItemGroup>
 </Project>
