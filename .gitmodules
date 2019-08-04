@@ -10,3 +10,6 @@
 [submodule "Externals/cereal"]
 	path = Externals/cereal
 	url = https://github.com/USCiLab/cereal
+[submodule "Externals/tinyobjloader"]
+	path = Externals/tinyobjloader
+	url = https://github.com/syoyo/tinyobjloader
