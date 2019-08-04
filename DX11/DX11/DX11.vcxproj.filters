@@ -54,5 +54,6 @@
     <ClCompile Include="Source\DX11\Geometry\Font\BitmapFont.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Font\FontData.cpp" />
     <ClCompile Include="Source\DX11\Utils\PathUtil.cpp" />
+    <ClCompile Include="Source\DX11\External\tinyobjloader\tinyobjloader_Build.cpp" />
   </ItemGroup>
 </Project>

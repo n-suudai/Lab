@@ -74,25 +74,25 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(ProjectDir)..\..\Externals\tinyobjloader\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(ProjectDir)..\..\Externals\tinyobjloader\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(ProjectDir)..\..\Externals\tinyobjloader\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Bin\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)Bin\Temp\$(Configuration)\$(PlatformShortName)\</IntDir>
-    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\Externals\glm\;$(ProjectDir)..\..\Externals\imgui\;$(ProjectDir)..\..\Externals\lodepng\;$(ProjectDir)..\..\Externals\cereal\include\;$(ProjectDir)..\..\Externals\tinyobjloader\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -269,6 +269,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Source\DX11\External\lodepng\lodepng_Build.cpp" />
+    <ClCompile Include="Source\DX11\External\tinyobjloader\tinyobjloader_Build.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\DX11\Geometry\Camera.cpp">
       <SubType>
       </SubType>
