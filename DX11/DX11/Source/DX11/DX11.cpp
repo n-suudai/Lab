@@ -169,6 +169,7 @@ void DX11::OnInitEnd()
     std::vector<std::string> demoNames = {
         "Triangle",
         "Texture",
+        "DiffuseLighting",
     };
 
     m_DemoSelector = std::make_unique<DemoSelector>(demoNames);
@@ -499,6 +500,13 @@ void DX11::Update()
                         m_Device,
                         m_Context,
                         m_ClientSize
+                        );
+                }
+                else if (name == "DiffuseLighting")
+                {
+                    return std::make_unique<DiffuselightingDemo>(
+                        m_Device,
+                        m_Context
                         );
                 }
 

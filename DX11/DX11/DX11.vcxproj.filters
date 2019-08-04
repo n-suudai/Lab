@@ -28,6 +28,7 @@
     <ClInclude Include="Source\DX11\Geometry\Font\FontData.hpp" />
     <ClInclude Include="Source\DX11\Utils\MathUtil.hpp" />
     <ClInclude Include="Source\DX11\Utils\PathUtil.hpp" />
+    <ClInclude Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -55,5 +56,6 @@
     <ClCompile Include="Source\DX11\Geometry\Font\FontData.cpp" />
     <ClCompile Include="Source\DX11\Utils\PathUtil.cpp" />
     <ClCompile Include="Source\DX11\External\tinyobjloader\tinyobjloader_Build.cpp" />
+    <ClCompile Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.cpp" />
   </ItemGroup>
 </Project>
