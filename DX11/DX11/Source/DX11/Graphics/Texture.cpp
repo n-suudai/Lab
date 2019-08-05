@@ -1,5 +1,5 @@
-﻿#include "Texture.hpp"
-#include "DX11/Utils/DX11Util.hpp"
+﻿#include "Texture.h"
+#include "DX11/Utils/DX11Util.h"
 
 
 Texture::Texture(

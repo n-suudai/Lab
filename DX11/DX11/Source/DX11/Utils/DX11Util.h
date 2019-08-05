@@ -1,11 +1,11 @@
 ﻿
 #pragma once
 
-#include "DX11/DX11Prerequisites.hpp"
+#include "DX11/DX11Prerequisites.h"
 #include <fstream>
 #include <vector>
 #include <iterator>
-#include "ResultUtil.hpp"
+#include "ResultUtil.h"
 
 
 namespace DX11Util

@@ -1,11 +1,11 @@
-﻿#include "TextureDemo.hpp"
-#include "DX11/Utils/DX11Util.hpp"
+﻿#include "TextureDemo.h"
+#include "DX11/Utils/DX11Util.h"
 #include "DX11/External/ImGui/ImGui_DX11.h"
-#include "DX11/Graphics/Sampler.hpp"
-#include "DX11/Graphics/Texture.hpp"
-#include "DX11/Graphics/BlendState.hpp"
-#include "DX11/Graphics/ConstantBuffer.hpp"
-#include "DX11/Geometry/Font/BitmapFont.hpp"
+#include "DX11/Graphics/Sampler.h"
+#include "DX11/Graphics/Texture.h"
+#include "DX11/Graphics/BlendState.h"
+#include "DX11/Graphics/ConstantBuffer.h"
+#include "DX11/Geometry/Font/BitmapFont.h"
 
 
 struct Vertex

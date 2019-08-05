@@ -5,11 +5,11 @@
 #pragma comment(lib, "D3DCompiler.lib")
 
 
-#include "DX11.hpp"
+#include "DX11.h"
 #include "External/ImGui/ImGui_DX11.h"
-#include "Utils/DX11Util.hpp"
-#include "Demo/Demo.hpp"
-#include "Demo/AllDemo.hpp"
+#include "Utils/DX11Util.h"
+#include "Demo/Demo.h"
+#include "Demo/AllDemo.h"
 #include <thread>
 
 

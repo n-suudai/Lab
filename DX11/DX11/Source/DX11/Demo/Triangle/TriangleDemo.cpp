@@ -1,5 +1,5 @@
-﻿#include "TriangleDemo.hpp"
-#include "DX11/Utils/DX11Util.hpp"
+﻿#include "TriangleDemo.h"
+#include "DX11/Utils/DX11Util.h"
 #include "DX11/External/ImGui/ImGui_DX11.h"
 
 

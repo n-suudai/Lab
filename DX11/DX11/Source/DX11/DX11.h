@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 
-#include "AppWin.hpp"
-#include "Utils/ResultUtil.hpp"
-#include "DX11Prerequisites.hpp"
+#include "AppWin.h"
+#include "Utils/ResultUtil.h"
+#include "DX11Prerequisites.h"
 #include <memory>
 
 

@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 
-#include "DX11/DX11Prerequisites.hpp"
+#include "DX11/DX11Prerequisites.h"
 #include "DX11/External/glm/glm_Prerequisites.h"
-#include "FontData.hpp"
+#include "FontData.h"
 
 
 

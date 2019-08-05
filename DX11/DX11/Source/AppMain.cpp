@@ -1,7 +1,7 @@
 ﻿#define UNUSED(x) (x)
 
 
-#include "DX11/DX11.hpp"
+#include "DX11/DX11.h"
 
 
 bool CreateApp(const Size2D& clientSize, const std::string& title, AppWin ** ppOut)

@@ -1,5 +1,5 @@
-﻿#include "BlendState.hpp"
-#include "DX11/Utils/ResultUtil.hpp"
+﻿#include "BlendState.h"
+#include "DX11/Utils/ResultUtil.h"
 #include "DX11/External/ImGui/ImGui_DX11.h"
 #include <map>
 

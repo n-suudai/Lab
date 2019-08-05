@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "DX11/Demo/Demo.hpp"
-#include "DX11/DX11Prerequisites.hpp"
+#include "DX11/Demo/Demo.h"
+#include "DX11/DX11Prerequisites.h"
 
 class Sampler;
 class Texture;

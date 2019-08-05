@@ -1,5 +1,5 @@
-﻿#include "FontData.hpp"
-#include "DX11/Utils/PathUtil.hpp"
+﻿#include "FontData.h"
+#include "DX11/Utils/PathUtil.h"
 
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>

@@ -23,7 +23,7 @@
     <ProjectGuid>{2657288a-f97b-435b-998b-bd2ff95a47d1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DX11</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,9 +102,9 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -121,9 +121,9 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -142,9 +142,9 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -165,9 +165,9 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.hpp</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>$(ProjectDir)Source\PCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.hpp</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(ProjectDir)Source\PCH.h</ForcedIncludeFiles>
       <AdditionalIncludeDirectories>$(ProjectDir)Source\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -179,32 +179,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Source\App.hpp">
+    <ClInclude Include="Source\App.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\AppWin.hpp">
+    <ClInclude Include="Source\AppWin.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Demo\AllDemo.hpp">
+    <ClInclude Include="Source\DX11\Demo\AllDemo.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.hpp">
+    <ClInclude Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Demo\Texture\TextureDemo.hpp">
+    <ClInclude Include="Source\DX11\Demo\Texture\TextureDemo.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Demo\Triangle\TriangleDemo.hpp">
+    <ClInclude Include="Source\DX11\Demo\Triangle\TriangleDemo.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\DX11.hpp" />
-    <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
+    <ClInclude Include="Source\DX11\DX11.h" />
+    <ClInclude Include="Source\DX11\DX11Prerequisites.h" />
     <ClInclude Include="Source\DX11\External\cereal\cereal_Prerequisites.h" />
     <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h">
       <SubType>
@@ -215,34 +215,38 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />
-    <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
+    <ClInclude Include="Source\DX11\Demo\Demo.h" />
     <ClInclude Include="Source\DX11\Geometry\Camera.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.hpp" />
-    <ClInclude Include="Source\DX11\Geometry\Font\FontData.hpp" />
-    <ClInclude Include="Source\DX11\Geometry\Transform.hpp">
+    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.h" />
+    <ClInclude Include="Source\DX11\Geometry\Font\FontData.h" />
+    <ClInclude Include="Source\DX11\Geometry\Mesh.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
-    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
-    <ClInclude Include="Source\DX11\Graphics\Sampler.hpp">
+    <ClInclude Include="Source\DX11\Geometry\Transform.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\DX11\Graphics\Texture.hpp" />
-    <ClInclude Include="Source\DX11\Utils\MathUtil.hpp" />
-    <ClInclude Include="Source\DX11\Utils\PathUtil.hpp" />
-    <ClInclude Include="Source\DX11\Utils\ResultUtil.hpp" />
-    <ClInclude Include="Source\DX11\Utils\DX11Util.hpp" />
-    <ClInclude Include="Source\DX11\Utils\StringUtil.hpp" />
-    <ClInclude Include="Source\KeyCode.hpp">
+    <ClInclude Include="Source\DX11\Graphics\BlendState.h" />
+    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Source\DX11\Graphics\Sampler.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Source\PCH.hpp">
+    <ClInclude Include="Source\DX11\Graphics\Texture.h" />
+    <ClInclude Include="Source\DX11\Utils\MathUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\PathUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\ResultUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\DX11Util.h" />
+    <ClInclude Include="Source\DX11\Utils\StringUtil.h" />
+    <ClInclude Include="Source\KeyCode.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Source\PCH.h">
       <SubType>
       </SubType>
     </ClInclude>

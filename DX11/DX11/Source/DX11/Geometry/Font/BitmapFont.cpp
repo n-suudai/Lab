@@ -1,10 +1,10 @@
-﻿#include "BitmapFont.hpp"
-#include "DX11/Utils/DX11Util.hpp"
-#include "DX11/Utils/StringUtil.hpp"
-#include "DX11/Utils/MathUtil.hpp"
-#include "DX11/Graphics/Sampler.hpp"
-#include "DX11/Graphics/BlendState.hpp"
-#include "DX11/Graphics/ConstantBuffer.hpp"
+﻿#include "BitmapFont.h"
+#include "DX11/Utils/DX11Util.h"
+#include "DX11/Utils/StringUtil.h"
+#include "DX11/Utils/MathUtil.h"
+#include "DX11/Graphics/Sampler.h"
+#include "DX11/Graphics/BlendState.h"
+#include "DX11/Graphics/ConstantBuffer.h"
 
 
 

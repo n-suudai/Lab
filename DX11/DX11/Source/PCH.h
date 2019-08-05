@@ -56,9 +56,9 @@ typedef double f64;
 //-----------------------------------------------------------------
 // アプリケーション関連
 //-----------------------------------------------------------------
-#include "KeyCode.hpp"
-#include "App.hpp"
-#include "AppWin.hpp"
+#include "KeyCode.h"
+#include "App.h"
+#include "AppWin.h"
 
 
 

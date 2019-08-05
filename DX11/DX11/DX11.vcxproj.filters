@@ -1,34 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="Source\App.hpp" />
-    <ClInclude Include="Source\PCH.hpp" />
-    <ClInclude Include="Source\KeyCode.hpp" />
-    <ClInclude Include="Source\AppWin.hpp" />
-    <ClInclude Include="Source\DX11\DX11.hpp" />
-    <ClInclude Include="Source\DX11\Utils\ResultUtil.hpp" />
-    <ClInclude Include="Source\DX11\Utils\DX11Util.hpp" />
-    <ClInclude Include="Source\DX11\DX11Prerequisites.hpp" />
-    <ClInclude Include="Source\DX11\Demo\Demo.hpp" />
-    <ClInclude Include="Source\DX11\Utils\StringUtil.hpp" />
-    <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />
-    <ClInclude Include="Source\DX11\Demo\Triangle\TriangleDemo.hpp" />
-    <ClInclude Include="Source\DX11\Demo\Texture\TextureDemo.hpp" />
-    <ClInclude Include="Source\DX11\Demo\AllDemo.hpp" />
-    <ClInclude Include="Source\DX11\Graphics\Sampler.hpp" />
-    <ClInclude Include="Source\DX11\Graphics\Texture.hpp" />
-    <ClInclude Include="Source\DX11\Graphics\BlendState.hpp" />
-    <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
-    <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h" />
-    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.hpp" />
-    <ClInclude Include="Source\DX11\Geometry\Transform.hpp" />
-    <ClInclude Include="Source\DX11\Geometry\Camera.h" />
+    <ClInclude Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.h" />
+    <ClInclude Include="Source\DX11\Demo\Texture\TextureDemo.h" />
+    <ClInclude Include="Source\DX11\Demo\Triangle\TriangleDemo.h" />
+    <ClInclude Include="Source\DX11\Demo\Demo.h" />
     <ClInclude Include="Source\DX11\External\cereal\cereal_Prerequisites.h" />
-    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.hpp" />
-    <ClInclude Include="Source\DX11\Geometry\Font\FontData.hpp" />
-    <ClInclude Include="Source\DX11\Utils\MathUtil.hpp" />
-    <ClInclude Include="Source\DX11\Utils\PathUtil.hpp" />
-    <ClInclude Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.hpp" />
+    <ClInclude Include="Source\DX11\External\glm\glm_Prerequisites.h" />
+    <ClInclude Include="Source\DX11\External\ImGui\ImGui_DX11.h" />
+    <ClInclude Include="Source\DX11\External\ImGui\ImGuiEx.h" />
+    <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.h" />
+    <ClInclude Include="Source\DX11\Geometry\Font\FontData.h" />
+    <ClInclude Include="Source\DX11\Geometry\Camera.h" />
+    <ClInclude Include="Source\DX11\Geometry\Mesh.h" />
+    <ClInclude Include="Source\DX11\Geometry\Transform.h" />
+    <ClInclude Include="Source\DX11\Graphics\BlendState.h" />
+    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Source\DX11\Graphics\Sampler.h" />
+    <ClInclude Include="Source\DX11\Graphics\Texture.h" />
+    <ClInclude Include="Source\DX11\DX11.h" />
+    <ClInclude Include="Source\DX11\DX11Prerequisites.h" />
+    <ClInclude Include="Source\App.h" />
+    <ClInclude Include="Source\AppWin.h" />
+    <ClInclude Include="Source\KeyCode.h" />
+    <ClInclude Include="Source\PCH.h" />
+    <ClInclude Include="Source\DX11\Utils\DX11Util.h" />
+    <ClInclude Include="Source\DX11\Utils\MathUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\PathUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\ResultUtil.h" />
+    <ClInclude Include="Source\DX11\Utils\StringUtil.h" />
+    <ClInclude Include="Source\DX11\Demo\AllDemo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />

@@ -1,4 +1,4 @@
-﻿#include "DiffuseLightingDemo.hpp"
+﻿#include "DiffuseLightingDemo.h"
 
 
 DiffuselightingDemo::DiffuselightingDemo(

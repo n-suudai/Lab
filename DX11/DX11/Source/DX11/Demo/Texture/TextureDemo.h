@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "DX11/Demo/Demo.hpp"
-#include "DX11/DX11Prerequisites.hpp"
+#include "DX11/Demo/Demo.h"
+#include "DX11/DX11Prerequisites.h"
 #include "DX11/External/glm/glm_Prerequisites.h"
-#include "DX11/Geometry/Transform.hpp"
+#include "DX11/Geometry/Transform.h"
 #include "DX11/Geometry/Camera.h"
 
 
