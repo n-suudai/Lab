@@ -565,43 +565,6 @@ namespace DX11Util
     }
 
 
-    // サンプラーステートを作成
-    bool CreateSamplerState(
-        const ComPtr<ID3D11Device>& device,
-        D3D11_FILTER filter,
-        D3D11_TEXTURE_ADDRESS_MODE addressU,
-        D3D11_TEXTURE_ADDRESS_MODE addressV,
-        D3D11_TEXTURE_ADDRESS_MODE addressW,
-        ComPtr<ID3D11SamplerState>& outSamplerState
-    )
-    {
-        FLOAT borderColor[4] = { 0.0f };
-        CD3D11_SAMPLER_DESC samplerDesc(
-            filter,       // サンプリング時に使用するフィルタ。ここでは異方性フィルターを使用する(D3D11_FILTER_ANISOTROPIC)
-            addressU,     // 0 ～ 1 の範囲外にある u テクスチャー座標の描画方法
-            addressV,     // 0 ～ 1 の範囲外にある v テクスチャー座標
-            addressW,     // 0 ～ 1 の範囲外にある w テクスチャー座標
-            0,                              // 計算されたミップマップ レベルからのバイアス
-            16,                             // サンプリングに異方性補間を使用している場合の限界値。有効な値は 1 ～ 16 
-            D3D11_COMPARISON_ALWAYS,        // 比較オプション
-            borderColor,                    // 境界色
-            0,                              // アクセス可能なミップマップの下限値
-            D3D11_FLOAT32_MAX               // アクセス可能なミップマップの上限値
-        );
-
-        ResultUtil result = device->CreateSamplerState(
-            &samplerDesc,
-            &outSamplerState
-        );
-        if (!result)
-        {
-            result.ShowMessageBox("device->CreateSamplerState");
-            return false;
-        }
-        return true;
-    }
-
-
     // 頂点シェーダーと入力レイアウトを作成
     bool CreateVertexShaderAndInputLayout(
         const ComPtr<ID3D11Device>& device,
@@ -768,7 +731,7 @@ namespace DX11Util
         );
         if (!result)
         {
-            result.ShowMessageBox("device->CreatePixelShader");
+            result.ShowMessageBox("device->CreateGeometryShader");
             return false;
         }
 
@@ -776,32 +739,131 @@ namespace DX11Util
     }
 
 
-    // ブレンドステートを作成
-    bool CreateBlendState(
+    // ジオメトリシェーダーを作成
+    bool CreateGeometryShader(
         const ComPtr<ID3D11Device>& device,
-        ComPtr<ID3D11BlendState>& outBlendState
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11GeometryShader>& outGeometryShader
     )
     {
-        // アルファブレンド 加算
-        CD3D11_BLEND_DESC blendDesc(D3D11_DEFAULT);
-        blendDesc.RenderTarget[0].BlendEnable = TRUE;
-        blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-        blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-        blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-        blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-        blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-        blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-        blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-        ResultUtil result = device->CreateBlendState(
-            &blendDesc,
-            &outBlendState
+        ResultUtil result = device->CreateGeometryShader(
+            byteCode->GetBufferPointer(),
+            byteCode->GetBufferSize(),
+            nullptr,
+            &outGeometryShader
         );
         if (!result)
         {
-            result.ShowMessageBox("device->CreateBlendState");
+            result.ShowMessageBox("device->CreateGeometryShader");
             return false;
         }
+
+        return true;
+    }
+
+
+    // ハルシェーダーを作成
+    bool CreateHullShader(
+        const ComPtr<ID3D11Device>& device,
+        const std::string& fileName,
+        ComPtr<ID3D11HullShader>& outHullShader
+    )
+    {
+        std::vector<BYTE> hullShaderData;
+
+        if (!ReadFile(fileName, hullShaderData))
+        {
+            return false;
+        }
+
+        ResultUtil result = device->CreateHullShader(
+            hullShaderData.data(),
+            hullShaderData.size(),
+            nullptr,
+            &outHullShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreateHullShader");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // ハルシェーダーを作成
+    bool CreateHullShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11HullShader>& outHullShader
+    )
+    {
+        ResultUtil result = device->CreateHullShader(
+            byteCode->GetBufferPointer(),
+            byteCode->GetBufferSize(),
+            nullptr,
+            &outHullShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreateHullShader");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // コンピュートシェーダーを作成
+    bool CreateComputeShader(
+        const ComPtr<ID3D11Device>& device,
+        const std::string& fileName,
+        ComPtr<ID3D11ComputeShader>& outComputeShader
+    )
+    {
+        std::vector<BYTE> computeShaderData;
+
+        if (!ReadFile(fileName, computeShaderData))
+        {
+            return false;
+        }
+
+        ResultUtil result = device->CreateComputeShader(
+            computeShaderData.data(),
+            computeShaderData.size(),
+            nullptr,
+            &outComputeShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreateComputeShader");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    // コンピュートシェーダーを作成
+    bool CreateComputeShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11ComputeShader>& outComputeShader
+    )
+    {
+        ResultUtil result = device->CreateComputeShader(
+            byteCode->GetBufferPointer(),
+            byteCode->GetBufferSize(),
+            nullptr,
+            &outComputeShader
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("device->CreateComputeShader");
+            return false;
+        }
+
         return true;
     }
 

@@ -112,6 +112,40 @@ namespace DX11Util
         ComPtr<ID3D11GeometryShader>& outGeometryShader
     );
 
+    // ジオメトリシェーダーを作成
+    bool CreateGeometryShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11GeometryShader>& outGeometryShader
+    );
+
+    // ハルシェーダーを作成
+    bool CreateHullShader(
+        const ComPtr<ID3D11Device>& device,
+        const std::string& fileName,
+        ComPtr<ID3D11HullShader>& outHullShader
+    );
+
+    // ハルシェーダーを作成
+    bool CreateHullShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11HullShader>& outHullShader
+    );
+
+    // コンピュートシェーダーを作成
+    bool CreateComputeShader(
+        const ComPtr<ID3D11Device>& device,
+        const std::string& fileName,
+        ComPtr<ID3D11ComputeShader>& outComputeShader
+    );
+
+    // コンピュートシェーダーを作成
+    bool CreateComputeShader(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3DBlob>& byteCode,
+        ComPtr<ID3D11ComputeShader>& outComputeShader
+    );
 
     // シェーダーをコンパイル
     bool CompileShader(

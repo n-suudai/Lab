@@ -12,6 +12,7 @@ class Texture;
 class BlendState;
 class ConstantBuffer;
 class BitmapFont;
+class Shader;
 class TextureDemo : public Demo
 {
     struct ConstantBufferData
@@ -51,13 +52,9 @@ private:
     UINT                        m_IndexCount;
     ComPtr<ID3D11Buffer>        m_VertexBuffer;
     ComPtr<ID3D11Buffer>        m_IndexBuffer;
-    ComPtr<ID3D11InputLayout>   m_InputLayout;
-    ComPtr<ID3D11VertexShader>  m_VertexShader;
-    ComPtr<ID3D11PixelShader>   m_PixelShader;
     ComPtr<ID3D11RasterizerState> m_RasterizerState;
 
-    std::string                 m_ShaderCode;
-
+    std::unique_ptr<Shader>         m_Shader;
     std::unique_ptr<Sampler>        m_Sampler;
     std::unique_ptr<BlendState>     m_BlendState;
     std::unique_ptr<Texture>        m_Texture1;

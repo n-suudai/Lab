@@ -5,6 +5,7 @@
 #include "DX11/Graphics/Texture.h"
 #include "DX11/Graphics/BlendState.h"
 #include "DX11/Graphics/ConstantBuffer.h"
+#include "DX11/Graphics/Shader.h"
 #include "DX11/Geometry/Font/BitmapFont.h"
 
 
@@ -101,7 +102,7 @@ TextureDemo::TextureDemo(
         m_IndexBuffer
     );
 
-    m_ShaderCode = R"(
+    std::string shaderCode = R"(
 Texture2D diffuseTexture : register(t0);
 SamplerState normalSampler : register(s0);
 
@@ -137,48 +138,16 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
 }
         )";
 
-    {
-        ComPtr<ID3DBlob> code;
-        bool result = DX11Util::CompileShader(
-            m_ShaderCode.data(),
-            m_ShaderCode.size(),
-            "vs_5_0",
-            "vs_main",
-            code
+    m_Shader = std::make_unique<Shader>(
+        m_Device,
+        m_Context
         );
-
-        if (result)
-        {
-            DX11Util::CreateVertexShaderAndInputLayout(
-                m_Device,
-                code,
-                inputElements,
-                _countof(inputElements),
-                m_VertexShader,
-                m_InputLayout
-            );
-        }
-    }
-
-    {
-        ComPtr<ID3DBlob> code;
-        bool result = DX11Util::CompileShader(
-            m_ShaderCode.data(),
-            m_ShaderCode.size(),
-            "ps_5_0",
-            "ps_main",
-            code
-        );
-
-        if (result)
-        {
-            DX11Util::CreatePixelShader(
-                m_Device,
-                code,
-                m_PixelShader
-            );
-        }
-    }
+    m_Shader->Init(
+        shaderCode,
+        SHADER_USE_FLAG_VS | SHADER_USE_FLAG_PS,
+        inputElements,
+        _countof(inputElements)
+    );
 
     DX11Util::CreateRasterizerState(
         m_Device,
@@ -304,55 +273,7 @@ void TextureDemo::Update()
     ImGui::Text("Shader");
     if (ImGui::TreeNode("Shader"))
     {
-        ImGui::InputTextMultiline(
-            "ShaderCode",
-            &m_ShaderCode
-        );
-        if (ImGui::Button("CompileShader"))
-        {
-            {
-                ComPtr<ID3DBlob> code;
-                bool result = DX11Util::CompileShader(
-                    m_ShaderCode.data(),
-                    m_ShaderCode.size(),
-                    "vs_5_0",
-                    "vs_main",
-                    code
-                );
-
-                if (result)
-                {
-                    DX11Util::CreateVertexShaderAndInputLayout(
-                        m_Device,
-                        code,
-                        inputElements,
-                        _countof(inputElements),
-                        m_VertexShader,
-                        m_InputLayout
-                    );
-                }
-            }
-
-            {
-                ComPtr<ID3DBlob> code;
-                bool result = DX11Util::CompileShader(
-                    m_ShaderCode.data(),
-                    m_ShaderCode.size(),
-                    "ps_5_0",
-                    "ps_main",
-                    code
-                );
-
-                if (result)
-                {
-                    DX11Util::CreatePixelShader(
-                        m_Device,
-                        code,
-                        m_PixelShader
-                    );
-                }
-            }
-        }
+        m_Shader->UpdateImGui();
 
         ImGui::TreePop();
     }
@@ -361,8 +282,8 @@ void TextureDemo::Update()
 
 void TextureDemo::Render()
 {
-    // 入力レイアウトを設定
-    m_Context->IASetInputLayout(m_InputLayout.Get());
+    m_Shader->ResetAll(); // 一応
+    m_Shader->SetAll();
 
     // 頂点バッファを設定
     {
@@ -386,12 +307,6 @@ void TextureDemo::Render()
 
     // プリミティブトポロジーの設定
     m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-    // 頂点シェーダーの設定
-    m_Context->VSSetShader(m_VertexShader.Get(), nullptr, 0);
-
-    // ピクセルシェーダーを設定
-    m_Context->PSSetShader(m_PixelShader.Get(), nullptr, 0);
 
     m_Context->RSSetState(m_RasterizerState.Get());
 

@@ -30,6 +30,7 @@
     <ClInclude Include="Source\DX11\Utils\ResultUtil.h" />
     <ClInclude Include="Source\DX11\Utils\StringUtil.h" />
     <ClInclude Include="Source\DX11\Demo\AllDemo.h" />
+    <ClInclude Include="Source\DX11\Graphics\Shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -58,5 +59,6 @@
     <ClCompile Include="Source\DX11\Utils\PathUtil.cpp" />
     <ClCompile Include="Source\DX11\External\tinyobjloader\tinyobjloader_Build.cpp" />
     <ClCompile Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\Shader.cpp" />
   </ItemGroup>
 </Project>
