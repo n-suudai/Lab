@@ -307,6 +307,80 @@ bool ImGui_DX11::ComboEnum(const char* label, D3D11_COMPARISON_FUNC* p_compariso
     return changed;
 }
 
+// D3D11_FILL_MODE
+bool ImGui_DX11::ComboEnum(const char* label, D3D11_FILL_MODE* p_fill_mode)
+{
+    static std::map<D3D11_FILL_MODE, std::string> fillModeMap = {
+        { D3D11_FILL_WIREFRAME, "WIREFRAME" },
+        { D3D11_FILL_SOLID,     "SOLID"     },
+    };
+
+    assert(p_fill_mode != nullptr);
+
+    bool changed = false;
+    const char* pSelectedFillMode = fillModeMap[(*p_fill_mode)].c_str();
+
+    if (ImGui::BeginCombo(label, pSelectedFillMode))
+    {
+        for (auto& fillMode : fillModeMap)
+        {
+            bool selected = fillMode.first == (*p_fill_mode);
+
+            if (ImGui::Selectable(fillMode.second.c_str(), &selected))
+            {
+                changed = true;
+                (*p_fill_mode) = fillMode.first;
+            }
+
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    return changed;
+}
+
+// D3D11_CULL_MODE
+bool ImGui_DX11::ComboEnum(const char* label, D3D11_CULL_MODE* p_cull_mode)
+{
+    static std::map<D3D11_CULL_MODE, std::string> cullModeMap = {
+        { D3D11_CULL_NONE, "NONE"   },
+        { D3D11_CULL_FRONT, "FRONT" },
+        { D3D11_CULL_BACK,  "BACK"  },
+    };
+
+    assert(p_cull_mode != nullptr);
+
+    bool changed = false;
+    const char* pSelectedCullMode = cullModeMap[(*p_cull_mode)].c_str();
+
+    if (ImGui::BeginCombo(label, pSelectedCullMode))
+    {
+        for (auto& cullMode : cullModeMap)
+        {
+            bool selected = cullMode.first == (*p_cull_mode);
+
+            if (ImGui::Selectable(cullMode.second.c_str(), &selected))
+            {
+                changed = true;
+                (*p_cull_mode) = cullMode.first;
+            }
+
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+        ImGui::EndCombo();
+    }
+
+    return changed;
+}
+
+
 // D3D11_COLOR_WRITE_ENABLE
 bool ImGui_DX11::CheckBox_ColorWriteEnable(const char* label, UINT8* p_flags)
 {

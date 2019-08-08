@@ -82,13 +82,6 @@ void BlendState::UpdateImGui()
 
         D3D11_RENDER_TARGET_BLEND_DESC& editRTBDesc = newDesc.RenderTarget[m_EditRenderTarget];
 
-        static std::map<D3D11_COLOR_WRITE_ENABLE, std::string> colorWriteEnableMap = {
-            { D3D11_COLOR_WRITE_ENABLE_RED,     "RED"      },
-            { D3D11_COLOR_WRITE_ENABLE_GREEN,   "GREEN"    },
-            { D3D11_COLOR_WRITE_ENABLE_BLUE,    "BLUE"     },
-            { D3D11_COLOR_WRITE_ENABLE_ALPHA,   "ALPHA"    },
-        };
-
         // BlendEnable
         {
             bool enable = editRTBDesc.BlendEnable == TRUE;

@@ -13,6 +13,7 @@ class BlendState;
 class ConstantBuffer;
 class BitmapFont;
 class Shader;
+class RasterizerState;
 class TextureDemo : public Demo
 {
     struct ConstantBufferData
@@ -52,11 +53,12 @@ private:
     UINT                        m_IndexCount;
     ComPtr<ID3D11Buffer>        m_VertexBuffer;
     ComPtr<ID3D11Buffer>        m_IndexBuffer;
-    ComPtr<ID3D11RasterizerState> m_RasterizerState;
 
-    std::unique_ptr<Shader>         m_Shader;
-    std::unique_ptr<Sampler>        m_Sampler;
-    std::unique_ptr<BlendState>     m_BlendState;
+    std::unique_ptr<Shader>             m_Shader;
+    std::unique_ptr<Sampler>            m_Sampler;
+    std::unique_ptr<BlendState>         m_BlendState;
+    std::unique_ptr<RasterizerState>    m_RasterizerState;
+
     std::unique_ptr<Texture>        m_Texture1;
     std::unique_ptr<ConstantBuffer> m_ConstantBuffer1;
     ConstantBufferData              m_ConstantBufferData1;
@@ -69,5 +71,5 @@ private:
     Camera      m_Camera;
     bool m_ForceUpdateConstantBuffer;
 
-    std::unique_ptr<BitmapFont> m_BitmapFont;
+    //std::unique_ptr<BitmapFont> m_BitmapFont;
 };

@@ -31,6 +31,7 @@
     <ClInclude Include="Source\DX11\Utils\StringUtil.h" />
     <ClInclude Include="Source\DX11\Demo\AllDemo.h" />
     <ClInclude Include="Source\DX11\Graphics\Shader.h" />
+    <ClInclude Include="Source\DX11\Graphics\RasterizerState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -60,5 +61,6 @@
     <ClCompile Include="Source\DX11\External\tinyobjloader\tinyobjloader_Build.cpp" />
     <ClCompile Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Shader.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\RasterizerState.cpp" />
   </ItemGroup>
 </Project>

@@ -232,6 +232,10 @@
     </ClInclude>
     <ClInclude Include="Source\DX11\Graphics\BlendState.h" />
     <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Source\DX11\Graphics\RasterizerState.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\DX11\Graphics\Sampler.h">
       <SubType>
       </SubType>
@@ -301,6 +305,10 @@
     </ClCompile>
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\Graphics\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\RasterizerState.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Source\DX11\Graphics\Sampler.cpp">
       <SubType>
       </SubType>

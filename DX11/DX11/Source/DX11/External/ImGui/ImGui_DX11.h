@@ -49,6 +49,12 @@ namespace ImGui_DX11
     // D3D11_COMPARISON_FUNC
     bool ComboEnum(const char* label, D3D11_COMPARISON_FUNC* p_comparison_func);
 
+    // D3D11_FILL_MODE
+    bool ComboEnum(const char* label, D3D11_FILL_MODE* p_fill_mode);
+
+    // D3D11_CULL_MODE
+    bool ComboEnum(const char* label, D3D11_CULL_MODE* p_cull_mode);
+
 
     //----------------------
     // Flags

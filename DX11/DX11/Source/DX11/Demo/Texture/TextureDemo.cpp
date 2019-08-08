@@ -2,8 +2,9 @@
 #include "DX11/Utils/DX11Util.h"
 #include "DX11/External/ImGui/ImGui_DX11.h"
 #include "DX11/Graphics/Sampler.h"
-#include "DX11/Graphics/Texture.h"
 #include "DX11/Graphics/BlendState.h"
+#include "DX11/Graphics/RasterizerState.h"
+#include "DX11/Graphics/Texture.h"
 #include "DX11/Graphics/ConstantBuffer.h"
 #include "DX11/Graphics/Shader.h"
 #include "DX11/Geometry/Font/BitmapFont.h"
@@ -149,19 +150,17 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         _countof(inputElements)
     );
 
-    DX11Util::CreateRasterizerState(
-        m_Device,
-        D3D11_CULL_BACK,
-        FALSE,
-        m_RasterizerState
-    );
-
     m_Sampler = std::make_unique<Sampler>(
         m_Device,
         m_Context
         );
 
     m_BlendState = std::make_unique<BlendState>(
+        m_Device,
+        m_Context
+        );
+
+    m_RasterizerState = std::make_unique<RasterizerState>(
         m_Device,
         m_Context
         );
@@ -193,12 +192,12 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         );
 
 
-    m_BitmapFont = std::make_unique<BitmapFont>(
-        m_Device,
-        m_Context,
-        m_Camera.orthoGraphicMatrix
-        );
-    m_BitmapFont->Initialize("test");
+    //m_BitmapFont = std::make_unique<BitmapFont>(
+    //    m_Device,
+    //    m_Context,
+    //    m_Camera.orthoGraphicMatrix
+    //    );
+    //m_BitmapFont->Initialize("test");
 }
 
 
@@ -210,7 +209,7 @@ TextureDemo::~TextureDemo()
 
 void TextureDemo::Update()
 {
-    m_BitmapFont->Put(glm::vec2(0), "魑魅魍魎複雑なサンプルと、思う");
+    //m_BitmapFont->Put(glm::vec2(0), "魑魅魍魎複雑なサンプルと、思う");
 
     auto updateTexture = [&](
         const char* label,
@@ -270,6 +269,11 @@ void TextureDemo::Update()
 
     ImGui::Separator();
 
+    ImGui::Text("RasterizerState");
+    m_RasterizerState->UpdateImGui();
+
+    ImGui::Separator();
+
     ImGui::Text("Shader");
     if (ImGui::TreeNode("Shader"))
     {
@@ -308,7 +312,7 @@ void TextureDemo::Render()
     // プリミティブトポロジーの設定
     m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    m_Context->RSSetState(m_RasterizerState.Get());
+    m_RasterizerState->Set();
 
     m_Sampler->Set();
 
@@ -320,7 +324,7 @@ void TextureDemo::Render()
     m_ConstantBuffer2->SetVS();
     RenderTexture(m_Texture2.get());
 
-    m_BitmapFont->Flush();
+    //m_BitmapFont->Flush();
 }
 
 
