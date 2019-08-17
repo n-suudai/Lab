@@ -5,7 +5,7 @@
 #include "DX11/Graphics/BlendState.h"
 #include "DX11/Graphics/RasterizerState.h"
 #include "DX11/Graphics/Texture.h"
-#include "DX11/Graphics/ConstantBuffer.h"
+#include "DX11/Graphics/BufferResource.h"
 #include "DX11/Graphics/Shader.h"
 #include "DX11/Geometry/Font/BitmapFont.h"
 
@@ -21,26 +21,6 @@ const D3D11_INPUT_ELEMENT_DESC inputElements[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,          0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
-
-
-TextureDemo::ConstantBufferData::ConstantBufferData()
-    : MVPMatrix(1.0f)
-    , Color(1.0f)
-    , UVOffset(0.0f)
-{
-
-}
-
-
-bool TextureDemo::ConstantBufferData::UpdateImGui()
-{
-    bool changed = false;
-
-    changed |= ImGuiEx::DragVec4("Color", &Color, 0.01f);
-    changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
-
-    return changed;
-}
 
 
 TextureDemo::TextureDemo(
@@ -169,13 +149,13 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         m_Device,
         m_Context
         );
-    m_Texture1->Initialize("Assets\\Image\\icon.png");
+    m_Texture1->Init("Assets\\Image\\icon.png");
 
     m_Texture2 = std::make_unique<Texture>(
         m_Device,
         m_Context
         );
-    m_Texture2->Initialize("Assets\\Image\\sample.png");
+    m_Texture2->Init("Assets\\Image\\sample.png");
 
     m_ConstantBuffer1 = std::make_unique<ConstantBuffer>(
         m_Device,
@@ -197,7 +177,7 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
     //    m_Context,
     //    m_Camera.orthoGraphicMatrix
     //    );
-    //m_BitmapFont->Initialize("test");
+    //m_BitmapFont->Init("test");
 }
 
 

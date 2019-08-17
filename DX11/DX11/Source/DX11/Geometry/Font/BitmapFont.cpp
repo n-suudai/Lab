@@ -4,7 +4,7 @@
 #include "DX11/Utils/MathUtil.h"
 #include "DX11/Graphics/Sampler.h"
 #include "DX11/Graphics/BlendState.h"
-#include "DX11/Graphics/ConstantBuffer.h"
+#include "DX11/Graphics/BufferResource.h"
 
 
 
@@ -39,7 +39,7 @@ void BitmapFont::FileLoad(const std::string& fontName, Font::FontData& out)
     LoadFont(fileName, out);
 }
 
-void BitmapFont::Initialize(const std::string& fontName)
+void BitmapFont::Init(const std::string& fontName)
 {
     // ファイル読み込み
     FileLoad(fontName, m_Data);

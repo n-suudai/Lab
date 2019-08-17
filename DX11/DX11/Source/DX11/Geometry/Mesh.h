@@ -1,71 +1,121 @@
 ﻿#pragma once
 
 #include <string>
-#include "DX11/External/glm/glm_Prerequisites.h"
-#include "DX11/DX11Prerequisites.h"
+#include "DX11/Graphics/Vertex.h"
+#include "DX11/Geometry/Transform.h"
+#include "DX11/Graphics/ConstantBufferData.h"
+#include <tiny_obj_loader.h>
+#include <unordered_map>
+#include <vector>
 
 
-
-enum class VertexFormat
+class Material;
+class Texture;
+struct ModelResource
 {
-    Position,
-    Color,
-    Normal,
-    Tangent,
-    TexCoord1,
-    TexCoord2,
-    TexCoord3,
+    typedef std::unordered_map<std::string, std::shared_ptr<Material>>  MaterialMap;
+    typedef std::unordered_map<std::string, std::shared_ptr<Texture>>   TextureMap;
+
+    MaterialMap Materials;
+    TextureMap  Textures;
 };
 
-class Mesh
+
+class Mesh;
+class Model
 {
 public:
-    struct Vertex
-    {
-        glm::vec4 Position;
-        glm::vec4 Color;
-        glm::vec4 Normal;
-        glm::vec2 TexCoord;
-    };
-
-    Mesh(
+    Model(
         const ComPtr<ID3D11Device>& device,
-        const ComPtr<ID3D11DeviceContext>& context
+        const ComPtr<ID3D11DeviceContext>& context,
+        const std::shared_ptr<ModelResource>& resource
     );
-    virtual ~Mesh();
+    virtual ~Model();
+
+    bool Init(const std::string& filename);
+
+    void Update(const ConstantBufferData& data);
+
+    void Draw();
 
 protected:
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
 
-    std::string m_FileName;
-
-
+    std::vector<std::unique_ptr<Mesh>> m_MeshList;
+    std::weak_ptr<ModelResource>  m_Resource;
 };
 
 
+class VertexBuffer;
+class IndexBuffer;
+class Mesh
+{
+public:
+    Mesh(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3D11DeviceContext>& context,
+        const std::shared_ptr<ModelResource>& resource
+    );
+    virtual ~Mesh();
+
+    bool Init(
+        const tinyobj::attrib_t& attribute,
+        const tinyobj::shape_t& shape,
+        const std::vector<tinyobj::material_t>& materials
+    );
+
+    void Update(const ConstantBufferData& data);
+
+    void Draw();
+
+protected:
+    ComPtr<ID3D11Device>        m_Device;
+    ComPtr<ID3D11DeviceContext> m_Context;
+
+    UINT                            m_VertexCount;
+    UINT                            m_IndexCount;
+    std::unique_ptr<VertexBuffer>   m_VertexBuffer;
+    std::unique_ptr<IndexBuffer>    m_IndexBuffer;
+    std::shared_ptr<Material>       m_Material;
+
+    std::weak_ptr<ModelResource>  m_Resource;
+};
+
+
+class Sampler;
+class BlendState;
 class ConstantBuffer;
 class Shader;
-class Texture;
-class Material
+class RasterizerState;
+class Material : public std::enable_shared_from_this<Material>
 {
 public:
     Material(
         const ComPtr<ID3D11Device>& device,
-        const ComPtr<ID3D11DeviceContext>& context
+        const ComPtr<ID3D11DeviceContext>& context,
+        const std::shared_ptr<ModelResource>& resource
     );
     virtual ~Material();
+
+    bool Init(const tinyobj::material_t& material);
+
+    void Update(const ConstantBufferData& data);
+
+    void Set();
 
 protected:
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
 
-    std::unique_ptr<Shader>         m_Shader;
-    std::unique_ptr<ConstantBuffer> m_ConstantBuffer;
-    std::unique_ptr<Texture>        m_Texture;
+    std::shared_ptr<Texture>            m_Texture;
+    std::unique_ptr<Shader>             m_Shader;
+    std::unique_ptr<Sampler>            m_Sampler;
+    std::unique_ptr<BlendState>         m_BlendState;
+    std::unique_ptr<RasterizerState>    m_RasterizerState;
+    std::unique_ptr<ConstantBuffer>     m_ConstantBuffer;
+    ConstantBufferData                  m_ConstantBufferData;
+
+    std::weak_ptr<ModelResource> m_Resource;
 };
-
-
-
-
 

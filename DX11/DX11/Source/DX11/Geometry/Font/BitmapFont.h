@@ -59,7 +59,7 @@ public:
 
     void FileLoad(const std::string& fileName, Font::FontData& out);
 
-    void Initialize(const std::string& fileName);
+    void Init(const std::string& fileName);
 
     glm::vec4 Put(const glm::vec2& position, const char* pUtf8);
 

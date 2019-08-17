@@ -2,18 +2,19 @@
 
 #include "DX11/Demo/Demo.h"
 #include "DX11/DX11Prerequisites.h"
+#include "DX11/Geometry/Camera.h"
+#include "DX11/Geometry/Transform.h"
 
-class Sampler;
-class Texture;
-class BlendState;
-class ConstantBuffer;
-class BitmapFont;
+
+struct ModelResource;
+class Model;
 class DiffuselightingDemo : public Demo
 {
 public:
     DiffuselightingDemo(
         const ComPtr<ID3D11Device>& device,
-        const ComPtr<ID3D11DeviceContext>& context
+        const ComPtr<ID3D11DeviceContext>& context,
+        const Size2D& clientSize
     );
 
     virtual ~DiffuselightingDemo();
@@ -27,5 +28,11 @@ public:
 private:
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
+
+    std::shared_ptr<ModelResource>  m_Resource;
+    std::unique_ptr<Model>          m_Model;
+    Camera                          m_Camera;
+    Transform                       m_Transform;
+    bool                            m_ForceUpdateModel;
 };
 

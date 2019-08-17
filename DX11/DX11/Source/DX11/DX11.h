@@ -63,7 +63,6 @@ private:
     ComPtr<ID3D11DepthStencilView>  m_DepthStencilView;
     ComPtr<ID3D11Texture2D>         m_DepthStencilTexture;
     ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
-    ComPtr<ID3D11RasterizerState>   m_RasterizerState;
     CD3D11_VIEWPORT                 m_Viewport;
 
     FLOAT                           m_ClearColor[4];

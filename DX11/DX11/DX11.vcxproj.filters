@@ -15,7 +15,6 @@
     <ClInclude Include="Source\DX11\Geometry\Mesh.h" />
     <ClInclude Include="Source\DX11\Geometry\Transform.h" />
     <ClInclude Include="Source\DX11\Graphics\BlendState.h" />
-    <ClInclude Include="Source\DX11\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Source\DX11\Graphics\Sampler.h" />
     <ClInclude Include="Source\DX11\Graphics\Texture.h" />
     <ClInclude Include="Source\DX11\DX11.h" />
@@ -32,6 +31,9 @@
     <ClInclude Include="Source\DX11\Demo\AllDemo.h" />
     <ClInclude Include="Source\DX11\Graphics\Shader.h" />
     <ClInclude Include="Source\DX11\Graphics\RasterizerState.h" />
+    <ClInclude Include="Source\DX11\Graphics\Vertex.h" />
+    <ClInclude Include="Source\DX11\Graphics\BufferResource.h" />
+    <ClInclude Include="Source\DX11\Graphics\ConstantBufferData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -50,7 +52,6 @@
     <ClCompile Include="Source\DX11\Graphics\BlendState.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGui_DX11.cpp" />
     <ClCompile Include="Source\DX11\External\ImGui\ImGuiEx.cpp" />
-    <ClCompile Include="Source\DX11\Graphics\ConstantBuffer.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Transform.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Camera.cpp" />
     <ClCompile Include="Source\DX11\External\lodepng\lodepng_Build.cpp" />
@@ -62,5 +63,8 @@
     <ClCompile Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Shader.cpp" />
     <ClCompile Include="Source\DX11\Graphics\RasterizerState.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Mesh.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\BufferResource.cpp" />
+    <ClCompile Include="Source\DX11\Graphics\ConstantBufferData.cpp" />
   </ItemGroup>
 </Project>

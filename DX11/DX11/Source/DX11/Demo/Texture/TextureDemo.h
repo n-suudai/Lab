@@ -2,9 +2,9 @@
 
 #include "DX11/Demo/Demo.h"
 #include "DX11/DX11Prerequisites.h"
-#include "DX11/External/glm/glm_Prerequisites.h"
 #include "DX11/Geometry/Transform.h"
 #include "DX11/Geometry/Camera.h"
+#include "DX11/Graphics/ConstantBufferData.h"
 
 
 class Sampler;
@@ -16,18 +16,6 @@ class Shader;
 class RasterizerState;
 class TextureDemo : public Demo
 {
-    struct ConstantBufferData
-    {
-        glm::mat4x4 MVPMatrix;
-        glm::vec4   Color;
-        glm::vec2   UVOffset;
-        float       dummy[2];
-
-        ConstantBufferData();
-
-        bool UpdateImGui();
-    };
-
 public:
     TextureDemo(
         const ComPtr<ID3D11Device>& device,

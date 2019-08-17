@@ -410,13 +410,6 @@ bool DX11::CreateBackBuffer(const Size2D& newSize)
     m_Viewport.TopLeftX = 0.0f;
     m_Viewport.TopLeftY = 0.0f;
     m_Context->RSSetViewports(1, &m_Viewport);
-    
-    //return DX11Util::CreateRasterizerState(
-    //    m_Device,
-    //    D3D11_CULL_BACK,
-    //    FALSE,
-    //    m_RasterizerState
-    //);
 
     return true;
 }
@@ -506,7 +499,8 @@ void DX11::Update()
                 {
                     return std::make_unique<DiffuselightingDemo>(
                         m_Device,
-                        m_Context
+                        m_Context,
+                        m_ClientSize
                         );
                 }
 

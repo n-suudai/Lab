@@ -12,12 +12,14 @@ Texture::Texture(
 
 }
 
+
 Texture::~Texture()
 {
 
 }
 
-bool Texture::Initialize(const std::string& fileName)
+
+bool Texture::Init(const std::string& fileName)
 {
     ComPtr<ID3D11Texture2D> texture2D;
     ComPtr<ID3D11ShaderResourceView> shaderResourceView;
@@ -37,6 +39,31 @@ bool Texture::Initialize(const std::string& fileName)
 
     return result;
 }
+
+
+bool Texture::InitAsTextureArray(const std::vector<std::string>& fileNames)
+{
+    ComPtr<ID3D11Texture2D> texture2D;
+    ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+    Size2D textureSize;
+
+    bool result = DX11Util::CreateTextureArrayFromFile(
+        m_Device,
+        fileNames,
+        texture2D,
+        shaderResourceView,
+        textureSize
+    );
+
+    if (result)
+    {
+        m_Texture2D = texture2D;
+        m_ShaderResourceView = shaderResourceView;
+    }
+
+    return result;
+}
+
 
 void Texture::Bind(u32 slot)
 {

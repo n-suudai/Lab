@@ -10,7 +10,7 @@ public:
     // HRESULT 受け取り
     ResultUtil(HRESULT hr);
 
-    ResultUtil(bool result, const std::string& text);
+    ResultUtil(bool result, const std::string& text = "");
 
     ~ResultUtil();
 

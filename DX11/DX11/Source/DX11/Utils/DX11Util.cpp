@@ -1,6 +1,7 @@
 ﻿#include "DX11Util.h"
 #include <lodepng.h>
 #include <d3dcompiler.h>
+#include <algorithm>
 
 
 namespace DX11Util
@@ -424,6 +425,9 @@ namespace DX11Util
     {
         std::vector<std::vector<unsigned char>> images;
         DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        std::vector<DXGI_FORMAT> formats;
+        formats.reserve(fileNames.capacity());
+        images.reserve(fileNames.capacity());
 
         for (auto& fileName : fileNames)
         {
@@ -435,6 +439,20 @@ namespace DX11Util
                 return false;
             }
             images.push_back(std::move(image));
+            formats.push_back(format);
+        }
+
+        ResultUtil result = std::all_of(
+            formats.begin(),
+            formats.end(),
+            [format](DXGI_FORMAT f) -> bool {
+                return format == f;
+            }
+        );
+        if (!result)
+        {
+            result.ShowMessageBox("Texture formats not matched.");
+            return false;
         }
 
         CD3D11_TEXTURE2D_DESC texture2DDesc(
@@ -462,7 +480,7 @@ namespace DX11Util
         }
 
         // テクスチャを生成
-        ResultUtil result = device->CreateTexture2D(
+        result = device->CreateTexture2D(
             &texture2DDesc,
             &subresourceDataArray[0],
             &outTexture2D
