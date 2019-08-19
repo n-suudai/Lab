@@ -33,6 +33,8 @@ private:
     std::unique_ptr<Model>          m_Model;
     Camera                          m_Camera;
     Transform                       m_Transform;
+    glm::vec4                       m_LightDirection; // 逆行列変換前
+
     bool                            m_ForceUpdateModel;
 };
 

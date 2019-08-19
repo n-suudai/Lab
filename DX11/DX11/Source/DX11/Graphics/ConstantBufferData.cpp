@@ -21,3 +21,31 @@ bool ConstantBufferData::UpdateImGui()
     return changed;
 }
 
+
+
+ConstantBufferData_DiffuseLighting::ConstantBufferData_DiffuseLighting()
+    : LightDirection(0.0f)
+    , EyeDirection(0.0f)
+    , DiffuseColor(1.0f)
+    , AmbientColor(0.0f)
+    , SpecularColor(1.0f, 1.0f, 1.0f, 5.0f)
+    , EmissiveColor(0.0f)
+{
+
+}
+
+
+bool ConstantBufferData_DiffuseLighting::UpdateImGui()
+{
+    bool changed = false;
+
+    //changed |= ImGuiEx::DragVec4("LightDirection", &LightDirection, 0.01f);
+    //changed |= ImGuiEx::DragVec4("EyeDirection", &EyeDirection, 0.01f);
+    changed |= ImGuiEx::DragVec4("DiffuseColor", &DiffuseColor, 0.01f);
+    changed |= ImGuiEx::DragVec4("AmbientColor", &AmbientColor, 0.01f);
+    changed |= ImGuiEx::DragVec4("SpecularColor", &SpecularColor, 0.01f);
+    changed |= ImGuiEx::DragVec4("EmissiveColor", &EmissiveColor, 0.01f);
+
+    return changed;
+}
+

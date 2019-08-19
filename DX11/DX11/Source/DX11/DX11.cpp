@@ -400,7 +400,7 @@ bool DX11::CreateBackBuffer(const Size2D& newSize)
     ID3D11RenderTargetView* pRenderTargetViews[] = {
         m_RenderTargetView.Get()
     };
-    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, nullptr);
+    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, m_DepthStencilView.Get());
 
     // ビューポートを設定
     m_Viewport.Width = static_cast<FLOAT>(newSize.width);
@@ -523,6 +523,11 @@ void DX11::Render()
     {
         m_Context->ClearRenderTargetView(m_RenderTargetView.Get(), m_ClearColor);
     }
+
+    // 深度バッファクリア
+    m_Context->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 0);
 
     m_DemoSelector->RenderDemo();
 }

@@ -124,11 +124,11 @@ bool Model::Init(const std::string& filename)
 }
 
 
-void Model::Update(const ConstantBufferData& data)
+void Model::Update()
 {
     for (int i = 0; i < m_MeshList.size(); i++)
     {
-        m_MeshList[i]->Update(data);
+        m_MeshList[i]->Update();
     }
 }
 
@@ -276,11 +276,11 @@ bool Mesh::Init(
 }
 
 
-void Mesh::Update(const ConstantBufferData& data)
+void Mesh::Update()
 {
     if (m_Material)
     {
-        m_Material->Update(data);
+        m_Material->Update();
     }
 }
 
@@ -348,7 +348,18 @@ cbuffer CB0 : register(b0)
     float4x4 MVPMatrix;
     float4 Color;
     float2 UVOffset;
-    float2 dummy;
+    float2 dummy_CB0;
+};
+
+cbuffer CB1 : register(b1)
+{
+    float4 LightDirection;
+    float4 EyeDirection;
+
+    float4 DiffuseColor;
+    float4 AmbientColor;
+    float4 SpecularColor; // w : power
+    float4 EmissiveColor;
 };
 
 struct VS_INPUT {
@@ -375,10 +386,30 @@ VS_OUTPUT vs_main(VS_INPUT In) {
 }
 
 float4 ps_main(VS_OUTPUT In) : SV_TARGET {
-    //return diffuseTexture.Sample(normalSampler, In.texcoord) * In.color;
-    float3 n = normalize(In.normal.xyz);
-    n = saturate(n);
-    return float4(n.x, n.y, n.z, 1.0f);
+
+    //float4 diffuseColor  = diffuseTexture.Sample(linearSampler, In.texcoord);
+    //float4 ambientColor  = float4(1.0, 1.0, 1.0, 1.0);
+    //float4 specularColor = specularTexture.Sample(linearSampler, In.texcoord);
+    //float4 emissiveColor = float4(1.0, 1.0, 1.0, 1.0);
+
+    float4 diffuseColor  = float4(DiffuseColor.xyz, 1.0);
+    float4 ambientColor  = float4(AmbientColor.xyz, 1.0);
+    float4 specularColor = float4(SpecularColor.xyz, 1.0);
+    float4 emissiveColor = float4(EmissiveColor.xyz, 1.0);
+
+    float3 light  = normalize(LightDirection.xyz);
+    float3 eye    = normalize(EyeDirection.xyz);
+    float diffuse = clamp(dot(In.normal.xyz, light), 0.1, 1.0);
+
+    float3 halfLE  = normalize(light + eye);
+    float specular = pow(clamp(dot(In.normal.xyz, halfLE), 0.0, 1.0), SpecularColor.w);
+
+    float4 color = In.color * diffuseColor * float4(diffuse, diffuse, diffuse, 1.0);
+    color += ambientColor;
+    color += float4(specular * specularColor.x, specular * specularColor.y, specular * specularColor.z, 1.0);
+    color += emissiveColor;
+
+    return color;
 }
 )";
 
@@ -412,25 +443,54 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
         m_Context
         );
 
-    m_ConstantBuffer = std::make_unique<ConstantBuffer>(
-        m_Device,
-        m_Context,
-        &m_ConstantBufferData,
-        sizeof(ConstantBufferData)
-        );
+    auto make_cbuffer = [&](void* initData, size_t size)
+    {
+        std::unique_ptr<ConstantBuffer> cbuffer = std::make_unique<ConstantBuffer>(
+            m_Device,
+            m_Context,
+            initData,
+            size
+            );
+        m_ConstantBuffers.push_back(std::move(cbuffer));
+    };
+
+    make_cbuffer(&m_CB0, sizeof(ConstantBufferData));
+    make_cbuffer(&m_CB1, sizeof(ConstantBufferData_DiffuseLighting));
 
     return true;
 }
 
 
-void Material::Update(const ConstantBufferData& data)
+void Material::Update()
 {
-    m_ConstantBufferData = data;
-
-    if (m_ConstantBuffer)
+    if (m_ConstantBufferChanged)
     {
-        m_ConstantBuffer->Update(&m_ConstantBufferData);
+        m_ConstantBuffers[0]->Update(&m_CB0);
+        m_ConstantBuffers[1]->Update(&m_CB1);
+
+        m_ConstantBufferChanged = false;
     }
+}
+
+
+void Material::SetMVPMatrix(const glm::mat4x4& mvpMatrix)
+{
+    m_CB0.MVPMatrix = mvpMatrix;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetEyeDirection(const glm::vec4& eyeDirection)
+{
+    m_CB1.EyeDirection = eyeDirection;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetLightDirection(const glm::vec4& lightDirection)
+{
+    m_CB1.LightDirection = lightDirection;
+    m_ConstantBufferChanged = true;
 }
 
 
@@ -464,10 +524,14 @@ void Material::Set()
         m_Shader->SetAll();
     }
 
-    if (m_ConstantBuffer)
+    for (size_t i = 0; i < m_ConstantBuffers.size(); i++)
     {
-        m_ConstantBuffer->SetVS();
-        m_ConstantBuffer->SetPS();
+        if (m_ConstantBuffers[i])
+        {
+            m_ConstantBuffers[i]->SetVS(static_cast<u32>(i));
+            m_ConstantBuffers[i]->SetPS(static_cast<u32>(i));
+        }
     }
+
 }
 

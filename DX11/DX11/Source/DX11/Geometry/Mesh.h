@@ -34,7 +34,7 @@ public:
 
     bool Init(const std::string& filename);
 
-    void Update(const ConstantBufferData& data);
+    void Update();
 
     void Draw();
 
@@ -65,7 +65,7 @@ public:
         const std::vector<tinyobj::material_t>& materials
     );
 
-    void Update(const ConstantBufferData& data);
+    void Update();
 
     void Draw();
 
@@ -100,7 +100,11 @@ public:
 
     bool Init(const tinyobj::material_t& material);
 
-    void Update(const ConstantBufferData& data);
+    void Update();
+
+    void SetMVPMatrix(const glm::mat4x4& mvpMatrix);
+    void SetEyeDirection(const glm::vec4& eyeDirection);
+    void SetLightDirection(const glm::vec4& lightDirection);
 
     void Set();
 
@@ -113,9 +117,13 @@ protected:
     std::unique_ptr<Sampler>            m_Sampler;
     std::unique_ptr<BlendState>         m_BlendState;
     std::unique_ptr<RasterizerState>    m_RasterizerState;
-    std::unique_ptr<ConstantBuffer>     m_ConstantBuffer;
-    ConstantBufferData                  m_ConstantBufferData;
 
+    ConstantBufferData                  m_CB0;
+    ConstantBufferData_DiffuseLighting  m_CB1;
+
+    bool m_ConstantBufferChanged;
+
+    std::vector<std::unique_ptr<ConstantBuffer>> m_ConstantBuffers;
     std::weak_ptr<ModelResource> m_Resource;
 };
 
