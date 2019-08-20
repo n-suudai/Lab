@@ -42,6 +42,8 @@ private:
     ComPtr<ID3D11Buffer>        m_VertexBuffer;
     ComPtr<ID3D11Buffer>        m_IndexBuffer;
 
+    ComPtr<ID3D11DepthStencilState> m_DepthStencilState;
+
     std::unique_ptr<Shader>             m_Shader;
     std::unique_ptr<Sampler>            m_Sampler;
     std::unique_ptr<BlendState>         m_BlendState;

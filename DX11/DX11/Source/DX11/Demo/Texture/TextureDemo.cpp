@@ -33,6 +33,21 @@ TextureDemo::TextureDemo(
     , m_IndexCount(0)
     , m_ForceUpdateConstantBuffer(false)
 {
+    // 深度ステンシルステートを作成する
+    CD3D11_DEPTH_STENCIL_DESC depthStencilDesc(D3D11_DEFAULT);
+    depthStencilDesc.DepthEnable = FALSE;
+    depthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+
+    ResultUtil result = m_Device->CreateDepthStencilState(
+        &depthStencilDesc,
+        &m_DepthStencilState
+    );
+    if (!result)
+    {
+        result.ShowMessageBox("m_Device->CreateDepthStencilState");
+        return;
+    }
+
     m_Camera.eye = glm::vec3(0.0f, 2.8f, -6.0f);
     m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
     m_Camera.screenSize.x = static_cast<float>(clientSize.width);
@@ -266,6 +281,8 @@ void TextureDemo::Update()
 
 void TextureDemo::Render()
 {
+    m_Context->OMSetDepthStencilState(m_DepthStencilState.Get(), 0);
+
     m_Shader->ResetAll(); // 一応
     m_Shader->SetAll();
 
