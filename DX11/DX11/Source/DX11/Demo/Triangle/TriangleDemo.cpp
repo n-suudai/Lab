@@ -40,7 +40,6 @@ TriangleDemo::TriangleDemo(
         m_VertexBuffer
     );
 
-
     const u16 indices[] = { 0, 2, 1 };
     m_IndexCount = _countof(indices);
 

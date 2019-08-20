@@ -7,6 +7,58 @@
 #include "DX11/Graphics/RasterizerState.h"
 #include "DX11/Graphics/BlendState.h"
 #include "DX11/Utils/PathUtil.h"
+#include "DX11/External/ImGui/ImGui_DX11.h"
+
+
+
+bool ModelResource::UpdateImGui()
+{
+    bool changed = false;
+
+    ImGui::Text("Materials");
+    {
+        MaterialMap::iterator it = Materials.begin();
+        while (it != Materials.end())
+        {
+            ImGui::PushID(it->first.data());
+
+            if (ImGui::TreeNode(it->first.c_str()))
+            {
+                //it->second->UpdateImGui();
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopID();
+
+            it++;
+        }
+    }
+
+    ImGui::Separator();
+
+    ImGui::Text("Textures");
+    {
+        TextureMap::iterator it = Textures.begin();
+        while (it != Textures.end())
+        {
+            ImGui::PushID(it->first.data());
+
+            if (ImGui::TreeNode(it->first.c_str()))
+            {
+                //it->second->UpdateImGui();
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopID();
+
+            it++;
+        }
+    }
+
+    return changed;
+}
 
 
 Model::Model(
@@ -241,6 +293,14 @@ bool Mesh::Init(
             {
                 m_Material = (*it).second;
             }
+            else
+            {
+                it = resource->Materials.find("Default");
+                if (it != resource->Materials.end())
+                {
+                    m_Material = (*it).second;
+                }
+            }
         }
     }
 
@@ -301,45 +361,7 @@ void Mesh::Draw()
 }
 
 
-Material::Material(
-    const ComPtr<ID3D11Device>& device,
-    const ComPtr<ID3D11DeviceContext>& context,
-    const std::shared_ptr<ModelResource>& resource
-)
-    : m_Device(device)
-    , m_Context(context)
-    , m_Resource(resource)
-{
-
-}
-
-
-Material::~Material()
-{
-
-}
-
-
-bool Material::Init(const tinyobj::material_t& material)
-{
-    if (m_Resource.expired())
-    {
-        return false;
-    }
-
-    {
-        std::shared_ptr<ModelResource> resource = m_Resource.lock();
-        ModelResource::TextureMap::iterator it = resource->Textures.find(
-            PathUtil::GetFileNameWithoutExtension(material.diffuse_texname)
-        );
-
-        if (it != resource->Textures.end())
-        {
-            m_Texture = (*it).second;
-        }
-    }
-
-    std::string shaderCode = R"(
+static const char* g_shaderCode = R"(
 //Texture2D diffuseTexture : register(t0);
 //SamplerState normalSampler : register(s0);
 
@@ -413,12 +435,51 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
 }
 )";
 
+
+Material::Material(
+    const ComPtr<ID3D11Device>& device,
+    const ComPtr<ID3D11DeviceContext>& context,
+    const std::shared_ptr<ModelResource>& resource
+)
+    : m_Device(device)
+    , m_Context(context)
+    , m_Resource(resource)
+{
+
+}
+
+
+Material::~Material()
+{
+
+}
+
+
+bool Material::Init(const tinyobj::material_t& material)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    {
+        std::shared_ptr<ModelResource> resource = m_Resource.lock();
+        ModelResource::TextureMap::iterator it = resource->Textures.find(
+            PathUtil::GetFileNameWithoutExtension(material.diffuse_texname)
+        );
+
+        if (it != resource->Textures.end())
+        {
+            m_Texture = (*it).second;
+        }
+    }
+
     m_Shader = std::make_unique<Shader>(
         m_Device,
         m_Context
         );
     bool result = m_Shader->Init(
-        shaderCode,
+        g_shaderCode,
         SHADER_USE_FLAG_VS | SHADER_USE_FLAG_PS,
         Vertex_PositionColorNormalTexture::InputElements,
         Vertex_PositionColorNormalTexture::ElementsCount
@@ -457,6 +518,83 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
     make_cbuffer(&m_CB0, sizeof(ConstantBufferData));
     make_cbuffer(&m_CB1, sizeof(ConstantBufferData_DiffuseLighting));
 
+    SetDiffuseColor(glmEx::to_vec3(material.diffuse));
+    SetAmbientColor(glmEx::to_vec3(material.ambient));
+    SetSpecularColor(glmEx::to_vec3(material.specular));
+    SetEmissiveColor(glmEx::to_vec3(material.emission));
+    SetSpecularPower(material.shininess);
+
+    return true;
+}
+
+
+bool Material::InitDefault()
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    {
+        std::shared_ptr<ModelResource> resource = m_Resource.lock();
+        ModelResource::TextureMap::iterator it = resource->Textures.find("diffuse_default");
+
+        if (it != resource->Textures.end())
+        {
+            m_Texture = (*it).second;
+        }
+    }
+
+    m_Shader = std::make_unique<Shader>(
+        m_Device,
+        m_Context
+        );
+    bool result = m_Shader->Init(
+        g_shaderCode,
+        SHADER_USE_FLAG_VS | SHADER_USE_FLAG_PS,
+        Vertex_PositionColorNormalTexture::InputElements,
+        Vertex_PositionColorNormalTexture::ElementsCount
+    );
+    if (!result)
+    {
+        return false;
+    }
+
+    m_Sampler = std::make_unique<Sampler>(
+        m_Device,
+        m_Context
+        );
+
+    m_BlendState = std::make_unique<BlendState>(
+        m_Device,
+        m_Context
+        );
+
+    m_RasterizerState = std::make_unique<RasterizerState>(
+        m_Device,
+        m_Context
+        );
+
+    auto make_cbuffer = [&](void* initData, size_t size)
+    {
+        std::unique_ptr<ConstantBuffer> cbuffer = std::make_unique<ConstantBuffer>(
+            m_Device,
+            m_Context,
+            initData,
+            size
+            );
+        m_ConstantBuffers.push_back(std::move(cbuffer));
+    };
+
+    make_cbuffer(&m_CB0, sizeof(ConstantBufferData));
+    make_cbuffer(&m_CB1, sizeof(ConstantBufferData_DiffuseLighting));
+
+    SetDiffuseColor(glm::vec3(0.3f, 0.3f, 0.3f));
+    SetAmbientColor(glm::vec3(0.0f, 0.0f, 0.0f));
+    SetSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f));
+    SetEmissiveColor(glm::vec3(0.0f, 0.0f, 0.0f));
+    SetSpecularPower(5.0f);
+
     return true;
 }
 
@@ -490,6 +628,49 @@ void Material::SetEyeDirection(const glm::vec4& eyeDirection)
 void Material::SetLightDirection(const glm::vec4& lightDirection)
 {
     m_CB1.LightDirection = lightDirection;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetDiffuseColor(const glm::vec3& diffuseColor)
+{
+    m_CB1.DiffuseColor.r = diffuseColor.r;
+    m_CB1.DiffuseColor.g = diffuseColor.g;
+    m_CB1.DiffuseColor.b = diffuseColor.b;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetAmbientColor(const glm::vec3& ambientColor)
+{
+    m_CB1.AmbientColor.r = ambientColor.r;
+    m_CB1.AmbientColor.g = ambientColor.g;
+    m_CB1.AmbientColor.b = ambientColor.b;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetSpecularColor(const glm::vec3& specularColor)
+{
+    m_CB1.SpecularColor.r = specularColor.r;
+    m_CB1.SpecularColor.g = specularColor.g;
+    m_CB1.SpecularColor.b = specularColor.b;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetEmissiveColor(const glm::vec3& emissiveColor)
+{
+    m_CB1.EmissiveColor.r = emissiveColor.r;
+    m_CB1.EmissiveColor.g = emissiveColor.g;
+    m_CB1.EmissiveColor.b = emissiveColor.b;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetSpecularPower(float power)
+{
+    m_CB1.SpecularColor.w = power;
     m_ConstantBufferChanged = true;
 }
 

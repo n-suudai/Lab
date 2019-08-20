@@ -18,6 +18,8 @@ struct ModelResource
 
     MaterialMap Materials;
     TextureMap  Textures;
+
+    bool UpdateImGui();
 };
 
 
@@ -99,12 +101,20 @@ public:
     virtual ~Material();
 
     bool Init(const tinyobj::material_t& material);
+    bool InitDefault();
 
     void Update();
 
     void SetMVPMatrix(const glm::mat4x4& mvpMatrix);
     void SetEyeDirection(const glm::vec4& eyeDirection);
     void SetLightDirection(const glm::vec4& lightDirection);
+
+    void SetDiffuseColor(const glm::vec3& diffuseColor);
+    void SetAmbientColor(const glm::vec3& ambientColor);
+    void SetSpecularColor(const glm::vec3& specularColor);
+    void SetEmissiveColor(const glm::vec3& emissiveColor);
+
+    void SetSpecularPower(float power);
 
     void Set();
 

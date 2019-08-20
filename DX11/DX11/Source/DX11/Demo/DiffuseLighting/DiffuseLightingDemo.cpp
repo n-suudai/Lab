@@ -15,12 +15,25 @@ DiffuselightingDemo::DiffuselightingDemo(
 {
     m_Resource = std::make_shared<ModelResource>();
 
+    std::shared_ptr<Material> defaultMaterial = std::make_shared<Material>(
+        m_Device,
+        m_Context,
+        m_Resource
+        );
+    defaultMaterial->InitDefault();
+    m_Resource->Materials.insert(
+        {
+            "Default",
+            defaultMaterial
+        }
+    );
+
     m_Model = std::make_unique<Model>(
         m_Device,
         m_Context,
         m_Resource
         );
-    m_Model->Init("Assets\\Model\\cat\\cat.obj");
+    m_Model->Init("Assets\\Model\\monkey\\monkey.obj");
 
     m_Camera.eye = glm::vec3(0.0f, 2.8f, 6.0f);
     m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -44,6 +57,10 @@ DiffuselightingDemo::~DiffuselightingDemo()
 
 void DiffuselightingDemo::Update()
 {
+    m_Resource->UpdateImGui();
+
+    ImGui::Separator();
+
     bool changed = m_ForceUpdateModel;
 
     changed |= ImGuiEx::DragVec4("LightDirection", &m_LightDirection, 0.01f);
