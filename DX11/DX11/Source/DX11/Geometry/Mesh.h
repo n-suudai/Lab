@@ -11,13 +11,18 @@
 
 class Material;
 class Texture;
-struct ModelResource
+struct ModelResource : public std::enable_shared_from_this<ModelResource>
 {
     typedef std::unordered_map<std::string, std::shared_ptr<Material>>  MaterialMap;
     typedef std::unordered_map<std::string, std::shared_ptr<Texture>>   TextureMap;
 
     MaterialMap Materials;
     TextureMap  Textures;
+
+    bool InitDefault(
+        const ComPtr<ID3D11Device>& device,
+        const ComPtr<ID3D11DeviceContext>& context
+    );
 
     bool UpdateImGui();
 };
@@ -35,6 +40,8 @@ public:
     virtual ~Model();
 
     bool Init(const std::string& filename);
+
+    bool InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color);
 
     void Update();
 
@@ -66,6 +73,9 @@ public:
         const tinyobj::shape_t& shape,
         const std::vector<tinyobj::material_t>& materials
     );
+
+    // トーラスとして初期化
+    bool InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color);
 
     void Update();
 
@@ -117,6 +127,8 @@ public:
 
     void SetSpecularPower(float power);
 
+    void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology);
+
     void Set();
 
 protected:
@@ -131,6 +143,8 @@ protected:
 
     ConstantBufferData                  m_CB0;
     ConstantBufferData_DiffuseLighting  m_CB1;
+
+    D3D_PRIMITIVE_TOPOLOGY              m_PrimitiveTopology;
 
     bool m_ConstantBufferChanged;
 

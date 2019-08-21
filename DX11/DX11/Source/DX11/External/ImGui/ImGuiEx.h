@@ -61,5 +61,13 @@ namespace ImGuiEx
     bool DragVec3(const char* label, glm::vec3* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* format = "%.3f", float power = 1.0f);
     
     bool DragVec4(const char* label, glm::vec4* v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char* format = "%.3f", float power = 1.0f);
+
+
+    //----------------------
+    // ColorEdit
+    //----------------------
+    bool ColorEdit4(const char* label, glm::vec4* v, ImGuiColorEditFlags flags = 0);
+
+    bool ColorEdit3(const char* label, glm::vec4* v, ImGuiColorEditFlags flags = 0);
 }
 

@@ -11,6 +11,50 @@
 
 
 
+bool ModelResource::InitDefault(
+    const ComPtr<ID3D11Device>& device,
+    const ComPtr<ID3D11DeviceContext>& context
+)
+{
+    std::string defaultTextureNames[] = {
+        "Assets\\Image\\default_diffuse.png",
+        "Assets\\Image\\default_specular.png",
+    };
+
+    for (int i = 0; i < _countof(defaultTextureNames); i++)
+    {
+        std::shared_ptr<Texture> texture = std::make_shared<Texture>(
+            device,
+            context
+            );
+        texture->Init(PathUtil::GetFullPath(defaultTextureNames[i]));
+
+        Textures.insert(
+            {
+                PathUtil::GetFileNameWithoutExtension(defaultTextureNames[i]),
+                texture
+            }
+        );
+    }
+
+    std::shared_ptr<Material> defaultMaterial = std::make_shared<Material>(
+        device,
+        context,
+        shared_from_this()
+        );
+
+    defaultMaterial->InitDefault();
+    Materials.insert(
+        {
+            "Default",
+            defaultMaterial
+        }
+    );
+
+    return true;
+}
+
+
 bool ModelResource::UpdateImGui()
 {
     bool changed = false;
@@ -176,6 +220,32 @@ bool Model::Init(const std::string& filename)
 }
 
 
+bool Model::InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    m_MeshList.resize(1);
+
+    m_MeshList[0] = std::make_unique<Mesh>(
+        m_Device,
+        m_Context,
+        resource
+        );
+    return m_MeshList[0]->InitAsTorus(
+        row,
+        column,
+        irad,
+        orad,
+        color
+    );
+}
+
+
 void Model::Update()
 {
     for (int i = 0; i < m_MeshList.size(); i++)
@@ -293,14 +363,15 @@ bool Mesh::Init(
             {
                 m_Material = (*it).second;
             }
-            else
-            {
-                it = resource->Materials.find("Default");
-                if (it != resource->Materials.end())
-                {
-                    m_Material = (*it).second;
-                }
-            }
+        }
+    }
+
+    if (!m_Material)
+    {
+        ModelResource::MaterialMap::iterator it = resource->Materials.find("Default");
+        if (it != resource->Materials.end())
+        {
+            m_Material = (*it).second;
         }
     }
 
@@ -313,6 +384,122 @@ bool Mesh::Init(
         indices[3 * face_index + 0] = static_cast<u16>(3 * face_index + 0);
         indices[3 * face_index + 1] = static_cast<u16>(3 * face_index + 1);
         indices[3 * face_index + 2] = static_cast<u16>(3 * face_index + 2);
+    }
+
+    m_VertexCount = static_cast<UINT>(vertices.size());
+
+    m_IndexCount = static_cast<UINT>(indices.size());
+
+    m_VertexBuffer = std::make_unique<VertexBuffer>(
+        m_Device,
+        m_Context,
+        vertices.data(),
+        sizeof(Vertex_PositionColorNormalTexture) * vertices.size()
+        );
+
+    m_IndexBuffer = std::make_unique<IndexBuffer>(
+        m_Device,
+        m_Context,
+        indices
+        );
+
+    return true;
+}
+
+
+// トーラスとして初期化
+bool Mesh::InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* colorIn)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    if (!m_Material)
+    {
+        ModelResource::MaterialMap::iterator it = resource->Materials.find("Default");
+        if (it != resource->Materials.end())
+        {
+            m_Material = (*it).second;
+        }
+    }
+
+    std::vector<Vertex_PositionColorNormalTexture> vertices;   // 頂点配列
+    std::vector<u16>    indices;    // インデックス配列
+
+    constexpr float PI = glm::pi<float>();
+
+    // 頂点配列を作成
+    for (u16 ix = 0; ix <= row; ++ix)
+    {
+        f32 r = PI * 2.0f / row * ix;
+        f32 rr = std::cosf(r);
+        f32 ry = std::sinf(r);
+
+        for (u16 iy = 0; iy <= column; ++iy)
+        {
+            f32 tr = PI * 2.0f / column * iy;
+
+            Vertex_PositionColorNormalTexture v;
+            // 頂点
+            v.Position.x = (rr * irad + orad) * std::cosf(tr);
+            v.Position.y = ry * irad;
+            v.Position.z = (rr * irad + orad) * std::sinf(tr);
+            v.Position.w = 1.0f;
+
+            // 頂点色
+            if (colorIn != nullptr)
+            {
+                v.Color.x = colorIn->x;
+                v.Color.y = colorIn->y;
+                v.Color.z = colorIn->z;
+                v.Color.w = colorIn->w;
+            }
+            else
+            {
+                glm::vec3 color = glm::rgbColor(glm::vec3(360.0f / column * iy, 1.0f, 1.0f));
+                v.Color.x = color.x;
+                v.Color.y = color.y;
+                v.Color.z = color.z;
+                v.Color.w = 1.0f;
+            }
+
+            // 法線
+            v.Normal.x = rr * std::cosf(tr);
+            v.Normal.y = ry;
+            v.Normal.z = rr * std::sinf(tr);
+            v.Normal.w = 1.0f;
+
+            // テクスチャ座標
+            v.Texture.x = 1.0f / column * iy;
+            v.Texture.y = 1.0f / row * ix + 0.5f;
+            if (v.Texture.y > 1.0f)
+            {
+                v.Texture.y -= 1.0f;
+            }
+            v.Texture.y = 1.0f - v.Texture.y;
+
+            vertices.push_back(v);
+        }
+    }
+
+    // インデックス配列を作成
+    for (u16 ix = 0; ix < row; ++ix)
+    {
+        for (u16 iy = 0; iy < column; ++iy)
+        {
+            u16 r = (column + 1) * ix + iy;
+
+            indices.push_back(r);
+            indices.push_back(r + column + 1);
+            indices.push_back(r + 1);
+
+            indices.push_back(r + column + 1);
+            indices.push_back(r + column + 2);
+            indices.push_back(r + 1);
+        }
     }
 
     m_VertexCount = static_cast<UINT>(vertices.size());
@@ -362,8 +549,8 @@ void Mesh::Draw()
 
 
 static const char* g_shaderCode = R"(
-//Texture2D diffuseTexture : register(t0);
-//SamplerState normalSampler : register(s0);
+Texture2D diffuseTexture : register(t0);
+SamplerState normalSampler : register(s0);
 
 cbuffer CB0 : register(b0)
 {
@@ -409,12 +596,12 @@ VS_OUTPUT vs_main(VS_INPUT In) {
 
 float4 ps_main(VS_OUTPUT In) : SV_TARGET {
 
-    //float4 diffuseColor  = diffuseTexture.Sample(linearSampler, In.texcoord);
+    float4 diffuseColor  = diffuseTexture.Sample(normalSampler, In.texcoord);
     //float4 ambientColor  = float4(1.0, 1.0, 1.0, 1.0);
-    //float4 specularColor = specularTexture.Sample(linearSampler, In.texcoord);
+    //float4 specularColor = specularTexture.Sample(normalSampler, In.texcoord);
     //float4 emissiveColor = float4(1.0, 1.0, 1.0, 1.0);
 
-    float4 diffuseColor  = float4(DiffuseColor.xyz, 1.0);
+    diffuseColor  = diffuseColor * float4(DiffuseColor.xyz, 1.0);
     float4 ambientColor  = float4(AmbientColor.xyz, 1.0);
     float4 specularColor = float4(SpecularColor.xyz, 1.0);
     float4 emissiveColor = float4(EmissiveColor.xyz, 1.0);
@@ -444,6 +631,7 @@ Material::Material(
     : m_Device(device)
     , m_Context(context)
     , m_Resource(resource)
+    , m_PrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
 {
 
 }
@@ -537,7 +725,7 @@ bool Material::InitDefault()
 
     {
         std::shared_ptr<ModelResource> resource = m_Resource.lock();
-        ModelResource::TextureMap::iterator it = resource->Textures.find("diffuse_default");
+        ModelResource::TextureMap::iterator it = resource->Textures.find("default_diffuse");
 
         if (it != resource->Textures.end())
         {
@@ -589,7 +777,7 @@ bool Material::InitDefault()
     make_cbuffer(&m_CB0, sizeof(ConstantBufferData));
     make_cbuffer(&m_CB1, sizeof(ConstantBufferData_DiffuseLighting));
 
-    SetDiffuseColor(glm::vec3(0.3f, 0.3f, 0.3f));
+    SetDiffuseColor(glm::vec3(1.0f, 1.0f, 1.0f));
     SetAmbientColor(glm::vec3(0.0f, 0.0f, 0.0f));
     SetSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f));
     SetEmissiveColor(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -706,9 +894,15 @@ void Material::SetSpecularPower(float power)
 }
 
 
+void Material::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitiveTopology)
+{
+    m_PrimitiveTopology = primitiveTopology;
+}
+
+
 void Material::Set()
 {
-    m_Context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_Context->IASetPrimitiveTopology(m_PrimitiveTopology);
 
     if (m_Texture)
     {

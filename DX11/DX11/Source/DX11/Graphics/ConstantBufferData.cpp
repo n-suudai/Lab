@@ -15,7 +15,7 @@ bool ConstantBufferData::UpdateImGui()
 {
     bool changed = false;
 
-    changed |= ImGuiEx::DragVec4("Color", &Color, 0.01f);
+    changed |= ImGuiEx::ColorEdit4("Color", &Color);
     changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
 
     return changed;
@@ -41,10 +41,11 @@ bool ConstantBufferData_DiffuseLighting::UpdateImGui()
 
     //changed |= ImGuiEx::DragVec4("LightDirection", &LightDirection, 0.01f);
     //changed |= ImGuiEx::DragVec4("EyeDirection", &EyeDirection, 0.01f);
-    changed |= ImGuiEx::DragVec4("DiffuseColor", &DiffuseColor, 0.01f);
-    changed |= ImGuiEx::DragVec4("AmbientColor", &AmbientColor, 0.01f);
-    changed |= ImGuiEx::DragVec4("SpecularColor", &SpecularColor, 0.01f);
-    changed |= ImGuiEx::DragVec4("EmissiveColor", &EmissiveColor, 0.01f);
+    changed |= ImGuiEx::ColorEdit4("DiffuseColor", &DiffuseColor);
+    changed |= ImGuiEx::ColorEdit4("AmbientColor", &AmbientColor);
+    changed |= ImGuiEx::ColorEdit3("SpecularColor", &SpecularColor);
+    changed |= ImGuiEx::ColorEdit4("EmissiveColor", &EmissiveColor);
+    changed |= ImGui::DragFloat("SpecularPower", &SpecularColor.w, 1.0f, 0.0f, 100.0f);
 
     return changed;
 }

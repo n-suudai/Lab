@@ -115,3 +115,18 @@ bool ImGuiEx::DragVec4(const char* label, glm::vec4* v, float v_speed, float v_m
     return ImGui::DragScalarN(label, ImGuiDataType_Float, reinterpret_cast<float*>(v), 4, v_speed, &v_min, &v_max, format, power);
 }
 
+
+//----------------------
+// ColorEdit
+//----------------------
+bool ImGuiEx::ColorEdit4(const char* label, glm::vec4* v, ImGuiColorEditFlags flags)
+{
+    return ImGui::ColorEdit4(label, &(*v)[0], flags);
+}
+
+
+bool ImGuiEx::ColorEdit3(const char* label, glm::vec4* v, ImGuiColorEditFlags flags)
+{
+    return ImGui::ColorEdit3(label, &(*v)[0], flags);
+}
+

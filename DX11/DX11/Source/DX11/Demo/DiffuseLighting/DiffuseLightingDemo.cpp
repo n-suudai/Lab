@@ -14,26 +14,19 @@ DiffuselightingDemo::DiffuselightingDemo(
     , m_ForceUpdateModel(false)
 {
     m_Resource = std::make_shared<ModelResource>();
-
-    std::shared_ptr<Material> defaultMaterial = std::make_shared<Material>(
+    m_Resource->InitDefault(
         m_Device,
-        m_Context,
-        m_Resource
-        );
-    defaultMaterial->InitDefault();
-    m_Resource->Materials.insert(
-        {
-            "Default",
-            defaultMaterial
-        }
+        m_Context
     );
 
+    glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
     m_Model = std::make_unique<Model>(
         m_Device,
         m_Context,
         m_Resource
         );
-    m_Model->Init("Assets\\Model\\monkey\\monkey.obj");
+    //m_Model->Init("Assets\\Model\\monkey\\monkey.obj");
+    m_Model->InitAsTorus(32, 32, 0.5f, 1.5f, &color);
 
     m_Camera.eye = glm::vec3(0.0f, 2.8f, 6.0f);
     m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -57,11 +50,19 @@ DiffuselightingDemo::~DiffuselightingDemo()
 
 void DiffuselightingDemo::Update()
 {
-    m_Resource->UpdateImGui();
+    bool changed = m_ForceUpdateModel;
+
+    static f32 delta = 0.0f;
+    delta += 0.003f;
+
+    m_Transform.rotate.y = delta;
+    m_Transform.rotate.z = delta;
+    m_Transform.UpdateMatrix();
+    changed = true;
+
+    changed |= m_Resource->UpdateImGui();
 
     ImGui::Separator();
-
-    bool changed = m_ForceUpdateModel;
 
     changed |= ImGuiEx::DragVec4("LightDirection", &m_LightDirection, 0.01f);
 
@@ -82,7 +83,7 @@ void DiffuselightingDemo::Update()
     {
         glm::mat4x4 inverseModelMatrix = glm::inverse(m_Transform.matrix);
 
-        glm::vec4 eyeDirection = inverseModelMatrix * glm::vec4(m_Camera.center - m_Camera.eye, 1.0f);
+        glm::vec4 eyeDirection = inverseModelMatrix * glm::vec4(m_Camera.eye - m_Camera.center, 1.0f);
         glm::normalize(eyeDirection);
 
         glm::vec4 lightDirection = inverseModelMatrix * m_LightDirection;
