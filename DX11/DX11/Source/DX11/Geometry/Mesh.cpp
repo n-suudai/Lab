@@ -24,7 +24,7 @@ bool ModelResource::UpdateImGui()
 
             if (ImGui::TreeNode(it->first.c_str()))
             {
-                //it->second->UpdateImGui();
+                changed |= it->second->UpdateImGui();
 
                 ImGui::TreePop();
             }
@@ -596,6 +596,37 @@ bool Material::InitDefault()
     SetSpecularPower(5.0f);
 
     return true;
+}
+
+
+bool Material::UpdateImGui()
+{
+    bool changed = false;
+
+    m_Sampler->UpdateImGui();
+
+    m_BlendState->UpdateImGui();
+
+    m_RasterizerState->UpdateImGui();
+
+    ImGui::Text("ConstantBuffers");
+    if (ImGui::TreeNode("CB0"))
+    {
+        changed |= m_CB0.UpdateImGui();
+        m_ConstantBufferChanged = true;
+        ImGui::TreePop();
+    }
+    
+    if (ImGui::TreeNode("CB1"))
+    {
+        changed |= m_CB1.UpdateImGui();
+        m_ConstantBufferChanged = true;
+        ImGui::TreePop();
+    }
+
+    m_Shader->UpdateImGui();
+
+    return changed;
 }
 
 

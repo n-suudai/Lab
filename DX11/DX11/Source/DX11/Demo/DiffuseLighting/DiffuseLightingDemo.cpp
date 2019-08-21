@@ -74,7 +74,6 @@ void DiffuselightingDemo::Update()
     if (m_Transform.UpdateImGui("ModelTransform"))
     {
         m_Transform.UpdateMatrix();
-
         changed = true;
     }
 

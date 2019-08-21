@@ -103,6 +103,7 @@ public:
     bool Init(const tinyobj::material_t& material);
     bool InitDefault();
 
+    bool UpdateImGui();
     void Update();
 
     void SetMVPMatrix(const glm::mat4x4& mvpMatrix);
