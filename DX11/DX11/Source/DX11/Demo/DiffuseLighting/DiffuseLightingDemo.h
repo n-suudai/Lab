@@ -26,6 +26,16 @@ public:
     virtual void OnResizedBuffer(const Size2D& size) override;
 
 private:
+    enum ModelType
+    {
+        ModelType_Cube,
+        ModelType_Sphere,
+        ModelType_Torus,
+        ModelType_Cylinder,
+        ModelType_File,
+        ModelType_Num,
+    };
+
     ComPtr<ID3D11Device>        m_Device;
     ComPtr<ID3D11DeviceContext> m_Context;
 
@@ -34,6 +44,9 @@ private:
     Camera                          m_Camera;
     Transform                       m_Transform;
     glm::vec4                       m_LightDirection; // 逆行列変換前
+
+    ModelType                       m_ModelType;
+    bool                            m_EnableRotateAnimation;
 
     bool                            m_ForceUpdateModel;
 };

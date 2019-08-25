@@ -236,13 +236,119 @@ bool Model::InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4
         m_Context,
         resource
         );
-    return m_MeshList[0]->InitAsTorus(
+
+    bool result = m_MeshList[0]->InitAsTorus(
         row,
         column,
         irad,
         orad,
         color
     );
+
+    if (!result)
+    {
+        m_MeshList.clear();
+    }
+
+    return result;
+}
+
+
+bool Model::InitAsSphere(u16 x, u16 y, f32 rad, const glm::vec4* color)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    m_MeshList.resize(1);
+
+    m_MeshList[0] = std::make_unique<Mesh>(
+        m_Device,
+        m_Context,
+        resource
+        );
+
+    bool result = m_MeshList[0]->InitAsSphere(
+        x,
+        y,
+        rad,
+        color
+    );
+
+    if (!result)
+    {
+        m_MeshList.clear();
+    }
+
+    return result;
+}
+
+
+bool Model::InitAsCube(f32 scale, const glm::vec4* color)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    m_MeshList.resize(1);
+
+    m_MeshList[0] = std::make_unique<Mesh>(
+        m_Device,
+        m_Context,
+        resource
+        );
+
+    bool result = m_MeshList[0]->InitAsCube(
+        scale,
+        color
+    );
+
+    if (!result)
+    {
+        m_MeshList.clear();
+    }
+
+    return result;
+}
+
+
+bool Model::InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* color)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    m_MeshList.resize(1);
+
+    m_MeshList[0] = std::make_unique<Mesh>(
+        m_Device,
+        m_Context,
+        resource
+        );
+
+    bool result = m_MeshList[0]->InitAsCylinder(
+        x,
+        y,
+        rad,
+        height,
+        color
+    );
+
+    if (!result)
+    {
+        m_MeshList.clear();
+    }
+
+    return result;
 }
 
 
@@ -424,10 +530,14 @@ bool Mesh::InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4*
         {
             m_Material = (*it).second;
         }
+        else
+        {
+            return false;
+        }
     }
 
     std::vector<Vertex_PositionColorNormalTexture> vertices;   // 頂点配列
-    std::vector<u16>    indices;    // インデックス配列
+    std::vector<u16> indices;    // インデックス配列
 
     constexpr float PI = glm::pi<float>();
 
@@ -499,6 +609,370 @@ bool Mesh::InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4*
             indices.push_back(r + column + 1);
             indices.push_back(r + column + 2);
             indices.push_back(r + 1);
+        }
+    }
+
+    m_VertexCount = static_cast<UINT>(vertices.size());
+
+    m_IndexCount = static_cast<UINT>(indices.size());
+
+    m_VertexBuffer = std::make_unique<VertexBuffer>(
+        m_Device,
+        m_Context,
+        vertices.data(),
+        sizeof(Vertex_PositionColorNormalTexture) * vertices.size()
+        );
+
+    m_IndexBuffer = std::make_unique<IndexBuffer>(
+        m_Device,
+        m_Context,
+        indices
+        );
+
+    return true;
+}
+
+
+bool Mesh::InitAsSphere(u16 x, u16 y, f32 rad, const glm::vec4* colorIn)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    if (!m_Material)
+    {
+        ModelResource::MaterialMap::iterator it = resource->Materials.find("Default");
+        if (it != resource->Materials.end())
+        {
+            m_Material = (*it).second;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    std::vector<Vertex_PositionColorNormalTexture> vertices;   // 頂点配列
+    std::vector<u16> indices;    // インデックス配列
+
+    // 頂点配列を作成
+    for (u16 iy = 0; iy <= y; iy++)
+    {
+        for (u16 ix = 0; ix <= x; ix++)
+        {
+            f32 r = glm::radians(180.0f / y * iy);
+            f32 ry = std::cosf(r);
+            f32 rr = std::sinf(r);
+
+            Vertex_PositionColorNormalTexture v;
+            f32 tr = glm::radians(360.0f / x * ix);
+
+            // 頂点
+            v.Position.x = rr * rad * std::cosf(tr);
+            v.Position.y = ry * rad;
+            v.Position.z = rr * rad * std::sinf(tr);
+            v.Position.w = 1.0f;
+
+            // 頂点色
+            if (colorIn != nullptr)
+            {
+                v.Color.x = colorIn->x;
+                v.Color.y = colorIn->y;
+                v.Color.z = colorIn->z;
+                v.Color.w = colorIn->w;
+            }
+            else
+            {
+                glm::vec3 color = glm::rgbColor(glm::vec3(360.0f / x * ix, 1.0f, 1.0f));
+                v.Color.x = color.x;
+                v.Color.y = color.y;
+                v.Color.z = color.z;
+                v.Color.w = 1.0f;
+            }
+
+            // 法線
+            v.Normal.x = rr * std::cosf(tr);
+            v.Normal.y = ry;
+            v.Normal.z = rr * std::sinf(tr);
+            v.Normal.w = 1.0f;
+
+            // テクスチャ座標
+            v.Texture.x = 1.0f / x * ix;
+            v.Texture.y = 1.0f / y * iy;
+
+            vertices.push_back(v);
+        }
+    }
+
+    // インデックス
+    for (u16 iy = 0; iy <= y; ++iy)
+    {
+        for (u16 ix = 0; ix < x; ++ix)
+        {
+            u16 i0 = ix + x * iy;
+            u16 i1 = i0 + 1;
+            u16 i2 = i0 + x + 1;
+            u16 i3 = i2 + 1;
+
+            indices.push_back(i0);
+            indices.push_back(i1);
+            indices.push_back(i2);
+
+            indices.push_back(i1);
+            indices.push_back(i3);
+            indices.push_back(i2);
+        }
+    }
+
+    m_VertexCount = static_cast<UINT>(vertices.size());
+
+    m_IndexCount = static_cast<UINT>(indices.size());
+
+    m_VertexBuffer = std::make_unique<VertexBuffer>(
+        m_Device,
+        m_Context,
+        vertices.data(),
+        sizeof(Vertex_PositionColorNormalTexture) * vertices.size()
+        );
+
+    m_IndexBuffer = std::make_unique<IndexBuffer>(
+        m_Device,
+        m_Context,
+        indices
+        );
+
+    return true;
+}
+
+
+bool Mesh::InitAsCube(f32 scale, const glm::vec4* colorIn)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    if (!m_Material)
+    {
+        ModelResource::MaterialMap::iterator it = resource->Materials.find("Default");
+        if (it != resource->Materials.end())
+        {
+            m_Material = (*it).second;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    const f32 hs = scale * 0.5f;
+
+    // 頂点配列
+    std::vector<Vertex_PositionColorNormalTexture> vertices = {
+        //          Position                          Color                                Normal                                   Texture
+        { glm::vec4(-hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+        { glm::vec4(hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(-hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+
+        { glm::vec4(-hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+        { glm::vec4(-hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+
+        { glm::vec4(-hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+        { glm::vec4(-hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+
+        { glm::vec4(-hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+        { glm::vec4(hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(-hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+
+        { glm::vec4(hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+        { glm::vec4(hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+
+        { glm::vec4(-hs, -hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f),  glm::vec2(1.0f, 0.0f) },
+        { glm::vec4(-hs, -hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f, -1.0f,  1.0f, 1.0f),  glm::vec2(1.0f, 1.0f) },
+        { glm::vec4(-hs,  hs,  hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f,  1.0f, 1.0f),  glm::vec2(0.0f, 1.0f) },
+        { glm::vec4(-hs,  hs, -hs, 1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec4(-1.0f,  1.0f, -1.0f, 1.0f),  glm::vec2(0.0f, 0.0f) },
+    };
+
+    // インデックス配列
+    std::vector<u16> indices = {
+        0,  1,  2,  0,  2,  3,
+        4,  5,  6,  4,  6,  7,
+        8,  9,  10, 8,  10, 11,
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23,
+    };
+
+    for (size_t i = 0; i < vertices.size(); i++)
+    {
+        if (colorIn != nullptr)
+        {
+            vertices[i].Color.x = colorIn->x;
+            vertices[i].Color.y = colorIn->y;
+            vertices[i].Color.z = colorIn->z;
+            vertices[i].Color.w = colorIn->w;
+        }
+        else
+        {
+            glm::vec3 color = glm::rgbColor(glm::vec3(360.0f / vertices.size() * i, 1.0f, 1.0f));
+            vertices[i].Color.x = color.x;
+            vertices[i].Color.y = color.y;
+            vertices[i].Color.z = color.z;
+            vertices[i].Color.w = 1.0f;
+        }
+    }
+
+    m_VertexCount = static_cast<UINT>(vertices.size());
+
+    m_IndexCount = static_cast<UINT>(indices.size());
+
+    m_VertexBuffer = std::make_unique<VertexBuffer>(
+        m_Device,
+        m_Context,
+        vertices.data(),
+        sizeof(Vertex_PositionColorNormalTexture) * vertices.size()
+        );
+
+    m_IndexBuffer = std::make_unique<IndexBuffer>(
+        m_Device,
+        m_Context,
+        indices
+        );
+
+    return true;
+}
+
+
+bool Mesh::InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* colorIn)
+{
+    if (m_Resource.expired())
+    {
+        return false;
+    }
+
+    std::shared_ptr<ModelResource> resource = m_Resource.lock();
+
+    if (!m_Material)
+    {
+        ModelResource::MaterialMap::iterator it = resource->Materials.find("Default");
+        if (it != resource->Materials.end())
+        {
+            m_Material = (*it).second;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    if (x <= 2 || y <= 2) { return false; }
+
+    std::vector<Vertex_PositionColorNormalTexture> vertices;   // 頂点配列
+    std::vector<u16> indices;    // インデックス配列
+
+    for (u16 iy = 0; iy <= y; ++iy)
+    {
+        for (u16 ix = 0; ix <= x; ++ix)
+        {
+            Vertex_PositionColorNormalTexture v;
+            v.Position.w = 1.0f;
+
+            // 頂点座標
+            if (iy == 0 || iy == y)
+            {
+                v.Position.x = 0.0f;
+                v.Position.z = 0.0f;
+                v.Position.y = height * 0.5f;
+                if (iy == y)
+                {
+                    v.Position.y = -height * 0.5f;
+                }
+            }
+            else
+            {
+                const f32 r = glm::radians(360.0f / x * ix);
+                v.Position.x = rad * std::cosf(r);
+                v.Position.z = rad * std::sinf(r);
+
+                const f32 h = 0.5f - (1.0f / (y - 2) * (iy - 1));
+                v.Position.y = height * h;
+            }
+
+            // 頂点色
+            if (colorIn != nullptr)
+            {
+                v.Color.x = colorIn->x;
+                v.Color.y = colorIn->y;
+                v.Color.z = colorIn->z;
+                v.Color.w = colorIn->w;
+            }
+            else
+            {
+                glm::vec3 color = glm::rgbColor(glm::vec3(360.0f / x * ix, 1.0f, 1.0f));
+                v.Color.x = color.x;
+                v.Color.y = color.y;
+                v.Color.z = color.z;
+                v.Color.w = 1.0f;
+            }
+
+            // 法線
+            v.Normal.w = 1.0f;
+            if (iy == 0 || iy == y)
+            {
+                v.Normal.x = 0.0f;
+                v.Normal.z = 0.0f;
+                v.Normal.y = 1.0f;
+                if (iy == y)
+                {
+                    v.Normal.y = -1.0f;
+                }
+            }
+            else
+            {
+                const f32 r = glm::radians(360.0f / x * ix);
+                v.Normal.x = rad * std::cosf(r);
+                v.Normal.z = rad * std::sinf(r);
+                v.Normal.y = 0.0f;
+            }
+
+            // UV座標
+            v.Texture.x = (1.0f / x) * ix;
+            v.Texture.y = (1.0f / y) * iy;
+
+            vertices.push_back(v);
+        }
+    }
+
+    // インデックス
+    for (u16 iy = 0; iy <= y; ++iy)
+    {
+        for (u16 ix = 0; ix < x; ++ix)
+        {
+            u16 i0 = ix + x * iy;
+            u16 i1 = i0 + 1;
+            u16 i2 = i0 + x + 1;
+            u16 i3 = i2 + 1;
+
+            indices.push_back(i0);
+            indices.push_back(i1);
+            indices.push_back(i2);
+
+            indices.push_back(i1);
+            indices.push_back(i3);
+            indices.push_back(i2);
         }
     }
 

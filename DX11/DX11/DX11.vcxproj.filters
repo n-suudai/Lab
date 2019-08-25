@@ -12,7 +12,6 @@
     <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.h" />
     <ClInclude Include="Source\DX11\Geometry\Font\FontData.h" />
     <ClInclude Include="Source\DX11\Geometry\Camera.h" />
-    <ClInclude Include="Source\DX11\Geometry\Mesh.h" />
     <ClInclude Include="Source\DX11\Geometry\Transform.h" />
     <ClInclude Include="Source\DX11\Graphics\BlendState.h" />
     <ClInclude Include="Source\DX11\Graphics\Sampler.h" />
@@ -34,6 +33,7 @@
     <ClInclude Include="Source\DX11\Graphics\Vertex.h" />
     <ClInclude Include="Source\DX11\Graphics\BufferResource.h" />
     <ClInclude Include="Source\DX11\Graphics\ConstantBufferData.h" />
+    <ClInclude Include="Source\DX11\Geometry\Model\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\PCH.cpp" />
@@ -63,8 +63,8 @@
     <ClCompile Include="Source\DX11\Demo\DiffuseLighting\DiffuseLightingDemo.cpp" />
     <ClCompile Include="Source\DX11\Graphics\Shader.cpp" />
     <ClCompile Include="Source\DX11\Graphics\RasterizerState.cpp" />
-    <ClCompile Include="Source\DX11\Geometry\Mesh.cpp" />
     <ClCompile Include="Source\DX11\Graphics\BufferResource.cpp" />
     <ClCompile Include="Source\DX11\Graphics\ConstantBufferData.cpp" />
+    <ClCompile Include="Source\DX11\Geometry\Model\Mesh.cpp" />
   </ItemGroup>
 </Project>

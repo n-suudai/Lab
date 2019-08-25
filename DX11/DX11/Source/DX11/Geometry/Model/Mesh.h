@@ -41,7 +41,13 @@ public:
 
     bool Init(const std::string& filename);
 
-    bool InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color);
+    bool InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color = nullptr);
+
+    bool InitAsSphere(u16 x, u16 y, f32 rad, const glm::vec4* color = nullptr);
+
+    bool InitAsCube(f32 scale, const glm::vec4* color = nullptr);
+
+    bool InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* color = nullptr);
 
     void Update();
 
@@ -74,8 +80,13 @@ public:
         const std::vector<tinyobj::material_t>& materials
     );
 
-    // トーラスとして初期化
     bool InitAsTorus(u16 row, u16 column, f32 irad, f32 orad, const glm::vec4* color);
+
+    bool InitAsSphere(u16 x, u16 y, f32 rad, const glm::vec4* color);
+
+    bool InitAsCube(f32 scale, const glm::vec4* color);
+
+    bool InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* color);
 
     void Update();
 

@@ -222,7 +222,7 @@
     </ClInclude>
     <ClInclude Include="Source\DX11\Geometry\Font\BitmapFont.h" />
     <ClInclude Include="Source\DX11\Geometry\Font\FontData.h" />
-    <ClInclude Include="Source\DX11\Geometry\Mesh.h">
+    <ClInclude Include="Source\DX11\Geometry\Model\Mesh.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -307,7 +307,7 @@
     </ClCompile>
     <ClCompile Include="Source\DX11\Geometry\Font\BitmapFont.cpp" />
     <ClCompile Include="Source\DX11\Geometry\Font\FontData.cpp" />
-    <ClCompile Include="Source\DX11\Geometry\Mesh.cpp">
+    <ClCompile Include="Source\DX11\Geometry\Model\Mesh.cpp">
       <SubType>
       </SubType>
     </ClCompile>

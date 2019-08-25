@@ -1,5 +1,5 @@
 ﻿#include "DiffuseLightingDemo.h"
-#include "DX11/Geometry/Mesh.h"
+#include "DX11/Geometry/Model/Mesh.h"
 #include "DX11/External/ImGui/ImGuiEx.h"
 
 
@@ -11,6 +11,8 @@ DiffuselightingDemo::DiffuselightingDemo(
 )
     : m_Device(device)
     , m_Context(context)
+    , m_ModelType(ModelType_Cube)
+    , m_EnableRotateAnimation(true)
     , m_ForceUpdateModel(false)
 {
     m_Resource = std::make_shared<ModelResource>();
@@ -25,8 +27,7 @@ DiffuselightingDemo::DiffuselightingDemo(
         m_Context,
         m_Resource
         );
-    //m_Model->Init("Assets\\Model\\monkey\\monkey.obj");
-    m_Model->InitAsTorus(32, 32, 0.5f, 1.5f, &color);
+    m_Model->InitAsCube(2.0f, &color);
 
     m_Camera.eye = glm::vec3(0.0f, 2.8f, 6.0f);
     m_Camera.center = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -52,13 +53,62 @@ void DiffuselightingDemo::Update()
 {
     bool changed = m_ForceUpdateModel;
 
-    static f32 delta = 0.0f;
-    delta += 0.003f;
+    ImGui::Checkbox("EnableRotateAnim", &m_EnableRotateAnimation);
 
-    m_Transform.rotate.y = delta;
-    m_Transform.rotate.z = delta;
-    m_Transform.UpdateMatrix();
-    changed = true;
+    if (m_EnableRotateAnimation)
+    {
+        static f32 delta = 0.0f;
+        delta += 0.003f;
+
+        m_Transform.rotate.y = delta;
+        m_Transform.rotate.z = delta;
+        m_Transform.UpdateMatrix();
+        changed = true;
+    }
+
+    {
+        static const char* models[ModelType_Num] = {
+            "Cube",
+            "Sphere",
+            "Torus",
+            "Cylinder",
+            "Monkey",
+        };
+
+        int modelType = static_cast<int>(m_ModelType);
+        static const char* current = models[modelType];
+
+        if (ImGui::Combo("ModelType", &modelType, models, _countof(models)))
+        {
+            glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
+
+            switch (modelType)
+            {
+            case ModelType_Cube:
+                m_Model->InitAsCube(2.0f, &color);
+                break;
+
+            case ModelType_Sphere:
+                m_Model->InitAsSphere(32, 32, 1.0f, &color);
+                break;
+
+            case ModelType_Torus:
+                m_Model->InitAsTorus(32, 32, 0.5f, 1.5f, &color);
+                break;
+
+            case ModelType_Cylinder:
+                m_Model->InitAsCylinder(32, 32, 1.0f, 2.0f, &color);
+                break;
+
+            case ModelType_File:
+                m_Model->Init("Assets\\Model\\monkey\\monkey.obj");
+                break;
+            }
+            changed = true;
+        }
+    }
+
+    ImGui::Separator();
 
     changed |= m_Resource->UpdateImGui();
 
