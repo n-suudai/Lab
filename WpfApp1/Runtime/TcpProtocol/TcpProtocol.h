@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "Factory.h"
 #include "Serializer.h"
 #include <string>
 #include <memory>
@@ -10,7 +11,10 @@ namespace TcpProtocol
 {
     class RemoteEntity
     {
+        static Factory<RemoteEntity> s_factory;
     public:
+        static bool Initialize();
+
         static std::shared_ptr<RemoteEntity> Create(const std::string& name);
 
         virtual bool IsQuery() const = 0;

@@ -28,6 +28,8 @@ char FloatToByte(float x)
 
 int main()
 {
+    if (!TcpProtocol::RemoteEntity::Initialize()) { return -1; }
+
     TcpProtocol::Peer peer;
 
     if (!peer.Connect("127.0.0.1", 9999)) { return -1; }

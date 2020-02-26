@@ -10,13 +10,13 @@ namespace TcpProtocol
     class SendImageQuery final : public Query
     {
     public:
-        bool Serialize(Serializer& serializer) const;
+        bool Serialize(Serializer& serializer) const override;
 
-        bool Deserialize(Serializer& serializer);
+        bool Deserialize(Serializer& serializer) override;
 
-        const char* Name() const;
+        const char* Name() const override;
 
-        std::unique_ptr<Response> Execute();
+        std::unique_ptr<Response> Execute() override;
 
     public:
         int width;
@@ -28,10 +28,10 @@ namespace TcpProtocol
     class SendImageResponse final : public Response
     {
     public:
-        bool Serialize(Serializer& serializer) const;
+        bool Serialize(Serializer& serializer) const override;
 
-        bool Deserialize(Serializer& serializer);
+        bool Deserialize(Serializer& serializer) override;
 
-        const char* Name() const;
+        const char* Name() const override;
     };
 }

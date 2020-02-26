@@ -7,6 +7,8 @@
     <ClCompile Include="TcpProtocol\Peer.cpp" />
     <ClCompile Include="TcpProtocol\SendImage.cpp" />
     <ClCompile Include="TcpProtocol\TcpProtocol.cpp" />
+    <ClCompile Include="TcpProtocol\WinSockUtil.cpp" />
+    <ClCompile Include="Debug\Print.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpProtocol\TcpProtocol.h" />
@@ -15,5 +17,8 @@
     <ClInclude Include="TcpProtocol\SendImage.h" />
     <ClInclude Include="TcpProtocol\NetworkStream.h" />
     <ClInclude Include="TcpProtocol\BlockingQueue.h" />
+    <ClInclude Include="TcpProtocol\WinSockUtil.h" />
+    <ClInclude Include="Debug\Print.h" />
+    <ClInclude Include="TcpProtocol\Factory.h" />
   </ItemGroup>
 </Project>

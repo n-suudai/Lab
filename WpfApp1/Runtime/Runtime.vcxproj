@@ -146,20 +146,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Debug\Print.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TcpProtocol\NetworkStream.cpp" />
     <ClCompile Include="TcpProtocol\Peer.cpp" />
     <ClCompile Include="TcpProtocol\SendImage.cpp" />
     <ClCompile Include="TcpProtocol\Serializer.cpp" />
     <ClCompile Include="TcpProtocol\TcpProtocol.cpp" />
+    <ClCompile Include="TcpProtocol\WinSockUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Debug\Print.h" />
     <ClInclude Include="TcpProtocol\BlockingQueue.h" />
+    <ClInclude Include="TcpProtocol\Factory.h" />
     <ClInclude Include="TcpProtocol\NetworkStream.h" />
     <ClInclude Include="TcpProtocol\Peer.h" />
     <ClInclude Include="TcpProtocol\SendImage.h" />
     <ClInclude Include="TcpProtocol\Serializer.h" />
     <ClInclude Include="TcpProtocol\TcpProtocol.h" />
+    <ClInclude Include="TcpProtocol\WinSockUtil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
