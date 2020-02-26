@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="TcpProtocol\NetworkStream.cpp" />
+    <ClCompile Include="TcpProtocol\Serializer.cpp" />
+    <ClCompile Include="TcpProtocol\Peer.cpp" />
+    <ClCompile Include="TcpProtocol\SendImage.cpp" />
+    <ClCompile Include="TcpProtocol\TcpProtocol.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TcpProtocol\TcpProtocol.h" />
+    <ClInclude Include="TcpProtocol\Serializer.h" />
+    <ClInclude Include="TcpProtocol\Peer.h" />
+    <ClInclude Include="TcpProtocol\SendImage.h" />
+    <ClInclude Include="TcpProtocol\NetworkStream.h" />
+    <ClInclude Include="TcpProtocol\BlockingQueue.h" />
+  </ItemGroup>
+</Project>
