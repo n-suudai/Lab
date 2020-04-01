@@ -44,7 +44,7 @@ int main()
 
     while (!exitRequest)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared< TcpProtocol::SendImageQuery>();
         query->width = width;

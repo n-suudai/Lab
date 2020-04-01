@@ -96,7 +96,7 @@ namespace TcpProtocol
         if (!IsConnected()) { return; }
 
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::unique_lock<std::mutex> lock(m_mutex);
 
             m_sendQueue.Enqueue(remoteEntity);
         }

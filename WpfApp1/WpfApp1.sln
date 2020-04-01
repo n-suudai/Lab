@@ -13,7 +13,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Runtime", "Runtime\Runtime.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		TcpProtocol\TcpProtocol.projitems*{a8c8fb25-c3bf-4ef1-b851-7cdf629bd19c}*SharedItemsImports = 5
 		TcpProtocol\TcpProtocol.projitems*{dbf3aa15-39b0-4c3b-9bc5-1304c6fbf8c6}*SharedItemsImports = 13
+		TcpProtocol\TcpProtocol.projitems*{e994c275-ce58-4514-8059-3677ee1455d9}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

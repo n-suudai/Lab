@@ -73,12 +73,10 @@ namespace TcpProtocol
             }
             finally
             {
-                failed = true;
-            }
-
-            if (failed)
-            {
-                client = null;
+                if (failed)
+                {
+                    client = null;
+                }
             }
         }
 
