@@ -17,6 +17,8 @@ namespace TcpProtocol
 
         static std::shared_ptr<RemoteEntity> Create(const std::string& name);
 
+        virtual ~RemoteEntity() = default;
+
         virtual bool IsQuery() const = 0;
 
         virtual bool IsResponse() const = 0;

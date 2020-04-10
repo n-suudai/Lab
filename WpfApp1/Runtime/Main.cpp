@@ -46,24 +46,23 @@ int main()
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared< TcpProtocol::SendImageQuery>();
+        std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
         query->width = width;
         query->height = height;
-        query->imageBuffer.resize((size_t)(width * height * 4));
+        query->imageBuffer.resize(((size_t)width * (size_t)height * 3));
 
-        for (int y = 0; y < height; y++)
+        for (size_t y = 0; y < height; y++)
         {
-            for (int x = 0; x < width; x++)
+            for (size_t x = 0; x < width; x++)
             {
-                int xx = (x + counter) / 100;
-                int yy = (y + counter) / 100;
+                size_t xx = (x + counter) / 100;
+                size_t yy = (y + counter) / 100;
 
-                int i = 4 * (y * width + x);
+                size_t i = 3 * (y * (size_t)width + x);
                 unsigned char color = FloatToByte(((xx + yy) % 2 == 0) ? 0.2f : 0.8f);
                 query->imageBuffer[i] = color;
                 query->imageBuffer[i + 1] = color;
                 query->imageBuffer[i + 2] = color;
-                query->imageBuffer[i + 3] = 255;
             }
         }
 

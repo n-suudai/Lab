@@ -92,17 +92,16 @@ namespace WpfApp1
             {
                 const int width = 10;
                 const int height = 10;
-                byte[] imageBuffer = new byte[width * height * 4];
+                byte[] imageBuffer = new byte[width * height * 3];
 
                 for (int y = 0; y < height; y++)
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        int i = 4 * (y * width + x);
+                        int i = 3 * (y * width + x);
                         imageBuffer[i] = 0;
                         imageBuffer[i + 1] = 0;
                         imageBuffer[i + 2] = 0;
-                        imageBuffer[i + 3] = 255;
                     }
                 }
 
@@ -112,8 +111,8 @@ namespace WpfApp1
 
         private void UpdateImage(byte[] imageBuffer, int width, int height)
         {
-            int stride = (width * PixelFormats.Pbgra32.BitsPerPixel + 7) / 8;
-            BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, imageBuffer, stride);
+            int stride = (width * PixelFormats.Rgb24.BitsPerPixel + 7) / 8;
+            BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, imageBuffer, stride);
             ScaleTransform transform = new ScaleTransform(RuntimeImage.Width / (double)width, RuntimeImage.Height / (double)height);
             TransformedBitmap transformed = new TransformedBitmap(image, transform);
             RuntimeImage.Source = transformed;

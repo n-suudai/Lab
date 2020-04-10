@@ -55,7 +55,7 @@ namespace RuntimeApp
                 if (!sendComplete) { continue; }
                 sendComplete = false;
 
-                byte[] buffer = new byte[width * height * 4];
+                byte[] buffer = new byte[width * height * 3];
 
                 TcpProtocol.SendImageQuery query = new TcpProtocol.SendImageQuery(width, height, buffer);
 
@@ -66,12 +66,11 @@ namespace RuntimeApp
                         int xx = (x + counter) / 100;
                         int yy = (y + counter) / 100;
 
-                        int i = 4 * (y * width + x);
+                        int i = 3 * (y * width + x);
                         byte color = FloatToByte(((xx + yy) % 2 == 0) ? 0.2f : 0.8f);
                         buffer[i] = color;
                         buffer[i + 1] = color;
                         buffer[i + 2] = color;
-                        buffer[i + 3] = 255;
                     }
                 }
 

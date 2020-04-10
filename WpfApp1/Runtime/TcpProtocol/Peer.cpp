@@ -24,7 +24,7 @@ namespace TcpProtocol
     }
 
     // 待ち受け（初回）
-    void Peer::Accept(const char* host, int port)
+    void Peer::Accept(const char* /*host*/, int /*port*/)
     {} // TODO : 未実装
 
     // 待ち受け（初期化済み）
@@ -116,7 +116,7 @@ namespace TcpProtocol
         m_receiveThread = std::thread(&Peer::ReceiveMain, this);
     }
 
-    void Peer::Listen(const char* host, int port)
+    void Peer::Listen(const char* /*host*/, int /*port*/)
     {} // TODO : 未実装
 
     void Peer::Disconnect()

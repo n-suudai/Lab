@@ -22,7 +22,7 @@ namespace TcpProtocol
         {
             buff = &buffer[offset + length];
 
-            int result = ::send(m_socket, buff, count - length, 0);
+            result = ::send(m_socket, buff, count - length, 0);
 
             if (result > 0)
             {
