@@ -1,14 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="TcpProtocol\NetworkStream.cpp" />
     <ClCompile Include="TcpProtocol\Serializer.cpp" />
     <ClCompile Include="TcpProtocol\Peer.cpp" />
     <ClCompile Include="TcpProtocol\SendImage.cpp" />
     <ClCompile Include="TcpProtocol\TcpProtocol.cpp" />
     <ClCompile Include="TcpProtocol\WinSockUtil.cpp" />
-    <ClCompile Include="Debug\Print.cpp" />
+    <ClCompile Include="App\Sample\Font\BitmapFont.cpp" />
+    <ClCompile Include="App\Sample\Graphics\Texture.cpp" />
+    <ClCompile Include="App\Sample\Shape\Shape.cpp" />
+    <ClCompile Include="App\Sample\ExternalBuild.cpp" />
+    <ClCompile Include="App\Sample\ResultUtil.cpp" />
+    <ClCompile Include="App\Sample\SampleApp.cpp" />
+    <ClCompile Include="App\AppMain.cpp" />
+    <ClCompile Include="App\AppWin.cpp" />
+    <ClCompile Include="App\PCH.cpp" />
+    <ClCompile Include="App\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TcpProtocol\TcpProtocol.h" />
@@ -18,7 +26,23 @@
     <ClInclude Include="TcpProtocol\NetworkStream.h" />
     <ClInclude Include="TcpProtocol\BlockingQueue.h" />
     <ClInclude Include="TcpProtocol\WinSockUtil.h" />
-    <ClInclude Include="Debug\Print.h" />
     <ClInclude Include="TcpProtocol\Factory.h" />
+    <ClInclude Include="App\Sample\Font\BitmapFont.hpp" />
+    <ClInclude Include="App\Sample\Graphics\Texture.hpp" />
+    <ClInclude Include="App\Sample\Shape\Shape.hpp" />
+    <ClInclude Include="App\Sample\ResultUtil.hpp" />
+    <ClInclude Include="App\Sample\SampleApp.hpp" />
+    <ClInclude Include="App\Sample\Utility.hpp" />
+    <ClInclude Include="App\Sample\Vertex.hpp" />
+    <ClInclude Include="App\App.hpp" />
+    <ClInclude Include="App\AppWin.hpp" />
+    <ClInclude Include="App\KeyCode.hpp" />
+    <ClInclude Include="App\PCH.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resource\Shader\FontPS.hlsl" />
+    <FxCompile Include="Resource\Shader\FontVS.hlsl" />
+    <FxCompile Include="Resource\Shader\ShapePS.hlsl" />
+    <FxCompile Include="Resource\Shader\ShapeVS.hlsl" />
   </ItemGroup>
 </Project>

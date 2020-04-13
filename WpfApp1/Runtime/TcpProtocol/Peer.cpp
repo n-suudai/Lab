@@ -1,6 +1,8 @@
 #include "Peer.h"
 #include "WinSockUtil.h"
-#include "../Debug/Print.h"
+//#include "../Debug/Print.h"
+
+#pragma comment(lib, "ws2_32.lib")
 
 
 namespace TcpProtocol
@@ -41,7 +43,7 @@ namespace TcpProtocol
         int result = ::WSAStartup(WINSOCK_VERSION, &m_wsaData);
         if (result != 0)
         {
-            DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
+            //DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
             return false;
         }
 
@@ -59,7 +61,7 @@ namespace TcpProtocol
         result = ::getaddrinfo(host, portBuffer, &hints, &addrinfo);
         if (result != 0)
         {
-            DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
+            //DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
             Disconnect();
             return false;
         }
@@ -76,7 +78,7 @@ namespace TcpProtocol
             result = ::connect(m_connectedSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
             if (result == SOCKET_ERROR)
             {
-                DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
+                //DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
                 ::closesocket(m_connectedSocket);
                 m_connectedSocket = INVALID_SOCKET;
                 continue;
@@ -126,14 +128,14 @@ namespace TcpProtocol
             int result = ::closesocket(m_connectedSocket);
             if (result != 0)
             {
-                DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
+                //DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
             }
             m_connectedSocket = INVALID_SOCKET;
 
             ::WSACleanup();
             if (result != 0)
             {
-                DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
+                //DEBUG_PRINT(WinSockUtil::GetLastErrorText().c_str());
             }
         }
     }
