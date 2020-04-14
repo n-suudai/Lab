@@ -33,10 +33,8 @@ namespace WpfApp1
         {
             InitializeComponent();
 
-            this.SizeToContent = SizeToContent.WidthAndHeight;
-
-            RuntimeImage.Width = Width;
-            RuntimeImage.Height = Height;
+            RuntimeImage.Width = ((Grid)(this.Content)).RenderSize.Width;
+            RuntimeImage.Height = ((Grid)(this.Content)).RenderSize.Height;
 
             ClearRuntimeImage();
             StartTcpMessaging(true);
@@ -114,17 +112,23 @@ namespace WpfApp1
 
         private void UpdateImage(byte[] imageBuffer, int width, int height)
         {
-            int stride = (width * PixelFormats.Pbgra32.BitsPerPixel + 7) / 8;
+            RuntimeImage.Width = ((Grid)(this.Content)).RenderSize.Width;
+            RuntimeImage.Height = ((Grid)(this.Content)).RenderSize.Height;
+
+            int stride = width * ((PixelFormats.Pbgra32.BitsPerPixel + 7) / 8);
             BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, imageBuffer, stride);
-            ScaleTransform transform = new ScaleTransform(RuntimeImage.Width / (double)width, RuntimeImage.Height / (double)height, 0, 0);
+            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Linear); // ビットマップスケールの品質
+            double scaleWidth = RuntimeImage.Width / width;
+            double scaleHeight = RuntimeImage.Height / height;
+            ScaleTransform transform = new ScaleTransform(scaleWidth, scaleHeight);
             TransformedBitmap transformed = new TransformedBitmap(image, transform);
             RuntimeImage.Source = transformed;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            RuntimeImage.Width = this.Width;
-            RuntimeImage.Height = this.Height;
+            RuntimeImage.Width = ((Grid)(this.Content)).RenderSize.Width;
+            RuntimeImage.Height = ((Grid)(this.Content)).RenderSize.Height;
         }
 
         private void Window_Closed(object sender, EventArgs e)

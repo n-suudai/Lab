@@ -106,8 +106,6 @@ bool AppWin::Init(const Size2D& clientSize, const std::string& title)
         return false;
     }
 
-    m_ClientSize = clientSize;
-
     // 拡張ウィンドウクラスの設定
     WNDCLASSEXA wc;
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -132,8 +130,8 @@ bool AppWin::Init(const Size2D& clientSize, const std::string& title)
     RECT rc = {
         0,
         0,
-        static_cast<LONG>(m_ClientSize.width),
-        static_cast<LONG>(m_ClientSize.height),
+        static_cast<LONG>(clientSize.width),
+        static_cast<LONG>(clientSize.height),
     };
 
     // 指定されたクライアント領域を確保するために必要なウィンドウ座標を計算
@@ -226,7 +224,15 @@ void AppWin::PostQuit()
 
 Size2D AppWin::GetClientSize() const
 {
-    return m_ClientSize;
+    RECT rc = {};
+    GetClientRect(m_hWnd, &rc);
+
+    Size2D clientSize = {
+        static_cast<u32>(rc.right - rc.left),
+        static_cast<u32>(rc.bottom - rc.top),
+    };
+
+    return clientSize;
 }
 
 
@@ -377,8 +383,8 @@ LRESULT CALLBACK AppWin::WindowProcedureInstance(HWND hWnd, UINT uMsg, WPARAM wP
         }
         break;
 
-    case WM_EXITSIZEMOVE:
-        if (m_Callbacks.pOnResize != nullptr)
+    case WM_ENTERSIZEMOVE:
+        if (m_Callbacks.pOnEnterResize != nullptr)
         {
             RECT rc = { 0 };
 
@@ -389,9 +395,28 @@ LRESULT CALLBACK AppWin::WindowProcedureInstance(HWND hWnd, UINT uMsg, WPARAM wP
                 static_cast<u32>(rc.bottom - rc.top),
             };
 
-            m_Callbacks.pOnResize(
+            m_Callbacks.pOnEnterResize(
                 newSize,
-                m_Callbacks.pOnResizeUser
+                m_Callbacks.pOnEnterResizeUser
+            );
+        }
+        break;
+
+    case WM_EXITSIZEMOVE:
+        if (m_Callbacks.pOnExitResize != nullptr)
+        {
+            RECT rc = { 0 };
+
+            GetClientRect(hWnd, &rc);
+
+            Size2D newSize = {
+                static_cast<u32>(rc.right - rc.left),
+                static_cast<u32>(rc.bottom - rc.top),
+            };
+
+            m_Callbacks.pOnExitResize(
+                newSize,
+                m_Callbacks.pOnExitResizeUser
             );
         }
         break;

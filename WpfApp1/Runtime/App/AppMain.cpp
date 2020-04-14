@@ -6,12 +6,19 @@
 #define UNUSED(x) (x)
 
 
-
-// リサイズ
-void OnResize(const Size2D& newSize, void* pUser)
+// リサイズ開始
+void OnEnterResize(const Size2D& newSize, void* pUser)
 {
     SampleApp* pSample = reinterpret_cast<SampleApp*>(pUser);
-    pSample->OnResize(newSize);
+    pSample->OnEnterResize(newSize);
+}
+
+
+// リサイズ終了
+void OnExitResize(const Size2D& newSize, void* pUser)
+{
+    SampleApp* pSample = reinterpret_cast<SampleApp*>(pUser);
+    pSample->OnExitResize(newSize);
 }
 
 
@@ -73,9 +80,12 @@ void AppMain()
     // コールバックの設定
     {
         AppCallbacks callbacks = { 0 };
-        // リサイズ
-        callbacks.pOnResize = OnResize;
-        callbacks.pOnResizeUser = pSample;
+        // リサイズ開始
+        callbacks.pOnEnterResize = OnEnterResize;
+        callbacks.pOnEnterResizeUser = pSample;
+        // リサイズ終了
+        callbacks.pOnExitResize = OnExitResize;
+        callbacks.pOnExitResizeUser = pSample;
         // キーダウン
         callbacks.pOnKeyDown = OnKeyDown;
         callbacks.pOnKeyDownUser = pSample;

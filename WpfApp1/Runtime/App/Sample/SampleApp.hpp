@@ -26,8 +26,11 @@ public:
     // 描画処理
     void Render();
 
-    // リサイズ
-    void OnResize(const Size2D& newSize);
+    // リサイズ開始
+    void OnEnterResize(const Size2D& newSize);
+
+    // リサイズ終了
+    void OnExitResize(const Size2D& newSize);
 
     // キー
     void OnKey(KEY_CODE key, bool isDown);
@@ -59,6 +62,9 @@ private:
     void RenderImGui();
 
 private:
+    bool m_Resizing;
+    bool m_RequestedBackBufferResize;
+    bool m_SaveCaptureBuffer;
     IApp * m_pApp;
     UINT m_BufferCount;
 

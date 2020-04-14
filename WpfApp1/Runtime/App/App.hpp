@@ -18,9 +18,13 @@ struct Size2D
 
 struct AppCallbacks
 {
-    // リサイズ
-    void(*pOnResize)(const Size2D& newSize, void* pUser);
-    void* pOnResizeUser;
+    // リサイズ開始
+    void (*pOnEnterResize)(const Size2D& newSize, void* pUser);
+    void* pOnEnterResizeUser;
+
+    // リサイズ終了
+    void(*pOnExitResize)(const Size2D& newSize, void* pUser);
+    void* pOnExitResizeUser;
 
     // キーダウン
     void(*pOnKeyDown)(KEY_CODE key, void* pUser);

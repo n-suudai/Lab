@@ -15,7 +15,9 @@
 
 
 SampleApp::SampleApp(IApp* pApp)
-    : m_pApp(pApp)
+    : m_Resizing(false)
+    , m_SaveCaptureBuffer(false)
+    , m_pApp(pApp)
     , m_BufferCount(2)
     , m_BufferFormat(DXGI_FORMAT_B8G8R8A8_UNORM)
     , m_FeatureLevel(D3D_FEATURE_LEVEL_11_1)
@@ -133,7 +135,7 @@ bool SampleApp::Init()
         swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
         swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
         swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-        swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_CENTERED;
+        swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_STRETCHED;
         swapChainDesc.BufferDesc.Format = m_BufferFormat;
         swapChainDesc.SampleDesc = m_SampleDesc;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
@@ -326,6 +328,14 @@ void SampleApp::Update()
 // 描画処理
 void SampleApp::Render()
 {
+    if (m_RequestedBackBufferResize)
+    {
+        Size2D newSize = m_pApp->GetClientSize();
+
+        // バックバッファを再生成
+        CreateBackBuffer(newSize);
+    }
+
     // レンダーターゲットを設定
     ID3D11RenderTargetView* pRenderTargetViews[] = {
         m_RenderTargetView.Get()
@@ -377,6 +387,7 @@ void SampleApp::Render()
     m_Context->Flush();
 
     // 描画結果をキャプチャ
+    if (!m_Resizing)
     {
         // CPU読み込み可能バッファにGPU上でデータをコピー
         {
@@ -405,35 +416,46 @@ void SampleApp::Render()
             }
 
             // CPU上のメモリにバッファを確保
-            u32 height = m_BackBufferSize.height;
             u32 src_stride = (u32)mappedResource.RowPitch;    // ※ m_BackBufferSize.width * 4 とは必ずしも一致しない
-            size_t buffer_size = src_stride * height;
+            u32 bitsPerPixel = Util::DXGIFormatBitsPerPixel(m_BufferFormat);
+            u32 width = src_stride / ((bitsPerPixel + 7) / 8);
+            size_t buffer_size = (u32)mappedResource.DepthPitch;
+            u32 height = (u32)buffer_size / src_stride;
+
+            {
+                // Tcpサーバーへ送るクエリ
+                std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
+                query->width = static_cast<int>(width);
+                query->height = static_cast<int>(height);
+                query->imageBuffer.resize(buffer_size);
+
+                // バッファコピー
+                CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
+
+                if (m_SaveCaptureBuffer)
+                {
+                    std::ofstream ofs("result.ppm");
+
+                    ofs << "P3\n" << width << " " << height << "\n255\n";
+
+                    for (u32 y = 0; y < height; y++)
+                    {
+                        for (u32 x = 0; x < width; x++)
+                        {
+                            u32 i = 4 * (y * width + x);
+                            ofs << (int)query->imageBuffer[i] << " "
+                                << (int)query->imageBuffer[i + 1] << " "
+                                << (int)query->imageBuffer[i + 2] << "\n";
+                        }
+                    }
+
+                    m_SaveCaptureBuffer = false;
+                }
+
+                // Tcpサーバーへ送る
+                m_Peer->Send(query);
+            }
             
-            // Tcpサーバーへ送るクエリ
-            std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
-            query->width = static_cast<int>(m_BackBufferSize.width);
-            query->height = static_cast<int>(m_BackBufferSize.height);
-            query->imageBuffer.resize(buffer_size);
-
-            // バッファコピー
-            CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
-
-            //// アルファ値の解決
-            //for (int y = 0; y < query->height; y++)
-            //{
-            //    for (int x = 0; x < query->width; x++)
-            //    {
-            //        int i = 4 * (y * query->width + x);
-            //        if (query->imageBuffer[i + 3])
-            //        {
-            //            query->imageBuffer[i + 3] = 255;
-            //        }
-            //    }
-            //}
-
-            // Tcpサーバーへ送る
-            m_Peer->Send(query);
-
             // アンマップ
             m_Context->Unmap(m_CaptureBuffer.Get(), 0);
         }
@@ -448,15 +470,22 @@ void SampleApp::Render()
     }
 }
 
-// リサイズ
-void SampleApp::OnResize(const Size2D& newSize)
+// リサイズ開始
+void SampleApp::OnEnterResize(const Size2D&)
+{
+    m_Resizing = true;
+}
+
+// リサイズ終了
+void SampleApp::OnExitResize(const Size2D& newSize)
 {
     if (m_BackBufferSize.width != newSize.width ||
         m_BackBufferSize.height != newSize.height)
     {
-        // バックバッファを再生成
-        CreateBackBuffer(newSize);
+        m_RequestedBackBufferResize = true;
     }
+
+    m_Resizing = false;
 }
 
 // キー
@@ -470,6 +499,14 @@ void SampleApp::OnKey(KEY_CODE key, bool isDown)
     if (key == KEY_CODE_I && isDown)
     {
         m_ImGuiActive = !m_ImGuiActive;
+    }
+
+    if (key == KEY_CODE_SPACE && isDown)
+    {
+        if (!m_SaveCaptureBuffer)
+        {
+            m_SaveCaptureBuffer = true;
+        }
     }
 }
 

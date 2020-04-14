@@ -35,7 +35,6 @@ private:
 private:
     HWND         m_hWnd;
     HINSTANCE    m_hInstance;
-    Size2D       m_ClientSize;
     Size2D       m_WindowSize;
     AppCallbacks m_Callbacks;
 };
