@@ -113,7 +113,7 @@ BitmapFont::BitmapFont(
     , m_Projection(projection)
 {
     m_Count = 0;
-    m_CharSpacing = -3.0f;
+    m_CharSpacing = 0.0f;
     m_LineSpacing = 0;
     m_FontScale = 1.0f;
     m_RectMargin = glm::vec4(-2.0f, -2.0f, 2.0f, 2.0f);
@@ -327,7 +327,7 @@ void BitmapFont::Initialize(const std::string& fontName)
     {
         Util::CreateRasterizerState(
             m_Device,
-            D3D11_CULL_BACK,
+            D3D11_CULL_NONE,
             FALSE,
             m_RasterizerState
         );
@@ -376,24 +376,8 @@ void BitmapFont::Initialize(const std::string& fontName)
 
     m_SizePerPix = glm::vec2(1.0f / static_cast<f32>(m_TextureSize.width), 1.0f / static_cast<f32>(m_TextureSize.height));
 
-    if (!m_Data.info.unicode)
-    {
-        // "あ","Ａ","A" これらの文字から標準フォント描画縦サイズを取得
-        m_FontHeight = 22;
-        static const u16 aTryCode[]{ 0x3042 ,0xFF21 };
-        for (auto & code : aTryCode)
-        {
-            if (m_Data.chars[code].id != 0xFFFF)
-            {
-                m_FontHeight = m_Data.chars[code].height + 2.0f;
-                break;
-            }
-        }
-    }
-    else
-    {
-        m_FontHeight = m_Data.chars[static_cast<int>('A')].height + 2.0f;
-    }
+    // フォント描画縦サイズを取得
+    m_FontHeight = m_Data.chars[static_cast<int>('A')].height + 2.0f;
 
     m_Color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     m_CurrentColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -575,6 +559,10 @@ void BitmapFont::PutVertex(const FontCharacter* pCharPrev, const FontCharacter* 
     //  [1]右上
     //	[2]左下
     //	[3]右下
+    pVtx[0].Channel = GetChannelColor(pChar->chnl);
+    pVtx[1].Channel = pVtx[0].Channel;
+    pVtx[2].Channel = pVtx[0].Channel;
+    pVtx[3].Channel = pVtx[0].Channel;
     pVtx[0].Position.x = x;
     pVtx[1].Position.x = x + (pChar->width * m_FontScale);
     pVtx[2].Position.x = x;
@@ -619,5 +607,15 @@ FontKerning* BitmapFont::GetKering(const FontCharacter* pCharLeft, const FontCha
     }
 
     return pKerning;
+}
+
+u32 BitmapFont::GetChannelColor(u8 channel) const
+{
+    u32 color =
+        (channel & ChannelFlag_Alpha ? 255 : 0) << 24 |
+        (channel & ChannelFlag_Blue ? 255 : 0) << 16 |
+        (channel & ChannelFlag_Green ? 255 : 0) << 8 |
+        (channel & ChannelFlag_Red ? 255 : 0);
+    return color;
 }
 

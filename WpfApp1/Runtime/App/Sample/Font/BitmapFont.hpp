@@ -101,13 +101,23 @@ struct FontData
     std::vector<FontKerning>    kernings;
 };
 
+enum ChannelFlag
+{
+    ChannelFlag_Blue    = (1 << 0),
+    ChannelFlag_Green   = (1 << 1),
+    ChannelFlag_Red     = (1 << 2),
+    ChannelFlag_Alpha   = (1 << 3),
+    ChannelFlag_All     = ChannelFlag_Blue | ChannelFlag_Green | ChannelFlag_Red | ChannelFlag_Alpha,
+};
+
 
 struct Vertex_BitmapFont
 {
-    glm::vec2   Position;
-    u32         Color;
-    glm::vec2   Texture;
-    u16         Page;
+    glm::vec2 Position;
+    u32    Color;
+    glm::vec2 Texture;
+    u32    Channel;
+    u16    Page;
 
     static constexpr UINT PositionOffset = 0;
     static constexpr UINT PositionSize = sizeof(glm::vec2);
@@ -118,13 +128,17 @@ struct Vertex_BitmapFont
     static constexpr UINT TextureOffset = ColorOffset + ColorSize;
     static constexpr UINT TextureSize = sizeof(glm::vec2);
 
-    static constexpr UINT PageOffset = TextureOffset + TextureSize;
+    static constexpr UINT ChannelOffset = TextureOffset + TextureSize;
+    static constexpr UINT ChannelSize = sizeof(u16);
+
+    static constexpr UINT PageOffset = ChannelOffset + ChannelSize;
     static constexpr UINT PageSize = sizeof(u16);
 
     static constexpr D3D11_INPUT_ELEMENT_DESC pInputElementDescs[] = {
         { "POSITION", 0,    DXGI_FORMAT_R32G32_FLOAT,   0,  0,                              D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR",    0,    DXGI_FORMAT_R8G8B8A8_UNORM, 0,  D3D11_APPEND_ALIGNED_ELEMENT,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0,    DXGI_FORMAT_R32G32_FLOAT,   0,  D3D11_APPEND_ALIGNED_ELEMENT,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "CHANNEL",  0,    DXGI_FORMAT_R8G8B8A8_UNORM, 0,  D3D11_APPEND_ALIGNED_ELEMENT,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "PAGE",     0,    DXGI_FORMAT_R16_UINT,       0,  D3D11_APPEND_ALIGNED_ELEMENT,   D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
     static constexpr UINT InputElementCount = _countof(pInputElementDescs);
@@ -168,6 +182,8 @@ protected:
     void PutVertex(const FontCharacter* pCharPrev, const FontCharacter* pChar);
 
     FontKerning* GetKering(const FontCharacter* pCharLeft, const FontCharacter* pCharRight);
+
+    u32 GetChannelColor(u8 channel) const;
 
     ComPtr<ID3D11Device>                m_Device;               // デバイス
     ComPtr<ID3D11DeviceContext>         m_Context;              // デバイスコンテキスト

@@ -11,6 +11,7 @@ struct VS_INPUT
     float2 position : POSITION;
     float4 color : COLOR;
     float2 tex : TEXCOORD;
+    float4 channel : CHANNEL;
     uint   page : PAGE;
 };
 
@@ -20,6 +21,7 @@ struct VS_OUTPUT
     float4 position : SV_POSITION;
     float4 color : COLOR;
     float2 tex : TEXCOORD;
+    float4 channel : CHANNEL;
     uint   page : PAGE;
 };
 
@@ -32,6 +34,7 @@ VS_OUTPUT main(VS_INPUT vs_input)
     vs_output.color = vs_input.color;
     vs_output.tex = vs_input.tex;
     vs_output.page = vs_input.page;
+    vs_output.channel = vs_input.channel;
 
     return vs_output;
 }

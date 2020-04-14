@@ -177,7 +177,7 @@ bool SampleApp::Init()
                 m_Context,
                 projection
             );
-        m_BitmapFont->Initialize("Arial");
+        m_BitmapFont->Initialize("test");
     }
 
     // シェイプを生成
@@ -290,7 +290,7 @@ void SampleApp::Term()
 // 更新処理
 void SampleApp::Update()
 {
-    m_BitmapFont->Put(glm::vec2(10.0f, 10.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), "Sample");
+    m_BitmapFont->Put(glm::vec2(10.0f, 10.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), "サンプル");
 
     {
         static f32 delta = 0.0f;
@@ -326,6 +326,12 @@ void SampleApp::Update()
 // 描画処理
 void SampleApp::Render()
 {
+    // レンダーターゲットを設定
+    ID3D11RenderTargetView* pRenderTargetViews[] = {
+        m_RenderTargetView.Get()
+    };
+    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, m_DepthStencilView.Get());
+
     // 指定色でクリア
     {
         // red, green, blue, alpha
@@ -356,6 +362,9 @@ void SampleApp::Render()
     {
         m_Cylinder->Draw();
     }
+
+    // レンダーターゲットを設定 深度バッファを無効に
+    m_Context->OMSetRenderTargets(_countof(pRenderTargetViews), pRenderTargetViews, nullptr);
 
     // ビットマップフォント描画
     m_BitmapFont->Flush();
