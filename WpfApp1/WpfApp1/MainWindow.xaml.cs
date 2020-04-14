@@ -114,8 +114,8 @@ namespace WpfApp1
 
         private void UpdateImage(byte[] imageBuffer, int width, int height)
         {
-            int stride = (width * PixelFormats.Bgr32.BitsPerPixel + 7) / 8;
-            BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgr32, null, imageBuffer, stride);
+            int stride = (width * PixelFormats.Pbgra32.BitsPerPixel + 7) / 8;
+            BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, imageBuffer, stride);
             ScaleTransform transform = new ScaleTransform(RuntimeImage.Width / (double)width, RuntimeImage.Height / (double)height, 0, 0);
             TransformedBitmap transformed = new TransformedBitmap(image, transform);
             RuntimeImage.Source = transformed;
