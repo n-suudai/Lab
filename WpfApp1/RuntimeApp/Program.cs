@@ -23,7 +23,7 @@ namespace RuntimeApp
         {
             string host = "127.0.0.1";
             IPAddress address = IPAddress.Parse(host);
-            int port = 9999;
+            int port = 9099;
 
             // 送信完了イベント
             peer.Sended += (TcpProtocol.RemoteEntity entity) => { 

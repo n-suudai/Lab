@@ -46,7 +46,7 @@ bool SampleApp::Init()
 
         m_Peer = std::make_unique<TcpProtocol::Peer>();
 
-        result = m_Peer->Connect("127.0.0.1", 9999);
+        result = m_Peer->Connect("127.0.0.1", 9099);
         if (!result)
         {
             ShowErrorMessage(result, "m_Peer->Connect");
