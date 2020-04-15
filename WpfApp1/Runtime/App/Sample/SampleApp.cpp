@@ -406,44 +406,48 @@ void SampleApp::Render()
                 );
 
                 // コピー
-                D3D11_BOX box = {};
-                box.left = 0;
-                box.right = static_cast<UINT>(m_BackBufferSize.width);
-                box.top = 0;
-                box.bottom = static_cast<UINT>(m_BackBufferSize.height);
-                box.front = 0; // 2Dテクスチャの場合
-                box.back = 1;  // 2Dテクスチャの場合
+                m_Context->CopyResource(m_CaptureBuffer.Get(), m_ResolveBuffer.Get());
 
-                m_Context->CopySubresourceRegion(
-                    m_CaptureBuffer.Get(),
-                    0,
-                    0, 0, 0,
-                    m_ResolveBuffer.Get(),
-                    0,
-                    &box
-                );
+                //// コピー（特定の領域を切り取る）
+                //D3D11_BOX box = {};
+                //box.left = 0;
+                //box.right = static_cast<UINT>(m_BackBufferSize.width);
+                //box.top = 0;
+                //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+                //box.front = 0; // 2Dテクスチャの場合
+                //box.back = 1;  // 2Dテクスチャの場合
+                //m_Context->CopySubresourceRegion(
+                //    m_CaptureBuffer.Get(),
+                //    0,
+                //    0, 0, 0,
+                //    m_ResolveBuffer.Get(),
+                //    0,
+                //    &box
+                //);
 
 #else
                 ComPtr<ID3D11Resource> resource;
                 m_RenderTargetView->GetResource(&resource);
 
                 // コピー
-                D3D11_BOX box = {};
-                box.left = 0;
-                box.right = static_cast<UINT>(m_BackBufferSize.width);
-                box.top = 0;
-                box.bottom = static_cast<UINT>(m_BackBufferSize.height);
-                box.front = 0; // 2Dテクスチャの場合
-                box.back = 1;  // 2Dテクスチャの場合
+                m_Context->CopyResource(m_CaptureBuffer.Get(), resource.Get());
 
-                m_Context->CopySubresourceRegion(
-                    m_CaptureBuffer.Get(),
-                    0,
-                    0, 0, 0,
-                    resource.Get(),
-                    0,
-                    &box
-                );
+                //// コピー
+                //D3D11_BOX box = {};
+                //box.left = 0;
+                //box.right = static_cast<UINT>(m_BackBufferSize.width);
+                //box.top = 0;
+                //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+                //box.front = 0; // 2Dテクスチャの場合
+                //box.back = 1;  // 2Dテクスチャの場合
+                //m_Context->CopySubresourceRegion(
+                //    m_CaptureBuffer.Get(),
+                //    0,
+                //    0, 0, 0,
+                //    resource.Get(),
+                //    0,
+                //    &box
+                //);
 #endif            
             }
 
@@ -483,16 +487,16 @@ void SampleApp::Render()
                     {
                         std::ofstream ofs("result.ppm");
 
-                        ofs << "P3\n" << width << " " << height << "\n255\n";
+                        ofs << "P3\n" << query->width << " " << query->height << "\n255\n";
 
-                        for (u32 y = 0; y < height; y++)
+                        for (int y = 0; y < query->height; y++)
                         {
-                            for (u32 x = 0; x < width; x++)
+                            for (int x = 0; x < query->width; x++)
                             {
-                                u32 i = 4 * (y * width + x);
-                                ofs << (int)query->imageBuffer[i] << " "
+                                int i = 4 * (y * query->buffer_width + x);
+                                ofs << (int)query->imageBuffer[i + 2] << " "
                                     << (int)query->imageBuffer[i + 1] << " "
-                                    << (int)query->imageBuffer[i + 2] << "\n";
+                                    << (int)query->imageBuffer[i + 0] << "\n";
                             }
                         }
 
