@@ -36,6 +36,9 @@ namespace WpfApp1
             RuntimeImage.Width = ((Grid)(this.Content)).RenderSize.Width;
             RuntimeImage.Height = ((Grid)(this.Content)).RenderSize.Height;
 
+            // ビットマップスケールの品質
+            RenderOptions.SetBitmapScalingMode(RuntimeImage, BitmapScalingMode.Fant);
+
             ClearRuntimeImage();
             StartTcpMessaging(true);
         }
@@ -52,7 +55,10 @@ namespace WpfApp1
                     if (entity.GetType() == typeof(TcpProtocol.SendImageQuery))
                     {
                         TcpProtocol.SendImageQuery query = (TcpProtocol.SendImageQuery)entity;
-                        UpdateImage(query.ImageBuffer, query.Width, query.Height);
+                        UpdateImage(
+                            query.ImageBuffer,
+                            query.BufferWidth, query.BufferHeight,
+                            query.Width, query.Height);
                     }
                 };
 
@@ -78,14 +84,6 @@ namespace WpfApp1
             }
         }
 
-        public void OnReceiveImage(byte[] imageBuffer, int width, int height)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                UpdateImage(imageBuffer, width, height);
-            });
-        }
-
         public void ClearRuntimeImage()
         {
             Dispatcher.Invoke(() =>
@@ -106,23 +104,37 @@ namespace WpfApp1
                     }
                 }
 
-                UpdateImage(imageBuffer, width, height);
+                UpdateImage(imageBuffer, width, height, width, height);
             });
         }
 
-        private void UpdateImage(byte[] imageBuffer, int width, int height)
+        private void UpdateImage(
+            byte[] imageBuffer,
+            int bufferWidth, int bufferHeight,
+            int width, int height)
         {
-            RuntimeImage.Width = ((Grid)(this.Content)).RenderSize.Width;
-            RuntimeImage.Height = ((Grid)(this.Content)).RenderSize.Height;
 
-            int stride = width * ((PixelFormats.Pbgra32.BitsPerPixel + 7) / 8);
-            BitmapSource image = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, imageBuffer, stride);
-            RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.Linear); // ビットマップスケールの品質
-            double scaleWidth = RuntimeImage.Width / width;
-            double scaleHeight = RuntimeImage.Height / height;
-            ScaleTransform transform = new ScaleTransform(scaleWidth, scaleHeight);
-            TransformedBitmap transformed = new TransformedBitmap(image, transform);
-            RuntimeImage.Source = transformed;
+            int stride = bufferWidth * ((PixelFormats.Pbgra32.BitsPerPixel + 7) / 8);
+            BitmapSource image = BitmapSource.Create(bufferWidth, bufferHeight, 96, 96, PixelFormats.Pbgra32, null, imageBuffer, stride);
+            
+            // クリッピング
+            if (bufferWidth != width ||
+                bufferHeight != height)
+            {
+                image = new CroppedBitmap(image, new Int32Rect(0, 0, width, height));
+            }
+
+            // スケーリング
+            if (RuntimeImage.Width != width ||
+                RuntimeImage.Height != height)
+            {
+                double scaleWidth = RuntimeImage.Width / width;
+                double scaleHeight = RuntimeImage.Height / height;
+                ScaleTransform transform = new ScaleTransform(scaleWidth, scaleHeight);
+                image = new TransformedBitmap(image, transform);
+            }
+            
+            RuntimeImage.Source = image;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

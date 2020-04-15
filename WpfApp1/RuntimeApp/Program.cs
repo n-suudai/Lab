@@ -57,7 +57,7 @@ namespace RuntimeApp
 
                 byte[] buffer = new byte[width * height * 4];
 
-                TcpProtocol.SendImageQuery query = new TcpProtocol.SendImageQuery(width, height, buffer);
+                TcpProtocol.SendImageQuery query = new TcpProtocol.SendImageQuery(width, height, width, height, buffer);
 
                 for (int y = 0; y < height; y++)
                 {

@@ -7,6 +7,8 @@ namespace TcpProtocol
     // Query
     bool SendImageQuery::Serialize(Serializer& serializer) const
     {
+        if (!serializer.WriteInt(buffer_width)) { return false; }
+        if (!serializer.WriteInt(buffer_height)) { return false; }
         if (!serializer.WriteInt(width)) { return false; }
         if (!serializer.WriteInt(height)) { return false; }
         if (!serializer.WriteBuffer(imageBuffer)) { return false; }
@@ -15,6 +17,8 @@ namespace TcpProtocol
 
     bool SendImageQuery::Deserialize(Serializer& serializer)
     {
+        if (!serializer.ReadInt(buffer_width)) { return false; }
+        if (!serializer.ReadInt(buffer_height)) { return false; }
         if (!serializer.ReadInt(width)) { return false; }
         if (!serializer.ReadInt(height)) { return false; }
         if (!serializer.ReadBuffer(imageBuffer)) { return false; }

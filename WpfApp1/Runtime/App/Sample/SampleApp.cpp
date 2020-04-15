@@ -389,77 +389,124 @@ void SampleApp::Render()
     // 描画結果をキャプチャ
     if (!m_Resizing)
     {
-        // CPU読み込み可能バッファにGPU上でデータをコピー
+        if (m_RequestedBackBufferResize)
         {
-#if DUSE_MSAA // マルチサンプル有効な場合、解決処理が必要
-            // 解決処理
-            m_Context->ResolveSubresource(
-                m_ResolveBuffer.Get(), 0,
-                m_BackBuffer.Get(), 0,
-                m_BufferFormat
-            );
-            m_Context->CopyResource(m_CaptureBuffer.Get(), m_ResolveBuffer.Get());
-#else
-            ComPtr<ID3D11Resource> resource;
-            m_RenderTargetView->GetResource(&resource);
-            m_Context->CopyResource(m_CaptureBuffer.Get(), resource.Get());
-#endif            
+            m_RequestedBackBufferResize = false;
         }
-        
+        else
         {
-            // GPU上の読み込み可能バッファのメモリアドレスのマップを開く
-            D3D11_MAPPED_SUBRESOURCE mappedResource;
-            result = m_Context->Map(m_CaptureBuffer.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
-            if (!result)
+            // CPU読み込み可能バッファにGPU上でデータをコピー
             {
-                ShowErrorMessage(result, "m_Context->Map");
+#if DUSE_MSAA // マルチサンプル有効な場合、解決処理が必要
+                // 解決処理
+                m_Context->ResolveSubresource(
+                    m_ResolveBuffer.Get(), 0,
+                    m_BackBuffer.Get(), 0,
+                    m_BufferFormat
+                );
+
+                // コピー
+                D3D11_BOX box = {};
+                box.left = 0;
+                box.right = static_cast<UINT>(m_BackBufferSize.width);
+                box.top = 0;
+                box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+                box.front = 0; // 2Dテクスチャの場合
+                box.back = 1;  // 2Dテクスチャの場合
+
+                m_Context->CopySubresourceRegion(
+                    m_CaptureBuffer.Get(),
+                    0,
+                    0, 0, 0,
+                    m_ResolveBuffer.Get(),
+                    0,
+                    &box
+                );
+
+#else
+                ComPtr<ID3D11Resource> resource;
+                m_RenderTargetView->GetResource(&resource);
+
+                // コピー
+                D3D11_BOX box = {};
+                box.left = 0;
+                box.right = static_cast<UINT>(m_BackBufferSize.width);
+                box.top = 0;
+                box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+                box.front = 0; // 2Dテクスチャの場合
+                box.back = 1;  // 2Dテクスチャの場合
+
+                m_Context->CopySubresourceRegion(
+                    m_CaptureBuffer.Get(),
+                    0,
+                    0, 0, 0,
+                    resource.Get(),
+                    0,
+                    &box
+                );
+#endif            
             }
 
-            // CPU上のメモリにバッファを確保
-            u32 src_stride = (u32)mappedResource.RowPitch;    // ※ m_BackBufferSize.width * 4 とは必ずしも一致しない
-            u32 bitsPerPixel = Util::DXGIFormatBitsPerPixel(m_BufferFormat);
-            u32 width = src_stride / ((bitsPerPixel + 7) / 8);
-            size_t buffer_size = (u32)mappedResource.DepthPitch;
-            u32 height = (u32)buffer_size / src_stride;
-
             {
-                // Tcpサーバーへ送るクエリ
-                std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
-                query->width = static_cast<int>(width);
-                query->height = static_cast<int>(height);
-                query->imageBuffer.resize(buffer_size);
-
-                // バッファコピー
-                CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
-
-                if (m_SaveCaptureBuffer)
+                // GPU上の読み込み可能バッファのメモリアドレスのマップを開く
+                D3D11_MAPPED_SUBRESOURCE mappedResource;
+                result = m_Context->Map(m_CaptureBuffer.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
+                if (!result)
                 {
-                    std::ofstream ofs("result.ppm");
-
-                    ofs << "P3\n" << width << " " << height << "\n255\n";
-
-                    for (u32 y = 0; y < height; y++)
-                    {
-                        for (u32 x = 0; x < width; x++)
-                        {
-                            u32 i = 4 * (y * width + x);
-                            ofs << (int)query->imageBuffer[i] << " "
-                                << (int)query->imageBuffer[i + 1] << " "
-                                << (int)query->imageBuffer[i + 2] << "\n";
-                        }
-                    }
-
-                    m_SaveCaptureBuffer = false;
+                    ShowErrorMessage(result, "m_Context->Map");
                 }
 
-                // Tcpサーバーへ送る
-                m_Peer->Send(query);
-            }
-            
-            // アンマップ
-            m_Context->Unmap(m_CaptureBuffer.Get(), 0);
-        }
+                // CPU上のメモリにバッファを確保
+                u32 src_stride = (u32)mappedResource.RowPitch;    // ※ m_BackBufferSize.width * 4 とは必ずしも一致しない
+                u32 bitsPerPixel = Util::DXGIFormatBitsPerPixel(m_BufferFormat);
+                u32 width = src_stride / ((bitsPerPixel + 7) / 8);
+                size_t buffer_size = (u32)mappedResource.DepthPitch;
+                u32 height = (u32)buffer_size / src_stride;
 
+                // https://docs.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_mapped_subresource
+                // 実際に描画されているサイズと異なることがある
+
+                {
+                    // Tcpサーバーへ送るクエリ
+                    std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
+                    query->buffer_width = static_cast<int>(width);
+                    query->buffer_height = static_cast<int>(height);
+                    query->width = static_cast<int>(m_BackBufferSize.width);
+                    query->height = static_cast<int>(m_BackBufferSize.height);
+                    query->imageBuffer.resize(buffer_size);
+
+                    // バッファコピー
+                    CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
+
+                    // 保存
+                    if (m_SaveCaptureBuffer)
+                    {
+                        std::ofstream ofs("result.ppm");
+
+                        ofs << "P3\n" << width << " " << height << "\n255\n";
+
+                        for (u32 y = 0; y < height; y++)
+                        {
+                            for (u32 x = 0; x < width; x++)
+                            {
+                                u32 i = 4 * (y * width + x);
+                                ofs << (int)query->imageBuffer[i] << " "
+                                    << (int)query->imageBuffer[i + 1] << " "
+                                    << (int)query->imageBuffer[i + 2] << "\n";
+                            }
+                        }
+
+                        m_SaveCaptureBuffer = false;
+                    }
+
+                    // Tcpサーバーへ送る
+                    m_Peer->Send(query);
+                }
+
+                // アンマップ
+                m_Context->Unmap(m_CaptureBuffer.Get(), 0);
+            }
+        }
     }    
 
     // 結果をウインドウに反映
@@ -525,15 +572,17 @@ void SampleApp::OnMouseWheel(const Position2D& position, s32 wheelDelta)
 // バックバッファを作成
 bool SampleApp::CreateBackBuffer(const Size2D& newSize)
 {
+    // バックバッファを破棄
+    m_Context->OMSetRenderTargets(0, nullptr, nullptr);
+
     m_BackBuffer.Reset();
     m_ResolveBuffer.Reset();
     m_CaptureBuffer.Reset();
+    m_DepthStencilView.Reset();
+    m_DepthStencilTexture.Reset();
+    m_RenderTargetView.Reset();
 
     ResultUtil result;
-
-    // バックバッファを破棄
-    m_Context->OMSetRenderTargets(0, nullptr, nullptr);
-    m_RenderTargetView.Reset();
 
     // バッファのサイズを変更
     result = m_SwapChain->ResizeBuffers(
