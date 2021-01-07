@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{E994C275-CE58-4514-8059-3677EE1455D9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9363355D-3063-4772-9EF9-ACCBC7CBA55F} = {9363355D-3063-4772-9EF9-ACCBC7CBA55F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeApp", "RuntimeApp\RuntimeApp.csproj", "{A8C8FB25-C3BF-4EF1-B851-7CDF629BD19C}"
 EndProject

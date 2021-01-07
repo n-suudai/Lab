@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "TcpProtocol.h"
+#include "../TcpProtocol.h"
 #include <vector>
 
 

@@ -1,6 +1,6 @@
 #include "TcpProtocol.h"
 
-#include "SendImage.h"
+#include "QueryResponse/SendImage.h"
 
 namespace TcpProtocol
 {

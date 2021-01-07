@@ -116,7 +116,7 @@ bool AppWin::Init(const Size2D& clientSize, const std::string& title)
     wc.hInstance = m_hInstance;
     wc.hIcon = LoadIcon(m_hInstance, IDI_APPLICATION);
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
     wc.lpszMenuName = nullptr;
     wc.lpszClassName = WINDOW_CLASS_NAME;
     wc.hIconSm = LoadIcon(m_hInstance, IDI_APPLICATION);
@@ -271,6 +271,21 @@ LRESULT CALLBACK AppWin::WindowProcedure(HWND hWnd, UINT uMsg, WPARAM wParam, LP
 }
 
 
+Size2D GetWindowClientSize(HWND hWnd)
+{
+    RECT rc = { 0 };
+
+    GetClientRect(hWnd, &rc);
+
+    Size2D size = {
+        static_cast<u32>(rc.right - rc.left),
+        static_cast<u32>(rc.bottom - rc.top),
+    };
+
+    return size;
+}
+
+
 extern IMGUI_API LRESULT   ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK AppWin::WindowProcedureInstance(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -383,17 +398,22 @@ LRESULT CALLBACK AppWin::WindowProcedureInstance(HWND hWnd, UINT uMsg, WPARAM wP
         }
         break;
 
+    case WM_SIZE:
+        if (m_Callbacks.pOnResizing != nullptr)
+        {
+            Size2D newSize = GetWindowClientSize(hWnd);
+
+            m_Callbacks.pOnResizing(
+                newSize,
+                m_Callbacks.pOnResizingUser
+            );
+        }
+        return TRUE;
+
     case WM_ENTERSIZEMOVE:
         if (m_Callbacks.pOnEnterResize != nullptr)
         {
-            RECT rc = { 0 };
-
-            GetClientRect(hWnd, &rc);
-
-            Size2D newSize = {
-                static_cast<u32>(rc.right - rc.left),
-                static_cast<u32>(rc.bottom - rc.top),
-            };
+            Size2D newSize = GetWindowClientSize(hWnd);
 
             m_Callbacks.pOnEnterResize(
                 newSize,
@@ -405,14 +425,7 @@ LRESULT CALLBACK AppWin::WindowProcedureInstance(HWND hWnd, UINT uMsg, WPARAM wP
     case WM_EXITSIZEMOVE:
         if (m_Callbacks.pOnExitResize != nullptr)
         {
-            RECT rc = { 0 };
-
-            GetClientRect(hWnd, &rc);
-
-            Size2D newSize = {
-                static_cast<u32>(rc.right - rc.left),
-                static_cast<u32>(rc.bottom - rc.top),
-            };
+            Size2D newSize = GetWindowClientSize(hWnd);
 
             m_Callbacks.pOnExitResize(
                 newSize,

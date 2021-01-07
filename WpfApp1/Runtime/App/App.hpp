@@ -15,9 +15,24 @@ struct Size2D
     u32 height;
 };
 
+inline bool operator == (const Size2D& v1, const Size2D& v2)
+{
+    return v1.width == v2.width &&
+        v1.height == v2.height;
+}
+
+inline bool operator != (const Size2D& v1, const Size2D& v2)
+{
+    return !(v1 == v2);
+}
+
 
 struct AppCallbacks
 {
+    // リサイズ
+    void (*pOnResizing)(const Size2D& newSize, void* pUser);
+    void* pOnResizingUser;
+
     // リサイズ開始
     void (*pOnEnterResize)(const Size2D& newSize, void* pUser);
     void* pOnEnterResizeUser;

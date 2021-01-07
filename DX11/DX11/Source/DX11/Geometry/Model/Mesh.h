@@ -7,6 +7,7 @@
 #include <tiny_obj_loader.h>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 
 class Material;

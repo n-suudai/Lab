@@ -7,6 +7,14 @@
 
 
 // リサイズ開始
+void OnResizing(const Size2D& newSize, void* pUser)
+{
+    SampleApp* pSample = reinterpret_cast<SampleApp*>(pUser);
+    pSample->OnResizing(newSize);
+}
+
+
+// リサイズ開始
 void OnEnterResize(const Size2D& newSize, void* pUser)
 {
     SampleApp* pSample = reinterpret_cast<SampleApp*>(pUser);
@@ -80,6 +88,10 @@ void AppMain()
     // コールバックの設定
     {
         AppCallbacks callbacks = { 0 };
+
+        // リサイズ
+        callbacks.pOnResizing = OnResizing;
+        callbacks.pOnResizingUser = pSample;
         // リサイズ開始
         callbacks.pOnEnterResize = OnEnterResize;
         callbacks.pOnEnterResizeUser = pSample;
@@ -118,7 +130,7 @@ void AppMain()
         pSample->Update();
         pSample->Render();
 
-        pApp->Sleep(8);
+        //pApp->Sleep(8);
     }
 
     delete pSample;

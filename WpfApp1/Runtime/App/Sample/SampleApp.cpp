@@ -1,7 +1,7 @@
 ﻿#include "SampleApp.hpp"
 #include "../../TcpProtocol/TcpProtocol.h"
 #include "../../TcpProtocol/Peer.h"
-#include "../../TcpProtocol/SendImage.h"
+#include "../../TcpProtocol/QueryResponse/SendImage.h"
 
 
 // DXGI & D3D11 のライブラリをリンク
@@ -12,6 +12,33 @@
 
 
 #define DUSE_MSAA 1
+
+
+void SavePPM(
+    const std::vector<unsigned char>& imageBuffer,
+    int buffer_width,
+    int buffer_height,
+    int width,
+    int height)
+{
+    std::ofstream ofs("result.ppm");
+
+    width = width <= buffer_width ? width : buffer_width;
+    height = height <= buffer_height ? height : buffer_height;
+
+    ofs << "P3\n" << width << " " << height << "\n255\n";
+
+    for (int y = 0; y < height; y++)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            int i = 4 * (y * buffer_width + x);
+            ofs << (int)imageBuffer[i + 2] << " "
+                << (int)imageBuffer[i + 1] << " "
+                << (int)imageBuffer[i + 0] << "\n";
+        }
+    }
+}
 
 
 SampleApp::SampleApp(IApp* pApp)
@@ -37,6 +64,7 @@ bool SampleApp::Init()
 {
     ResultUtil result;
 
+#if 1
     // Tcpサーバーに接続 
     {
         result = TcpProtocol::RemoteEntity::Initialize();
@@ -57,6 +85,7 @@ bool SampleApp::Init()
 
         m_Peer->Start();
     }
+#endif
 
     // ウィンドウハンドルを取得
     HWND hWnd = reinterpret_cast<HWND>(m_pApp->GetWindowHandle());
@@ -135,7 +164,7 @@ bool SampleApp::Init()
         swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
         swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
         swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-        swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_STRETCHED;
+        swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
         swapChainDesc.BufferDesc.Format = m_BufferFormat;
         swapChainDesc.SampleDesc = m_SampleDesc;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
@@ -328,14 +357,6 @@ void SampleApp::Update()
 // 描画処理
 void SampleApp::Render()
 {
-    if (m_RequestedBackBufferResize)
-    {
-        Size2D newSize = m_pApp->GetClientSize();
-
-        // バックバッファを再生成
-        CreateBackBuffer(newSize);
-    }
-
     // レンダーターゲットを設定
     ID3D11RenderTargetView* pRenderTargetViews[] = {
         m_RenderTargetView.Get()
@@ -389,136 +410,129 @@ void SampleApp::Render()
     // 描画結果をキャプチャ
     if (!m_Resizing)
     {
-        if (m_RequestedBackBufferResize)
+        // CPU読み込み可能バッファにGPU上でデータをコピー
         {
-            m_RequestedBackBufferResize = false;
-        }
-        else
-        {
-            // CPU読み込み可能バッファにGPU上でデータをコピー
-            {
 #if DUSE_MSAA // マルチサンプル有効な場合、解決処理が必要
-                // 解決処理
-                m_Context->ResolveSubresource(
-                    m_ResolveBuffer.Get(), 0,
-                    m_BackBuffer.Get(), 0,
-                    m_BufferFormat
-                );
+            // 解決処理
+            m_Context->ResolveSubresource(
+                m_ResolveBuffer.Get(), 0,
+                m_BackBuffer.Get(), 0,
+                m_BufferFormat
+            );
 
-                // コピー
-                m_Context->CopyResource(m_CaptureBuffer.Get(), m_ResolveBuffer.Get());
+            // コピー
+            m_Context->CopyResource(m_CaptureBuffer.Get(), m_ResolveBuffer.Get());
 
-                //// コピー（特定の領域を切り取る）
-                //D3D11_BOX box = {};
-                //box.left = 0;
-                //box.right = static_cast<UINT>(m_BackBufferSize.width);
-                //box.top = 0;
-                //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
-                //box.front = 0; // 2Dテクスチャの場合
-                //box.back = 1;  // 2Dテクスチャの場合
-                //m_Context->CopySubresourceRegion(
-                //    m_CaptureBuffer.Get(),
-                //    0,
-                //    0, 0, 0,
-                //    m_ResolveBuffer.Get(),
-                //    0,
-                //    &box
-                //);
+            //// コピー（特定の領域を切り取る）
+            //D3D11_BOX box = {};
+            //box.left = 0;
+            //box.right = static_cast<UINT>(m_BackBufferSize.width);
+            //box.top = 0;
+            //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+            //box.front = 0; // 2Dテクスチャの場合
+            //box.back = 1;  // 2Dテクスチャの場合
+            //m_Context->CopySubresourceRegion(
+            //    m_CaptureBuffer.Get(),
+            //    0,
+            //    0, 0, 0,
+            //    m_ResolveBuffer.Get(),
+            //    0,
+            //    &box
+            //);
 
 #else
-                ComPtr<ID3D11Resource> resource;
-                m_RenderTargetView->GetResource(&resource);
+            ComPtr<ID3D11Resource> resource;
+            m_RenderTargetView->GetResource(&resource);
 
-                // コピー
-                m_Context->CopyResource(m_CaptureBuffer.Get(), resource.Get());
+            // コピー
+            m_Context->CopyResource(m_CaptureBuffer.Get(), resource.Get());
 
-                //// コピー
-                //D3D11_BOX box = {};
-                //box.left = 0;
-                //box.right = static_cast<UINT>(m_BackBufferSize.width);
-                //box.top = 0;
-                //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
-                //box.front = 0; // 2Dテクスチャの場合
-                //box.back = 1;  // 2Dテクスチャの場合
-                //m_Context->CopySubresourceRegion(
-                //    m_CaptureBuffer.Get(),
-                //    0,
-                //    0, 0, 0,
-                //    resource.Get(),
-                //    0,
-                //    &box
-                //);
+            //// コピー
+            //D3D11_BOX box = {};
+            //box.left = 0;
+            //box.right = static_cast<UINT>(m_BackBufferSize.width);
+            //box.top = 0;
+            //box.bottom = static_cast<UINT>(m_BackBufferSize.height);
+            //box.front = 0; // 2Dテクスチャの場合
+            //box.back = 1;  // 2Dテクスチャの場合
+            //m_Context->CopySubresourceRegion(
+            //    m_CaptureBuffer.Get(),
+            //    0,
+            //    0, 0, 0,
+            //    resource.Get(),
+            //    0,
+            //    &box
+            //);
 #endif            
+        }
+
+        {
+            // GPU上の読み込み可能バッファのメモリアドレスのマップを開く
+            D3D11_MAPPED_SUBRESOURCE mappedResource;
+            result = m_Context->Map(m_CaptureBuffer.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
+            if (!result)
+            {
+                ShowErrorMessage(result, "m_Context->Map");
             }
 
+            // CPU上のメモリにバッファを確保
+            u32 src_stride = (u32)mappedResource.RowPitch;    // ※ m_BackBufferSize.width * 4 とは必ずしも一致しない
+            u32 bitsPerPixel = Util::DXGIFormatBitsPerPixel(m_BufferFormat);
+            u32 width = src_stride / ((bitsPerPixel + 7) / 8);
+            size_t buffer_size = (u32)mappedResource.DepthPitch;
+            u32 height = (u32)buffer_size / src_stride;
+
+            // https://docs.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_mapped_subresource
+            // 実際に描画されているサイズと異なることがある
+
             {
-                // GPU上の読み込み可能バッファのメモリアドレスのマップを開く
-                D3D11_MAPPED_SUBRESOURCE mappedResource;
-                result = m_Context->Map(m_CaptureBuffer.Get(), 0, D3D11_MAP_READ, 0, &mappedResource);
-                if (!result)
-                {
-                    ShowErrorMessage(result, "m_Context->Map");
-                }
+                // Tcpサーバーへ送るクエリ
+                std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
+                query->buffer_width = static_cast<int>(width);
+                query->buffer_height = static_cast<int>(height);
+                query->width = static_cast<int>(m_BackBufferSize.width);
+                query->height = static_cast<int>(m_BackBufferSize.height);
+                query->imageBuffer.resize(buffer_size);
 
-                // CPU上のメモリにバッファを確保
-                u32 src_stride = (u32)mappedResource.RowPitch;    // ※ m_BackBufferSize.width * 4 とは必ずしも一致しない
-                u32 bitsPerPixel = Util::DXGIFormatBitsPerPixel(m_BufferFormat);
-                u32 width = src_stride / ((bitsPerPixel + 7) / 8);
-                size_t buffer_size = (u32)mappedResource.DepthPitch;
-                u32 height = (u32)buffer_size / src_stride;
-
-                // https://docs.microsoft.com/ja-jp/windows/win32/api/d3d11/ns-d3d11-d3d11_mapped_subresource
-                // 実際に描画されているサイズと異なることがある
-
-                {
-                    // Tcpサーバーへ送るクエリ
-                    std::shared_ptr<TcpProtocol::SendImageQuery> query = std::make_shared<TcpProtocol::SendImageQuery>();
-                    query->buffer_width = static_cast<int>(width);
-                    query->buffer_height = static_cast<int>(height);
-                    query->width = static_cast<int>(m_BackBufferSize.width);
-                    query->height = static_cast<int>(m_BackBufferSize.height);
-                    query->imageBuffer.resize(buffer_size);
-
-                    // バッファコピー
-                    CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
-
-                    // 保存
-                    if (m_SaveCaptureBuffer)
-                    {
-                        std::ofstream ofs("result.ppm");
-
-                        ofs << "P3\n" << query->width << " " << query->height << "\n255\n";
-
-                        for (int y = 0; y < query->height; y++)
-                        {
-                            for (int x = 0; x < query->width; x++)
-                            {
-                                int i = 4 * (y * query->buffer_width + x);
-                                ofs << (int)query->imageBuffer[i + 2] << " "
-                                    << (int)query->imageBuffer[i + 1] << " "
-                                    << (int)query->imageBuffer[i + 0] << "\n";
-                            }
-                        }
-
-                        m_SaveCaptureBuffer = false;
-                    }
-
-                    // Tcpサーバーへ送る
-                    m_Peer->Send(query);
-                }
+                // バッファコピー
+                CopyMemory(query->imageBuffer.data(), mappedResource.pData, buffer_size);
 
                 // アンマップ
                 m_Context->Unmap(m_CaptureBuffer.Get(), 0);
+
+                // 保存
+                if (m_SaveCaptureBuffer)
+                {
+                    SavePPM(
+                        query->imageBuffer,
+                        query->buffer_width,
+                        query->buffer_height,
+                        query->width,
+                        query->height);
+                    m_SaveCaptureBuffer = false;
+                }
+
+                if (m_Peer)
+                {
+                    // Tcpサーバーへ送る
+                    m_Peer->Send(query);
+                }
             }
         }
     }    
 
     // 結果をウインドウに反映
-    result = m_SwapChain->Present(0, 0);
+    result = m_SwapChain->Present(1, 0);
     if (!result)
     {
         ShowErrorMessage(result, "m_SwapChain->Present");
     }
+}
+
+// リサイズ
+void SampleApp::OnResizing(const Size2D&)
+{
+    m_Resizing = true;
 }
 
 // リサイズ開始
@@ -533,7 +547,7 @@ void SampleApp::OnExitResize(const Size2D& newSize)
     if (m_BackBufferSize.width != newSize.width ||
         m_BackBufferSize.height != newSize.height)
     {
-        m_RequestedBackBufferResize = true;
+        CreateBackBuffer(newSize);
     }
 
     m_Resizing = false;
