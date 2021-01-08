@@ -18,10 +18,10 @@
 #endif
 
 
-class TEST_DLL_API Test_DLL
+class Test_DLL
 {
 public:
-    void func();
+    virtual void func() = 0;
 };
 
 

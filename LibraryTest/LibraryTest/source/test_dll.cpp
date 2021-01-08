@@ -6,14 +6,18 @@
 
 //#pragma comment(lib, "test_lib.lib")
 
-void Test_DLL::func()
+class Test_DLL_Impl final : public Test_DLL
 {
-    printf_s("Test_DLL::func\n");
-}
+public:
+    void func() override
+    {
+        printf_s("Test_DLL::func\n");
+    }
+};
 
 Test_DLL* create_Test_DLL()
 {
-    return new Test_DLL();
+    return new Test_DLL_Impl();
 }
 
 
