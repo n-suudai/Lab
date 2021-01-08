@@ -1,5 +1,6 @@
 ﻿#include "test_module.h"
 #include "test_lib.h"
+#include "test_dll.h"
 
 
 //#pragma comment(lib, "test_lib.lib")
@@ -19,6 +20,12 @@ public:
 
 MODULEAPI IModule* test_func()
 {
+    Test_DLL* p = create_Test_DLL();
+
+    p->func();
+
+    delete p;
+
     return new TestModule();
 }
 
