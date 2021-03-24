@@ -498,7 +498,17 @@ void DX11::Update()
 
         ImGui::Separator();
 
-        m_DemoSelector->UpdateDemo();
+        static std::chrono::high_resolution_clock::time_point last = std::chrono::high_resolution_clock::now();
+        
+        const std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+
+        std::chrono::high_resolution_clock::duration elapsed = now - last;
+
+        last = now;
+
+        std::chrono::milliseconds elapsed_millisec = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed);
+
+        m_DemoSelector->UpdateDemo(elapsed_millisec.count() / 1000.0f);
 
         ImGui::End();
     }

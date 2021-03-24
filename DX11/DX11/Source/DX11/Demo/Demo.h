@@ -11,7 +11,7 @@ class Demo
 public:
     Demo() {}
     virtual ~Demo() {}
-    virtual void Update() {}
+    virtual void Update(float) {}
     virtual void Render() {}
     virtual void OnResizedBuffer(const Size2D&) {}
 };
@@ -29,7 +29,7 @@ public:
 
     void UpdateSelector(const DemoCreateFunc& createFunc);
 
-    void UpdateDemo();
+    void UpdateDemo(float deltaTime);
 
     void RenderDemo();
 

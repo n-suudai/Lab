@@ -49,7 +49,7 @@ DiffuselightingDemo::~DiffuselightingDemo()
 }
 
 
-void DiffuselightingDemo::Update()
+void DiffuselightingDemo::Update(float deltaTime)
 {
     bool changed = m_ForceUpdateModel;
 
@@ -61,7 +61,7 @@ void DiffuselightingDemo::Update()
         delta += 0.003f;
 
         m_Transform.rotate.y = delta;
-        m_Transform.rotate.z = delta;
+        //m_Transform.rotate.z = delta;
         m_Transform.UpdateMatrix();
         changed = true;
     }
@@ -148,12 +148,13 @@ void DiffuselightingDemo::Update()
         while(material_it != m_Resource->Materials.end())
         {
             material_it->second->SetMVPMatrix(mvpMatrix);
+            material_it->second->SetModelMatrix(glm::transpose(m_Transform.matrix));
             material_it->second->SetEyeDirection(eyeDirection);
             material_it->second->SetLightDirection(lightDirection);
             material_it++;
         }
 
-        m_Model->Update();
+        m_Model->Update(deltaTime);
     }
 
     m_ForceUpdateModel = false;

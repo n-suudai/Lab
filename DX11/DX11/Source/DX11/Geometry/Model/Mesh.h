@@ -26,6 +26,8 @@ struct ModelResource : public std::enable_shared_from_this<ModelResource>
     );
 
     bool UpdateImGui();
+
+    void UpdateTime(float deltaTime);
 };
 
 
@@ -50,7 +52,7 @@ public:
 
     bool InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* color = nullptr);
 
-    void Update();
+    void Update(float deltaTime);
 
     void Draw();
 
@@ -89,7 +91,7 @@ public:
 
     bool InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* color);
 
-    void Update();
+    void Update(float deltaTime);
 
     void Draw();
 
@@ -126,9 +128,10 @@ public:
     bool InitDefault();
 
     bool UpdateImGui();
-    void Update();
+    void Update(float deltaTime);
 
     void SetMVPMatrix(const glm::mat4x4& mvpMatrix);
+    void SetModelMatrix(const glm::mat4x4& modelMatrix);
     void SetEyeDirection(const glm::vec4& eyeDirection);
     void SetLightDirection(const glm::vec4& lightDirection);
 

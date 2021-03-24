@@ -50,11 +50,11 @@ void DemoSelector::UpdateSelector(const DemoCreateFunc& createFunc)
 }
 
 
-void DemoSelector::UpdateDemo()
+void DemoSelector::UpdateDemo(float deltaTime)
 {
     if (m_Demo)
     {
-        m_Demo->Update();
+        m_Demo->Update(deltaTime);
     }
 }
 

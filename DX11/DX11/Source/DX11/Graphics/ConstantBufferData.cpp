@@ -4,8 +4,10 @@
 
 ConstantBufferData::ConstantBufferData()
     : MVPMatrix(1.0f)
+    , ModelMatrix(1.0f)
     , Color(1.0f)
     , UVOffset(0.0f)
+    , Time(0.0f)
 {
 
 }
@@ -17,6 +19,7 @@ bool ConstantBufferData::UpdateImGui()
 
     changed |= ImGuiEx::ColorEdit4("Color", &Color);
     changed |= ImGuiEx::DragVec2("UVOffset", &UVOffset, 0.01f);
+    ImGui::Text("Time : %f", Time);
 
     return changed;
 }

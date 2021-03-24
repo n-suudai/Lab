@@ -202,7 +202,7 @@ TextureDemo::~TextureDemo()
 }
 
 
-void TextureDemo::Update()
+void TextureDemo::Update(float)
 {
     //m_BitmapFont->Put(glm::vec2(0), "魑魅魍魎複雑なサンプルと、思う");
 

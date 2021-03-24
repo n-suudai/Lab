@@ -132,7 +132,7 @@ TriangleDemo::~TriangleDemo()
 }
 
 
-void TriangleDemo::Update()
+void TriangleDemo::Update(float)
 {
     ImGui::Text("Shader");
 

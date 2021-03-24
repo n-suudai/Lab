@@ -352,11 +352,11 @@ bool Model::InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* c
 }
 
 
-void Model::Update()
+void Model::Update(float deltaTime)
 {
     for (int i = 0; i < m_MeshList.size(); i++)
     {
-        m_MeshList[i]->Update();
+        m_MeshList[i]->Update(deltaTime);
     }
 }
 
@@ -997,11 +997,11 @@ bool Mesh::InitAsCylinder(u16 x, u16 y, f32 rad, f32 height, const glm::vec4* co
 }
 
 
-void Mesh::Update()
+void Mesh::Update(float deltaTime)
 {
     if (m_Material)
     {
-        m_Material->Update();
+        m_Material->Update(deltaTime);
     }
 }
 
@@ -1029,8 +1029,10 @@ SamplerState normalSampler : register(s0);
 cbuffer CB0 : register(b0)
 {
     float4x4 MVPMatrix;
+    float4x4 ModelMatrix;
     float4 Color;
     float2 UVOffset;
+    float Time;
     float2 dummy_CB0;
 };
 
@@ -1056,16 +1058,39 @@ struct VS_OUTPUT {
     float4 position : SV_POSITION;
     float4 color    : COLOR;
     float4 normal   : NORMAL;
-    float2 texcoord : TEXCOORD;
+    float2 texcoord : TEXCOORD0;
+    float4 worldPosition   : POSITION;
 };
 
 VS_OUTPUT vs_main(VS_INPUT In) {
     VS_OUTPUT Out = (VS_OUTPUT)0;
+    Out.worldPosition = mul(In.position, ModelMatrix);
     Out.position = mul(In.position, MVPMatrix);
     Out.color = Color;
     Out.texcoord = In.texcoord + UVOffset;
     Out.normal = In.normal;
     return Out;
+}
+
+
+float rand(float co) {
+    return frac(sin(dot(co, 12.9898)) * 43758.5453);
+}
+
+float rand2(float2 p) {
+    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+float graph(float x, float noise_size, float alpha) {
+    return pow(noise_size * abs(sin(10.0 * x) * (-sin(x * 2.0) + 1.0)) * 0.5, 2.0) * alpha;
+}
+
+float noise(float2 coord) {
+    return rand2(coord + floor(Time));
+}
+
+float scanline(float y, float lineAmount) {
+    return frac(y * lineAmount - Time);
 }
 
 float4 ps_main(VS_OUTPUT In) : SV_TARGET {
@@ -1088,10 +1113,13 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
     float specular = pow(clamp(dot(In.normal.xyz, halfLE), 0.0, 1.0), SpecularColor.w);
 
     float4 color = In.color * diffuseColor * float4(diffuse, diffuse, diffuse, 1.0);
-    color += ambientColor;
-    color += float4(specular * specularColor.x, specular * specularColor.y, specular * specularColor.z, 1.0);
-    color += emissiveColor;
+    color.rgb += ambientColor.rgb;
+    color.rgb += float3(specular * specularColor.x, specular * specularColor.y, specular * specularColor.z);
+    color.rgb += emissiveColor.rgb;
 
+    //color -= noise(In.position.xy);
+
+    color.a -= scanline(In.worldPosition.y, 15.0);
     return color;
 }
 )";
@@ -1291,12 +1319,22 @@ bool Material::UpdateImGui()
     return changed;
 }
 
-
-void Material::Update()
+float wrap(float x, float low, float high)
 {
+    assert(low < high);
+    const float n = std::fmod(x - low, high - low);
+    return (n >= 0) ? (n + low) : (n + high);
+}
+
+
+void Material::Update(float deltaTime)
+{
+    // CB0は時間を含むので毎回更新
+    m_CB0.Time = wrap(m_CB0.Time + deltaTime, 0.0f, 1000.0f);
+    m_ConstantBuffers[0]->Update(&m_CB0);
+
     if (m_ConstantBufferChanged)
     {
-        m_ConstantBuffers[0]->Update(&m_CB0);
         m_ConstantBuffers[1]->Update(&m_CB1);
 
         m_ConstantBufferChanged = false;
@@ -1307,6 +1345,13 @@ void Material::Update()
 void Material::SetMVPMatrix(const glm::mat4x4& mvpMatrix)
 {
     m_CB0.MVPMatrix = mvpMatrix;
+    m_ConstantBufferChanged = true;
+}
+
+
+void Material::SetModelMatrix(const glm::mat4x4& modelMatrix)
+{
+    m_CB0.ModelMatrix = modelMatrix;
     m_ConstantBufferChanged = true;
 }
 
