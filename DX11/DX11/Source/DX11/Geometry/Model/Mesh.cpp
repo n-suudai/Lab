@@ -1086,11 +1086,28 @@ float graph(float x, float noise_size, float alpha) {
 }
 
 float noise(float2 coord) {
-    return rand2(coord + floor(Time));
+    return rand2(coord + floor(Time * 10.0));
 }
 
 float scanline(float y, float lineAmount) {
     return frac(y * lineAmount - Time);
+}
+
+float overlay_element(float c, float o) {
+    if (c < 0.5) {
+        c = 2.0 * c * o;
+    }
+    else {
+        c = 1.0 - 2.0 * (1.0 - c) * (1.0 - o);
+    }
+    return c;
+}
+
+float4 overlay(float4 color, float4 overlayColor) {
+    color.r = overlay_element(color.r, overlayColor.r);
+    color.g = overlay_element(color.g, overlayColor.g);
+    color.b = overlay_element(color.b, overlayColor.b);
+    return color;
 }
 
 float4 ps_main(VS_OUTPUT In) : SV_TARGET {
@@ -1112,14 +1129,24 @@ float4 ps_main(VS_OUTPUT In) : SV_TARGET {
     float3 halfLE  = normalize(light + eye);
     float specular = pow(clamp(dot(In.normal.xyz, halfLE), 0.0, 1.0), SpecularColor.w);
 
-    float4 color = In.color * diffuseColor * float4(diffuse, diffuse, diffuse, 1.0);
-    color.rgb += ambientColor.rgb;
-    color.rgb += float3(specular * specularColor.x, specular * specularColor.y, specular * specularColor.z);
-    color.rgb += emissiveColor.rgb;
+    float4 color = diffuseColor;
+    //float4 color = In.color * diffuseColor * float4(diffuse, diffuse, diffuse, 1.0);
+    //color.rgb += ambientColor.rgb;
+    //color.rgb += float3(specular * specularColor.x, specular * specularColor.y, specular * specularColor.z);
+    //color.rgb += emissiveColor.rgb;
 
-    //color -= noise(In.position.xy);
+    //color -= noise(In.position.xy) * 0.5;
 
-    color.a -= scanline(In.worldPosition.y, 15.0);
+    float fScanLineX = scanline(In.worldPosition.x, 15.0) - 0.5; // -0.5 ~ 0.5
+    float fScanLineY = scanline(In.worldPosition.y, 15.0) - 0.5; // -0.5 ~ 0.5
+
+    fScanLineX = step(abs(fScanLineX), 0.4); // 両端 0.1 分を 0.0 へ
+    fScanLineY = step(abs(fScanLineY), 0.4); // 両端 0.1 分を 0.0 へ
+
+    color.a = 1.0 - (fScanLineX * fScanLineY); // 端の部分 0.1 分を 1.0 へ
+
+    color.rgb *= overlay(color, float4(0.5, 0, 0, 1)).rgb;
+
     return color;
 }
 )";
